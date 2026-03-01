@@ -81,3 +81,5 @@ local-dev/
 config.json
 secrets.json
 credentials.json
+.vercel
+.env*.local

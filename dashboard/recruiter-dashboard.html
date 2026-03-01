@@ -210,9 +210,10 @@
                 visibility: visible !important;
                 opacity: 1 !important;
             }
-            /* ── Blur only the main content, not the sidebar ── */
-            .main { transition: filter 0.3s ease !important; }
-            body.sidebar-open .main { filter: blur(4px) !important; }
+            /* ── Blur layout (main content) when sidebar open — sidebar is outside .layout so unaffected ── */
+            .layout { transition: filter 0.3s ease !important; }
+            body.sidebar-open .layout { filter: blur(3px) !important; }
+            body.sidebar-open .topbar { filter: blur(3px) !important; }
             /* ── Hamburger ── */
             .topbar-hamburger {
                 display: flex !important;
@@ -378,24 +379,24 @@
         </div>
     </div>
 
-    <div class="layout">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-label">Recruiter Panel</div>
-            <a class="nav-item active" data-page="overview">
-                <i class="fas fa-chart-bar"></i> Overview
-            </a>
-            <a class="nav-item" data-page="post-job">
-                <i class="fas fa-plus-circle"></i> Post a Job
-            </a>
-            <a class="nav-item" data-page="my-jobs">
-                <i class="fas fa-briefcase"></i> My Posted Jobs
-            </a>
-            <a class="nav-item" data-page="applicants">
-                <i class="fas fa-users"></i> Applicants
-            </a>
-        </aside>
+    <!-- Sidebar is outside .layout so CSS blur on .layout never touches it -->
+    <aside class="sidebar">
+        <div class="sidebar-label">Recruiter Panel</div>
+        <a class="nav-item active" data-page="overview">
+            <i class="fas fa-chart-bar"></i> Overview
+        </a>
+        <a class="nav-item" data-page="post-job">
+            <i class="fas fa-plus-circle"></i> Post a Job
+        </a>
+        <a class="nav-item" data-page="my-jobs">
+            <i class="fas fa-briefcase"></i> My Posted Jobs
+        </a>
+        <a class="nav-item" data-page="applicants">
+            <i class="fas fa-users"></i> Applicants
+        </a>
+    </aside>
 
+    <div class="layout">
         <!-- Main Content -->
         <div class="main">
 

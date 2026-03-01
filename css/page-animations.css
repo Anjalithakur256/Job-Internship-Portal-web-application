@@ -1,0 +1,830 @@
+/* ============================================================
+   JOBNEXUS — PAGE ANIMATIONS SYSTEM
+   Covers: entrance reveals, micro-interactions, counters,
+   tab transitions, progress bar, button ripple, skeleton shimmer,
+   accent lines, floating labels, pulse badges.
+   Linked after light-theme.css on every page.
+   ============================================================ */
+
+/* ============================================================
+   0.  SCROLL PROGRESS BAR
+   ============================================================ */
+#scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, #e53935, #c62828, #e53935);
+  background-size: 200% 100%;
+  animation: progressShine 2s linear infinite;
+  z-index: 10000;
+  transition: width 0.1s linear;
+  border-radius: 0 2px 2px 0;
+}
+.recruiter-dashboard #scroll-progress {
+  background: linear-gradient(90deg, #e53935, #c62828, #e53935);
+  background-size: 200% 100%;
+}
+@keyframes progressShine {
+  0%   { background-position: 0%   50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* ============================================================
+   1.  SCROLL REVEAL — [data-reveal] attribute system
+       JS adds .revealed once element enters viewport
+   ============================================================ */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.6s cubic-bezier(.25,.8,.25,1),
+              transform 0.6s cubic-bezier(.25,.8,.25,1);
+  will-change: opacity, transform;
+}
+[data-reveal="left"]  { transform: translateX(-32px); }
+[data-reveal="right"] { transform: translateX(32px);  }
+[data-reveal="zoom"]  { transform: scale(0.92);       }
+[data-reveal="flip"]  {
+  transform: perspective(600px) rotateX(18deg);
+  transform-origin: top center;
+}
+
+[data-reveal].revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* Stagger children: parent has [data-stagger], children animate one-by-one */
+[data-stagger] > * {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+[data-stagger].stagger-active > *:nth-child(1)  { transition-delay: 0.05s; }
+[data-stagger].stagger-active > *:nth-child(2)  { transition-delay: 0.12s; }
+[data-stagger].stagger-active > *:nth-child(3)  { transition-delay: 0.19s; }
+[data-stagger].stagger-active > *:nth-child(4)  { transition-delay: 0.26s; }
+[data-stagger].stagger-active > *:nth-child(5)  { transition-delay: 0.33s; }
+[data-stagger].stagger-active > *:nth-child(6)  { transition-delay: 0.40s; }
+[data-stagger].stagger-active > *:nth-child(n+7){ transition-delay: 0.47s; }
+[data-stagger].stagger-active > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* ============================================================
+   2.  PAGE ENTRANCE — whole page fades in on load
+   ============================================================ */
+@keyframes pageEnter {
+  from { opacity: 0; filter: blur(4px); }
+  to   { opacity: 1; filter: blur(0);   }
+}
+body {
+  animation: pageEnter 0.55s ease both;
+}
+
+/* ============================================================
+   3.  BUTTON MICRO-INTERACTIONS
+   ============================================================ */
+
+/* Ripple container — JS adds .ripple-effect class */
+.btn, .cta-button, .auth-btn, .chip,
+.clear-filters-btn, .nav-item, .topbar-hamburger {
+  position: relative;
+  overflow: hidden;
+}
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: rippleAnim 0.55s linear;
+  background: rgba(255,255,255,0.35);
+  pointer-events: none;
+}
+.btn-outline .ripple, .auth-btn .ripple, .chip .ripple {
+  background: rgba(229,57,53,0.18);
+}
+@keyframes rippleAnim {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* Button press scale */
+.btn:active, .cta-button:active {
+  transform: scale(0.97) !important;
+}
+
+/* CTA primary button animated gradient border */
+.cta-button.primary-btn {
+  background-size: 200% auto !important;
+  background-image: linear-gradient(115deg, #e53935 0%, #c62828 50%, #e53935 100%) !important;
+  animation: btnGradientShift 4s ease infinite !important;
+  transition: background-position 0.4s ease, box-shadow 0.3s, transform 0.2s !important;
+}
+.cta-button.primary-btn:hover {
+  background-position: right center !important;
+  box-shadow: 0 6px 24px rgba(229,57,53,0.42) !important;
+  transform: translateY(-2px) !important;
+}
+.recruiter-dashboard .btn-primary,
+.recruiter-dashboard .cta-button.primary-btn {
+  background-image: linear-gradient(115deg, #e53935 0%, #c62828 50%, #e53935 100%) !important;
+}
+@keyframes btnGradientShift {
+  0%   { background-position: 0%   50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0%   50%; }
+}
+
+/* Submit/login button shimmer sweep */
+.btn-primary::after,
+.form-btn::after,
+.cta-button.primary-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.22) 50%, transparent 60%);
+  background-size: 200% 100%;
+  transform: translateX(-100%);
+  transition: transform 0.4s ease;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.btn-primary:hover::after,
+.form-btn:hover::after,
+.cta-button.primary-btn:hover::after {
+  transform: translateX(100%);
+}
+
+/* ============================================================
+   4.  CARD HOVER LIFT
+   ============================================================ */
+.why-card, .step-card, .testimonial-card,
+.stat-card, .section-card, .job-card,
+.filter-sidebar, .applicant-card,
+.hero-visual-card {
+  transition:
+    transform   0.3s cubic-bezier(.25,.8,.25,1),
+    box-shadow  0.3s cubic-bezier(.25,.8,.25,1),
+    border-color 0.3s ease !important;
+}
+.why-card:hover, .step-card:hover, .testimonial-card:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 18px 40px rgba(229,57,53,0.13) !important;
+}
+.stat-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 12px 28px rgba(229,57,53,0.1) !important;
+}
+.job-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 10px 24px rgba(229,57,53,0.1) !important;
+}
+.recruiter-dashboard .job-card:hover,
+.recruiter-dashboard .stat-card:hover {
+  box-shadow: 0 12px 28px rgba(229,57,53,0.12) !important;
+}
+
+/* ============================================================
+   5.  STAT COUNTER — .count-anim class added by JS
+   ============================================================ */
+.count-anim {
+  display: inline-block;
+  transition: transform 0.15s;
+}
+.count-anim.ticking { transform: scale(1.12); }
+
+/* ============================================================
+   6.  ANIMATED UNDERLINE for section headings
+   ============================================================ */
+.section-header h2,
+.page-header h1,
+.section-card h2 {
+  position: relative;
+  display: inline-block;
+}
+.section-header h2::after,
+.page-header h1::after {
+  content: '';
+  position: absolute;
+  bottom: -6px; left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, #e53935, #c62828);
+  border-radius: 2px;
+  transition: width 0.7s cubic-bezier(.25,.8,.25,1) 0.2s;
+}
+.recruiter-dashboard .section-header h2::after,
+.recruiter-dashboard .page-header h1::after {
+  background: linear-gradient(90deg, #e53935, #c62828);
+}
+.section-header.revealed h2::after,
+.page-header.revealed h1::after,
+[data-reveal].revealed .section-header h2::after {
+  width: 60%;
+}
+/* For elements that are always visible (no reveal) */
+.page-header h1::after {
+  animation: underlineGrow 0.8s cubic-bezier(.25,.8,.25,1) 0.4s forwards;
+  width: 0;
+}
+@keyframes underlineGrow {
+  to { width: 60%; }
+}
+
+/* ============================================================
+   7.  INPUT FLOATING LABEL / FOCUS GLOW
+   ============================================================ */
+.form-group {
+  position: relative;
+}
+/* Focus glow ring on inputs */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus,
+.search-bar input:focus,
+.search-bar select:focus,
+#filterKeyword:focus,
+#filterSkills:focus {
+  box-shadow: 0 0 0 3px rgba(229,57,53,0.12),
+              0 2px 8px rgba(229,57,53,0.08) !important;
+  transform: translateY(-1px);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s !important;
+}
+.recruiter-dashboard .form-group input:focus,
+.recruiter-dashboard .form-group select:focus,
+.recruiter-dashboard .form-group textarea:focus {
+  box-shadow: 0 0 0 3px rgba(229,57,53,0.12),
+              0 2px 8px rgba(229,57,53,0.08) !important;
+}
+
+/* ============================================================
+   8.  TAB SWITCH ANIMATION (login page tabs + dashboard sections)
+   ============================================================ */
+.tab, .auth-tab, .nav-item {
+  position: relative;
+}
+.tab::after, .auth-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%; right: 50%;
+  height: 2px;
+  background: #e53935;
+  border-radius: 2px;
+  transition: left 0.3s ease, right 0.3s ease;
+}
+.tab.active::after, .auth-tab.active::after {
+  left: 0; right: 0;
+}
+
+/* Page section fade-slide transition */
+.page-section {
+  animation: none;
+}
+.page-section.active {
+  animation: sectionSlideIn 0.35s cubic-bezier(.25,.8,.25,1) both;
+}
+@keyframes sectionSlideIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   9.  SKELETON SHIMMER IMPROVEMENT
+   ============================================================ */
+.skel {
+  background: linear-gradient(90deg,
+    rgba(229,57,53,0.06) 25%,
+    rgba(229,57,53,0.14) 50%,
+    rgba(229,57,53,0.06) 75%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: shimmer 1.5s infinite !important;
+  border-radius: 6px !important;
+}
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position:  200% 0; }
+}
+
+/* ============================================================
+   10. NAV LINK ANIMATED UNDERLINE (index / browse-jobs)
+   ============================================================ */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 0%; height: 2px;
+  background: #e53935;
+  border-radius: 2px;
+  transition: width 0.25s ease;
+}
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* ============================================================
+   11. NOTIFICATION BELL ANIMATION
+   ============================================================ */
+@keyframes bellRing {
+  0%   { transform: rotate(0);    }
+  10%  { transform: rotate(14deg);}
+  20%  { transform: rotate(-12deg);}
+  30%  { transform: rotate(10deg);}
+  40%  { transform: rotate(-8deg);}
+  50%  { transform: rotate(6deg); }
+  60%  { transform: rotate(-4deg);}
+  100% { transform: rotate(0);    }
+}
+.notif-bell.has-unread {
+  animation: bellRing 2.5s cubic-bezier(.36,.07,.19,.97) 1s infinite;
+  transform-origin: top center;
+  color: #e53935 !important;
+}
+.notif-bell .badge-count {
+  animation: badgePop 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+@keyframes badgePop {
+  0%   { transform: scale(0); }
+  70%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* ============================================================
+   12. BADGE PULSE (active / new)
+   ============================================================ */
+.badge-active, .badge-new {
+  animation: badgePulse 2.5s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(229,57,53,0.4); }
+  50%       { box-shadow: 0 0 0 4px rgba(229,57,53,0);  }
+}
+.badge-pending {
+  animation: badgePending 3s ease-in-out infinite;
+}
+@keyframes badgePending {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+/* ============================================================
+   13. AVATAR RING PULSE
+   ============================================================ */
+.avatar, .applicant-avatar {
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.avatar:hover, .applicant-avatar:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 0 3px rgba(229,57,53,0.25);
+}
+
+/* ============================================================
+   14. LOGO HOVER GLOW
+   ============================================================ */
+.navbar .logo, .topbar .logo {
+  transition: filter 0.3s ease;
+}
+.navbar .logo:hover, .topbar .logo:hover {
+  filter: drop-shadow(0 0 10px rgba(229,57,53,0.4));
+}
+
+/* ============================================================
+   15. FILTER CHIP ANIMATION
+   ============================================================ */
+.chip {
+  transition: background 0.2s, color 0.2s, transform 0.15s, box-shadow 0.2s !important;
+}
+.chip:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(229,57,53,0.15) !important;
+}
+.chip.active {
+  animation: chipSelected 0.3s cubic-bezier(.25,.8,.25,1) both;
+}
+@keyframes chipSelected {
+  0%   { transform: scale(0.94); }
+  60%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+/* ============================================================
+   16. SIDEBAR NAV-ITEM SLIDE INDICATOR
+   ============================================================ */
+.nav-item {
+  transition: padding-left 0.2s ease, background 0.2s ease, color 0.2s ease !important;
+}
+.nav-item.active {
+  padding-left: 1.8rem !important;
+}
+.nav-item i {
+  transition: transform 0.25s ease;
+}
+.nav-item:hover i {
+  transform: scale(1.18);
+}
+.nav-item.active i {
+  transform: scale(1.12);
+}
+
+/* ============================================================
+   17. HERO BADGE FLOAT
+   ============================================================ */
+.hero-badge {
+  animation: heroBadgeFloat 3s ease-in-out infinite;
+}
+@keyframes heroBadgeFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-4px); }
+}
+
+/* ============================================================
+   18. STEP NUMBER BOUNCE
+   ============================================================ */
+.step-card:hover .step-number {
+  animation: stepBounce 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+@keyframes stepBounce {
+  0%   { transform: scale(1) rotate(0deg); }
+  30%  { transform: scale(1.2) rotate(-8deg); }
+  60%  { transform: scale(0.95) rotate(4deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+/* ============================================================
+   19. TESTIMONIAL STAR HOVER
+   ============================================================ */
+.testimonial-card:hover .stars i {
+  animation: starTwinkle 0.4s ease both;
+}
+.stars i:nth-child(1) { animation-delay: 0.00s; }
+.stars i:nth-child(2) { animation-delay: 0.06s; }
+.stars i:nth-child(3) { animation-delay: 0.12s; }
+.stars i:nth-child(4) { animation-delay: 0.18s; }
+.stars i:nth-child(5) { animation-delay: 0.24s; }
+@keyframes starTwinkle {
+  0%   { transform: scale(1) rotate(0deg);   color: inherit; }
+  50%  { transform: scale(1.35) rotate(20deg); color: #f59e0b; }
+  100% { transform: scale(1) rotate(0deg);   color: #f59e0b; }
+}
+
+/* ============================================================
+   20. BROWSE-JOBS FILTER SIDEBAR SLIDE-IN
+   ============================================================ */
+.filter-sidebar {
+  animation: filterSlideIn 0.5s cubic-bezier(.25,.8,.25,1) both;
+}
+@keyframes filterSlideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ============================================================
+   21. JOB CARDS STAGGER IN (browse-jobs)
+   ============================================================ */
+.job-card-wrapper {
+  animation: jobCardIn 0.45s cubic-bezier(.25,.8,.25,1) both;
+}
+
+/* ============================================================
+   22. TOAST SLIDE-UP (improved)
+   ============================================================ */
+.toast.show,
+#toastContainer > * {
+  animation: toastSlide 0.38s cubic-bezier(.25,.8,.25,1) both !important;
+}
+@keyframes toastSlide {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* ============================================================
+   23. MODAL ENTRANCE
+   ============================================================ */
+.modal-overlay.active .modal,
+.modal .modal-content {
+  animation: modalPop 0.35s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes modalPop {
+  from { opacity: 0; transform: scale(0.88) translateY(20px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+/* ============================================================
+   24. EMPTY STATE ANIMATION
+   ============================================================ */
+.empty-state i {
+  animation: emptyBob 2.8s ease-in-out infinite;
+}
+@keyframes emptyBob {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-8px) scale(1.05); }
+}
+
+/* ============================================================
+   25. SCROLL-TRIGGERED SECTION SEPARATORS
+   ============================================================ */
+.section-separator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(229,57,53,0.2), transparent);
+  margin: 0 auto;
+  width: 0%;
+  transition: width 1s ease;
+}
+.section-separator.revealed { width: 80%; }
+
+/* ============================================================
+   26. LOADING SPINNER ENHANCEMENT
+   ============================================================ */
+.loading-spinner i {
+  animation: spinnerSpin 1s linear infinite;
+  display: inline-block;
+}
+@keyframes spinnerSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   27. SMOOTH FOCUS RING (accessibility)
+   ============================================================ */
+:focus-visible {
+  outline: 2px solid rgba(229,57,53,0.5) !important;
+  outline-offset: 2px !important;
+  border-radius: 4px !important;
+}
+.recruiter-dashboard :focus-visible {
+  outline-color: rgba(229,57,53,0.5) !important;
+}
+
+/* ============================================================
+   28. GRADIENT TEXT SHIMMER (hero headline accent)
+   ============================================================ */
+.gradient-text {
+  background: linear-gradient(135deg, #e53935 0%, #ff6b6b 50%, #e53935 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientTextPan 4s linear infinite;
+}
+@keyframes gradientTextPan {
+  from { background-position: 0%    center; }
+  to   { background-position: 200%  center; }
+}
+
+/* ============================================================
+   29. CARD ICON BOUNCE ON HOVER
+   ============================================================ */
+.why-card:hover .why-icon,
+.step-card:hover > i {
+  animation: iconBounce 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+@keyframes iconBounce {
+  0%   { transform: translateY(0) scale(1); }
+  30%  { transform: translateY(-8px) scale(1.15); }
+  60%  { transform: translateY(2px)  scale(0.95); }
+  100% { transform: translateY(0)   scale(1); }
+}
+
+/* ============================================================
+   30. HERO STATS NUMBER HIGHLIGHT ON ENTER
+   ============================================================ */
+.stat-number {
+  transition: color 0.3s, transform 0.3s;
+  display: inline-block;
+}
+.stat-number.highlighted {
+  color: #e53935;
+  transform: scale(1.08);
+}
+
+/* ============================================================
+   31. TOPBAR / NAVBAR — scrolled elevation
+   ============================================================ */
+.topbar.scrolled,
+.navbar.scrolled {
+  box-shadow: 0 4px 24px rgba(229,57,53,0.12) !important;
+}
+.recruiter-dashboard .topbar.scrolled {
+  box-shadow: 0 4px 24px rgba(229,57,53,0.12) !important;
+}
+/* Smooth hide / show transition */
+.navbar {
+  transition: transform 0.35s ease, box-shadow 0.3s ease !important;
+}
+
+/* ============================================================
+   32. DASHBOARD SIDEBAR — smooth item transitions
+   ============================================================ */
+.sidebar {
+  transition: transform 0.3s cubic-bezier(.25,.8,.25,1),
+              box-shadow 0.3s ease !important;
+}
+/* Sidebar item left-border slide */
+.nav-item {
+  border-left-width: 3px;
+  transition: border-left-color 0.25s, background 0.25s, color 0.25s,
+              padding-left 0.25s !important;
+}
+
+/* ============================================================
+   33. TOPBAR LOGO — animated gradient (dashboard)
+   ============================================================ */
+.topbar .logo span {
+  background: linear-gradient(135deg, #e53935, #ff6b6b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: logoColorPan 5s linear infinite;
+  background-size: 200% auto;
+}
+.recruiter-dashboard .topbar .logo span {
+  background: linear-gradient(135deg, #e53935, #ff6b6b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: logoColorPan 5s linear infinite;
+  background-size: 200% auto;
+}
+@keyframes logoColorPan {
+  0%   { background-position: 0%   center; }
+  50%  { background-position: 100% center; }
+  100% { background-position: 0%   center; }
+}
+
+/* ============================================================
+   34. NOTIFICATION DROPDOWN ENTRANCE
+   ============================================================ */
+.notif-dropdown.show {
+  animation: dropdownIn 0.3s cubic-bezier(.25,.8,.25,1) both !important;
+}
+@keyframes dropdownIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* ============================================================
+   35. FILTER INPUT CLEAR BUTTON ANIMATION
+   ============================================================ */
+.clear-filters-btn {
+  transition: background 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s !important;
+}
+.clear-filters-btn:hover {
+  transform: scale(1.03) !important;
+  box-shadow: 0 4px 14px rgba(239,68,68,0.14) !important;
+}
+.clear-filters-btn:active { transform: scale(0.97) !important; }
+
+/* ============================================================
+   36. STAT CARD — value glow pulse
+   ============================================================ */
+.stat-card .value,
+.stat-card .stat-value {
+  display: inline-block;
+  transition: text-shadow 0.3s;
+}
+.stat-card:hover .value,
+.stat-card:hover .stat-value {
+  text-shadow: 0 0 16px rgba(229,57,53,0.35);
+}
+.recruiter-dashboard .stat-card:hover .value {
+  text-shadow: 0 0 16px rgba(229,57,53,0.35) !important;
+}
+
+/* ============================================================
+   37. BROWSE-JOBS HERO GRADIENT UNDERLINE
+   ============================================================ */
+.browse-hero h1 span.gradient-text {
+  position: relative;
+}
+.browse-hero h1 span.gradient-text::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0;
+  width: 100%; height: 3px;
+  background: linear-gradient(90deg, #e53935, #c62828);
+  border-radius: 2px;
+  animation: underlineGrow 1s cubic-bezier(.25,.8,.25,1) 0.6s both;
+}
+
+/* ============================================================
+   38. JOB CARD — left accent bar on hover
+   ============================================================ */
+.job-card {
+  border-left: 3px solid transparent !important;
+  transition: border-left-color 0.25s, transform 0.3s, box-shadow 0.3s !important;
+}
+.job-card:hover {
+  border-left-color: #e53935 !important;
+}
+.recruiter-dashboard .job-card:hover {
+  border-left-color: #e53935 !important;
+}
+
+/* ============================================================
+   39. APPLICANT CARD — slide in
+   ============================================================ */
+.applicant-card {
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s !important;
+}
+.applicant-card:hover {
+  transform: translateX(4px) !important;
+  box-shadow: 0 6px 18px rgba(229,57,53,0.08) !important;
+}
+.recruiter-dashboard .applicant-card:hover {
+  box-shadow: 0 6px 18px rgba(229,57,53,0.08) !important;
+}
+
+/* ============================================================
+   40. SECTION CARD — top accent bar on hover
+   ============================================================ */
+.section-card {
+  border-top: 2px solid transparent !important;
+  transition: border-top-color 0.3s, transform 0.3s, box-shadow 0.3s !important;
+}
+.section-card:hover {
+  border-top-color: rgba(229,57,53,0.35) !important;
+  transform: translateY(-2px) !important;
+}
+.recruiter-dashboard .section-card:hover {
+  border-top-color: rgba(229,57,53,0.35) !important;
+}
+
+/* ============================================================
+   41. STEP CARD NUMBER GRADIENT
+   ============================================================ */
+.step-number {
+  background: linear-gradient(135deg, #e53935, #c62828) !important;
+  color: #fff !important;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.9rem;
+  transition: transform 0.3s, box-shadow 0.3s !important;
+}
+.step-card:hover .step-number {
+  box-shadow: 0 4px 16px rgba(229,57,53,0.35) !important;
+}
+
+/* ============================================================
+   42. TESTIMONIAL CARD — author avatar border animation
+   ============================================================ */
+.testimonial-card .author-avatar {
+  transition: transform 0.3s, box-shadow 0.3s !important;
+  border-radius: 50%;
+}
+.testimonial-card:hover .author-avatar {
+  transform: scale(1.1) !important;
+  box-shadow: 0 0 0 3px rgba(229,57,53,0.2) !important;
+}
+
+/* ============================================================
+   43. FOOTER — link hover with underline slide
+   ============================================================ */
+.footer a {
+  transition: color 0.2s !important;
+  text-underline-offset: 3px;
+}
+.footer a:hover { text-decoration: underline !important; }
+
+/* ============================================================
+   44. LOGOUT BUTTON SLIDE
+   ============================================================ */
+.logout-btn {
+  transition: background 0.2s, color 0.2s, transform 0.15s !important;
+}
+.logout-btn:hover { transform: scale(1.03) !important; }
+.logout-btn:active { transform: scale(0.96) !important; }
+
+/* ============================================================
+   45. SCROLL TO TOP BUTTON (injected by JS)
+   ============================================================ */
+#scroll-to-top {
+  position: fixed;
+  bottom: 2rem; right: 2rem;
+  width: 42px; height: 42px;
+  background: linear-gradient(135deg, #e53935, #c62828);
+  color: #fff; border: none; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; cursor: pointer; z-index: 9000;
+  opacity: 0; pointer-events: none;
+  transform: translateY(16px);
+  transition: opacity 0.3s, transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 14px rgba(229,57,53,0.35);
+}
+#scroll-to-top.visible {
+  opacity: 1; pointer-events: auto;
+  transform: translateY(0);
+}
+#scroll-to-top:hover {
+  transform: translateY(-3px) scale(1.08) !important;
+  box-shadow: 0 8px 20px rgba(229,57,53,0.45) !important;
+}
+.recruiter-dashboard #scroll-to-top {
+  background: linear-gradient(135deg, #e53935, #c62828) !important;
+  box-shadow: 0 4px 14px rgba(229,57,53,0.35) !important;
+}

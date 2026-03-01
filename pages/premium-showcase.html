@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium UI Showcase - JobNexus</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/premium-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Page-specific styles */
+        .showcase-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px 60px;
+            color: white;
+        }
+
+        .showcase-content {
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-title {
+            font-size: clamp(32px, 8vw, 64px);
+            font-weight: 800;
+            margin-bottom: 30px;
+            letter-spacing: -1px;
+        }
+
+        .section-description {
+            font-size: clamp(16px, 3vw, 20px);
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 50px;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 900px;
+        }
+
+        .hero-title {
+            font-size: clamp(48px, 12vw, 96px);
+            font-weight: 900;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            letter-spacing: -2px;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(18px, 4vw, 28px);
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 60px;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .feature-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-smooth);
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--glow-primary), var(--shadow-lg);
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .feature-description {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+
+        /* Cards Showcase */
+        .cards-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            margin: 60px 0;
+        }
+
+        .showcase-card {
+            position: relative;
+            height: 400px;
+        }
+
+        /* Button Showcase */
+        .buttons-showcase {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 60px 0;
+            justify-content: center;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 40px 0;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .code-block code {
+            color: var(--primary);
+        }
+
+        /* Floating Elements */
+        .floating-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 40px 0;
+            margin: 60px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--gradient-primary);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            text-align: right;
+            padding-right: 52%;
+        }
+
+        .timeline-item:nth-child(even) {
+            text-align: left;
+            padding-left: 52%;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 20px var(--glow-primary);
+        }
+
+        .timeline-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item:nth-child(odd),
+            .timeline-item:nth-child(even) {
+                text-align: left;
+                padding-left: 80px;
+                padding-right: 0;
+            }
+
+            .timeline-marker {
+                left: 20px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .btn-magnetic {
+                width: 100%;
+            }
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(15, 15, 31, 0.7);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .nav-logo {
+            font-size: 24px;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color var(--transition-smooth);
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--darker-bg);
+            border-top: 1px solid var(--glass-border);
+            padding: 60px 20px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- WebGL Background -->
+    <div id="webgl-container"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">JobNexus Premium</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#showcase">Showcase</a></li>
+                <li><a href="#cta">Get Started</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- ============ HERO SECTION ============ -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1 class="hero-title gradient-text">
+                Future of Recruiting
+            </h1>
+            <p class="hero-subtitle">
+                Experience the next generation of job and internship discovery with AI-powered matching, 
+                premium UI/UX, and cutting-edge design patterns.
+            </p>
+            <div class="hero-buttons">
+                <button class="btn-magnetic primary">Explore Now</button>
+                <button class="btn-magnetic secondary">Watch Demo</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ FEATURES SECTION ============ -->
+    <section class="showcase-section" id="features">
+        <div class="showcase-content">
+            <h2 class="section-title gradient-text">Premium Features</h2>
+            <p class="section-description">
+                State-of-the-art technology meets exceptional design
+            </p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <h3 class="feature-title">WebGL Background</h3>
+                    <p class="feature-description">
+                        Interactive 3D particle system rendered with Three.js, responds to mouse movement
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mouse"></i>
+                    </div>
+                    <h3 class="feature-title">Mouse Effects</h3>
+                    <p class="feature-description">
+                        Custom cursor, light glow effects, and magnetic buttons that follow your pointer
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                    </div>
+                    <h3 class="feature-title">GSAP Animations</h3>
+                    <p class="feature-description">
+                        Professional timeline animations with scroll triggers and stagger effects
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <h3 class="feature-title">3D Tilt Cards</h3>
+                    <p class="feature-description">
+                        Interactive perspective transforms on hover with light reflection effects
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-sparkles"></i>
+                    </div>
+                    <h3 class="feature-title">Glass Morphism</h3>
+                    <p class="feature-description">
+                        Frosted glass panels with blur effects and premium layering
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-scroll"></i>
+                    </div>
+                    <h3 class="feature-title">Smooth Scrolling</h3>
+                    <p class="feature-description">
+                        Lenis integration for buttery-smooth scrolling experience across all devices
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ SHOWCASE SECTION ============ -->
+    <section class="showcase-section" id="showcase">
+        <div class="showcase-content">
+            <h2 class="section-title gradient-text">Interactive Showcase</h2>
+            <p class="section-description">
+                Hover over cards to see 3D tilt effects • Click buttons to see animations
+            </p>
+
+            <!-- Button Showcase -->
+            <div style="margin: 80px 0;">
+                <h3 style="font-size: 24px; margin-bottom: 40px; color: rgba(255,255,255,0.9);">
+                    Magnetic Buttons
+                </h3>
+                <div class="buttons-showcase">
+                    <button class="btn-magnetic">Outline Button</button>
+                    <button class="btn-magnetic primary">Primary Button</button>
+                    <button class="btn-magnetic secondary">Secondary Button</button>
+                </div>
+            </div>
+
+            <!-- Card Showcase -->
+            <div style="margin: 80px 0;">
+                <h3 style="font-size: 24px; margin-bottom: 40px; color: rgba(255,255,255,0.9);">
+                    3D Tilt Cards (Hover Me!)
+                </h3>
+                <div class="cards-showcase">
+                    <div class="card-3d-container">
+                        <div class="card-3d glass-panel">
+                            <div class="card-3d-content">
+                                <h4 class="gradient-text">Senior Developer</h4>
+                                <p style="color: rgba(255,255,255,0.7); margin: 15px 0;">
+                                    Build the future with cutting-edge technology
+                                </p>
+                                <button class="btn-magnetic primary" style="width: 100%; margin-top: 20px;">
+                                    Apply Now
+                                </button>
+                            </div>
+                            <div class="card-3d-light"></div>
+                        </div>
+                    </div>
+
+                    <div class="card-3d-container">
+                        <div class="card-3d glass-panel">
+                            <div class="card-3d-content">
+                                <h4 class="gradient-text secondary">UI/UX Designer</h4>
+                                <p style="color: rgba(255,255,255,0.7); margin: 15px 0;">
+                                    Create stunning interfaces for millions of users
+                                </p>
+                                <button class="btn-magnetic primary" style="width: 100%; margin-top: 20px;">
+                                    Apply Now
+                                </button>
+                            </div>
+                            <div class="card-3d-light"></div>
+                        </div>
+                    </div>
+
+                    <div class="card-3d-container">
+                        <div class="card-3d glass-panel">
+                            <div class="card-3d-content">
+                                <h4 class="gradient-text tertiary">Product Manager</h4>
+                                <p style="color: rgba(255,255,255,0.7); margin: 15px 0;">
+                                    Shape strategy and drive product vision
+                                </p>
+                                <button class="btn-magnetic primary" style="width: 100%; margin-top: 20px;">
+                                    Apply Now
+                                </button>
+                            </div>
+                            <div class="card-3d-light"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Glass Panels -->
+            <div style="margin: 80px 0;">
+                <h3 style="font-size: 24px; margin-bottom: 40px; color: rgba(255,255,255,0.9);">
+                    Floating Glass Panels
+                </h3>
+                <div class="floating-demo">
+                    <div class="glass-panel floating-panel">
+                        <h4 style="color: var(--primary); margin-bottom: 10px;">
+                            <i class="fas fa-zap"></i> Performance
+                        </h4>
+                        <p style="color: rgba(255,255,255,0.7); font-size: 14px;">
+                            Optimized for 60 FPS with GPU acceleration
+                        </p>
+                    </div>
+
+                    <div class="glass-panel floating-panel">
+                        <h4 style="color: var(--secondary); margin-bottom: 10px;">
+                            <i class="fas fa-shield"></i> Responsive
+                        </h4>
+                        <p style="color: rgba(255,255,255,0.7); font-size: 14px;">
+                            Beautiful on any device, any screen size
+                        </p>
+                    </div>
+
+                    <div class="glass-panel floating-panel">
+                        <h4 style="color: var(--accent); margin-bottom: 10px;">
+                            <i class="fas fa-code"></i> Developer
+                        </h4>
+                        <p style="color: rgba(255,255,255,0.7); font-size: 14px;">
+                            Easy to customize and integrate
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Example -->
+            <div style="margin: 80px 0;">
+                <h3 style="font-size: 24px; margin-bottom: 20px; color: rgba(255,255,255,0.9);">
+                    Quick Integration
+                </h3>
+                <div class="code-block">
+<code>// Access all systems
+const UI = window.PremiumUI;
+
+// Hide loading screen
+UI.hideLoadingScreen();
+
+// Animate elements
+UI.animateElement(element, 'fadeIn');
+
+// Scroll smoothly
+UI.scrollToElement(targetElement);</code>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ CTA SECTION ============ -->
+    <section class="showcase-section" id="cta">
+        <div class="showcase-content" style="text-align: center;">
+            <h2 class="section-title gradient-text">Ready to Get Started?</h2>
+            <p class="section-description">
+                Join thousands of users discovering their perfect job or internship opportunity
+            </p>
+
+            <div class="hero-buttons">
+                <button class="btn-magnetic primary">Sign Up Free</button>
+                <button class="btn-magnetic secondary">Schedule Demo</button>
+            </div>
+
+            <p style="margin-top: 60px; color: rgba(255,255,255,0.5); font-size: 14px;">
+                No credit card required • Free tier available
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <h3 style="margin-bottom: 20px; color: white;">JobNexus Premium UI</h3>
+            <p>
+                Built with cutting-edge web technologies and design principles.<br/>
+                Experience the future of recruitment technology.
+            </p>
+            <p style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px;">
+                © 2024 JobNexus. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Third-party Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script src="https://unpkg.com/gsap@3.12.2/dist/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
+
+    <!-- Premium UI System -->
+    <script src="../js/effects/webgl-background.js"></script>
+    <script src="../js/effects/mouse-effects.js"></script>
+    <script src="../js/effects/card-3d-tilt.js"></script>
+    <script src="../js/effects/loading-screen.js"></script>
+    <script src="../js/effects/smooth-scroll.js"></script>
+    <script src="../js/effects/glass-panels.js"></script>
+    <script src="../js/effects/gradient-text.js"></script>
+    <script src="../js/animations/gsap-animations.js"></script>
+    <script src="../js/premium-ui-init.js"></script>
+
+    <script>
+        // Custom page scripts
+        window.addEventListener('load', () => {
+            const UI = window.PremiumUI;
+            
+            // Hide loading screen
+            UI.hideLoadingScreen();
+
+            // Add click handlers to buttons
+            document.querySelectorAll('.btn-magnetic').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (UI.systems.toastNotification) {
+                        window.toastNotification.show('Button clicked!', 'success');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

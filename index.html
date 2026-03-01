@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobNexus - Job & Internship Portal</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+    <link rel="stylesheet" href="css/advanced-features.css">
+    <link rel="stylesheet" href="css/premium-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/light-theme.css">
+    <link rel="stylesheet" href="css/page-animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23e53935'/><text x='50' y='60' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>J</text></svg>">
+    <style>
+        /* Critical inline CSS for fast page load */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { 
+            background: #0d1117; 
+            color: #e6edf3; 
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #0d1117;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 9999;
+            gap: 20px;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(229,57,53,0.15);
+            border-top: 3px solid #e53935;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+        .loading-text { font-size: 14px; color: rgba(255,255,255,0.6); }
+    </style>
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="animated-background">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="gradient-overlay"></div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-backdrop" id="navBackdrop"></div>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <i class="fas fa-briefcase"></i>
+                <span>JobNexus</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link active" data-section="home">Home</a>
+                <a href="pages/browse-jobs.html" class="nav-link">Browse Jobs</a>
+                <a href="pages/about.html" class="nav-link">About</a>
+                <a href="pages/contact.html" class="nav-link">Contact</a>
+                <a href="login.html" class="auth-btn nav-mobile-login">Login</a>
+            </div>
+            <div class="nav-actions">
+                <a href="login.html" class="auth-btn nav-desktop-login">Login</a>
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="container hero-container">
+
+            <!-- Left: Text Content -->
+            <div class="hero-content hero-anim-left">
+
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    <span>Now with AI-powered smart matching</span>
+                </div>
+
+                <h1 class="hero-title">
+                    Find Work That Matches<br>
+                    Your <span class="gradient-text">Potential.</span><br>
+                    <span class="hero-title-sub">Not Just Your Degree.</span>
+                </h1>
+
+                <p class="hero-subtitle">
+                    JobNexus connects students and early professionals with verified recruiters — internships, freelance roles, and full-time opportunities tailored to your skills and goals.
+                </p>
+
+                <div class="hero-buttons">
+                    <a href="pages/browse-jobs.html" class="cta-button primary-btn">
+                        <i class="fas fa-search"></i>
+                        <span>Browse Opportunities</span>
+                        <i class="fas fa-arrow-right btn-arrow"></i>
+                    </a>
+                    <a href="login.html" class="cta-button secondary-btn">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Create Free Profile</span>
+                    </a>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="statTotalJobs">1.2K</span>
+                        <span class="stat-label">Active Jobs</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="statTotalUsers">8.7K</span>
+                        <span class="stat-label">Users</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="statTotalApplications">31K</span>
+                        <span class="stat-label">Applications</span>
+                    </div>
+                </div>
+
+                <p class="hero-trust">
+                    <i class="fas fa-shield-alt"></i> Verified recruiters only &nbsp;·&nbsp;
+                    <i class="fas fa-lock"></i> No spam, ever
+                </p>
+            </div>
+
+            <!-- Right: Visual Panel -->
+            <div class="hero-visual hero-anim-right">
+                <div class="hero-visual-card main-card">
+                    <div class="vc-header">
+                        <div class="vc-logo"><i class="fas fa-code"></i></div>
+                        <div>
+                            <div class="vc-title">Frontend Developer</div>
+                            <div class="vc-company">TechCorp Inc.</div>
+                        </div>
+                        <span class="vc-badge">New</span>
+                    </div>
+                    <div class="vc-tags">
+                        <span>React</span><span>TypeScript</span><span>Remote</span>
+                    </div>
+                    <div class="vc-footer">
+                        <span class="vc-salary">₹70K / mo</span>
+                        <button class="vc-apply-btn">Apply Now</button>
+                    </div>
+                </div>
+
+                <div class="hero-visual-card mini-card card-top-right">
+                    <i class="fas fa-user-check"></i>
+                    <div>
+                        <div class="mini-title">Profile Match</div>
+                        <div class="mini-val">92%</div>
+                    </div>
+                </div>
+
+                <div class="hero-visual-card mini-card card-bottom-left">
+                    <i class="fas fa-chart-line"></i>
+                    <div>
+                        <div class="mini-title">Applications</div>
+                        <div class="mini-val">+24 today</div>
+                    </div>
+                </div>
+
+                <div class="hero-glow"></div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Why Choose JobNexus Section -->
+    <section class="why-choose" id="why-choose">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Why Choose <span class="gradient-text">JobNexus?</span></h2>
+                <p>Built specifically for students and early-career professionals</p>
+            </div>
+            <div class="why-grid">
+                <div class="why-card" data-aos="fade-up">
+                    <div class="why-icon"><i class="fas fa-brain"></i></div>
+                    <h3>Smart Matching Engine</h3>
+                    <p>We recommend jobs based on your skills and profile activity — not just keywords.</p>
+                </div>
+                <div class="why-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="why-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3>Verified Recruiters</h3>
+                    <p>Every recruiter is reviewed and approved before they can post any opportunity.</p>
+                </div>
+                <div class="why-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="why-icon"><i class="fas fa-satellite-dish"></i></div>
+                    <h3>Real-Time Tracking</h3>
+                    <p>Track every application status in one clean dashboard — applied, viewed, shortlisted.</p>
+                </div>
+                <div class="why-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="why-icon"><i class="fas fa-chart-bar"></i></div>
+                    <h3>Resume Insights</h3>
+                    <p>See how recruiters view your profile and what sections get the most attention.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Jobs Section -->
+    <section id="jobs" class="featured-jobs">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Featured Opportunities</h2>
+                <p>Discover positions curated for you</p>
+            </div>
+            <div class="jobs-carousel" id="jobsCarousel">
+                <div class="job-card" data-aos="fade-up">
+                    <div class="job-card-header">
+                        <img src="https://ui-avatars.com/api/?name=TC&background=5b21b6&color=fff&bold=true&rounded=true&size=50" alt="TechCorp Inc." class="company-logo">
+                        <div class="save-job-btn">
+                            <i class="far fa-bookmark"></i>
+                        </div>
+                    </div>
+                    <h3 class="job-title">Frontend Developer</h3>
+                    <p class="company-name">TechCorp Inc.</p>
+                    <div class="job-meta">
+                        <span class="job-type">Full-time</span>
+                        <span class="job-location"><i class="fas fa-map-marker-alt"></i> Remote</span>
+                        <span class="job-salary">₹50-70K</span>
+                    </div>
+                    <p class="job-description">Build modern web applications with React and ensure exceptional user experiences.</p>
+                    <div class="job-tags">
+                        <span class="tag">React</span>
+                        <span class="tag">JavaScript</span>
+                        <span class="tag">CSS</span>
+                    </div>
+                    <button class="apply-btn">Apply Now</button>
+                </div>
+
+                <div class="job-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="job-card-header">
+                        <img src="https://ui-avatars.com/api/?name=CS&background=0ea5e9&color=fff&bold=true&rounded=true&size=50" alt="CloudSys Ltd." class="company-logo">
+                        <div class="save-job-btn">
+                            <i class="far fa-bookmark"></i>
+                        </div>
+                    </div>
+                    <h3 class="job-title">Backend Engineer</h3>
+                    <p class="company-name">CloudSys Ltd.</p>
+                    <div class="job-meta">
+                        <span class="job-type">Full-time</span>
+                        <span class="job-location"><i class="fas fa-map-marker-alt"></i> Bangalore</span>
+                        <span class="job-salary">₹60-80K</span>
+                    </div>
+                    <p class="job-description">Design and implement scalable backend solutions using Node.js and Python.</p>
+                    <div class="job-tags">
+                        <span class="tag">Node.js</span>
+                        <span class="tag">Python</span>
+                        <span class="tag">Database</span>
+                    </div>
+                    <button class="apply-btn">Apply Now</button>
+                </div>
+
+                <div class="job-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="job-card-header">
+                        <img src="https://ui-avatars.com/api/?name=DH&background=ec4899&color=fff&bold=true&rounded=true&size=50" alt="DesignHub Co." class="company-logo">
+                        <div class="save-job-btn">
+                            <i class="far fa-bookmark"></i>
+                        </div>
+                    </div>
+                    <h3 class="job-title">UI/UX Designer</h3>
+                    <p class="company-name">DesignHub Co.</p>
+                    <div class="job-meta">
+                        <span class="job-type">Internship</span>
+                        <span class="job-location"><i class="fas fa-map-marker-alt"></i> Pune</span>
+                        <span class="job-salary">₹15-25K</span>
+                    </div>
+                    <p class="job-description">Create beautiful and intuitive user interfaces for mobile and web applications.</p>
+                    <div class="job-tags">
+                        <span class="tag">Figma</span>
+                        <span class="tag">UI Design</span>
+                        <span class="tag">UX</span>
+                    </div>
+                    <button class="apply-btn">Apply Now</button>
+                </div>
+            </div>
+            <div class="carousel-controls">
+                <button class="carousel-btn prev" id="prevBtn">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel-btn next" id="nextBtn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>How It Works</h2>
+                <p>Simple steps to landing your dream job</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card" data-aos="fade-up">
+                    <div class="step-number">1</div>
+                    <i class="fas fa-user-plus"></i>
+                    <h3>Create Profile</h3>
+                    <p>Set up your profile with your skills and experience</p>
+                </div>
+                <div class="step-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="step-number">2</div>
+                    <i class="fas fa-search"></i>
+                    <h3>Search & Filter</h3>
+                    <p>Find jobs matching your preferences and skills</p>
+                </div>
+                <div class="step-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="step-number">3</div>
+                    <i class="fas fa-file-upload"></i>
+                    <h3>Apply</h3>
+                    <p>Submit your application with one click</p>
+                </div>
+                <div class="step-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="step-number">4</div>
+                    <i class="fas fa-briefcase"></i>
+                    <h3>Get Selected</h3>
+                    <p>Track your applications and land your dream job</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Success Stories</h2>
+                <p>Join thousands of successful candidates</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card" data-aos="fade-up">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"JobNexus helped me land my dream internship at a leading tech company. The platform is incredibly user-friendly!"</p>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah Johnson" class="author-avatar">
+                        <div>
+                            <p class="author-name">Sarah Johnson</p>
+                            <p class="author-title">Frontend Developer @ TechCorp</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Great platform for job seekers. I got multiple offers within a month. Really impressed with the features!"</p>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Rahul Sharma" class="author-avatar">
+                        <div>
+                            <p class="author-name">Rahul Sharma</p>
+                            <p class="author-title">Backend Engineer @ CloudSys</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"The best job portal I've used. Easy to navigate, great job listings, and amazing support. Highly recommended!"</p>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Priya Patel" class="author-avatar">
+                        <div>
+                            <p class="author-name">Priya Patel</p>
+                            <p class="author-title">UX Designer @ DesignHub</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content" data-aos="zoom-in">
+                <h2>Start Your Journey Today</h2>
+                <p>Join thousands of professionals finding their perfect opportunity</p>
+                <div class="cta-buttons">
+                    <button class="cta-button primary-btn" id="ctaSignupBtn">Get Started</button>
+                    <button class="cta-button secondary-btn">Contact Us</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>JobNexus</h3>
+                    <p>Your gateway to career success</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>For Students</h4>
+                    <ul>
+                        <li><a href="#">Browse Jobs</a></li>
+                        <li><a href="#">Internships</a></li>
+                        <li><a href="#">Create Resume</a></li>
+                        <li><a href="#">Career Tips</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>For Recruiters</h4>
+                    <ul>
+                        <li><a href="#">Post Job</a></li>
+                        <li><a href="#">Find Talent</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Resources</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="pages/about.html">About Us</a></li>
+                        <li><a href="pages/contact.html">Contact</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 JobNexus. All rights reserved. | Designed with <i class="fas fa-heart"></i> for your success</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">&times;</button>
+            <div class="auth-container">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="login">Login</button>
+                    <button class="auth-tab" data-tab="signup">Sign Up</button>
+                </div>
+
+                <!-- Login Form -->
+                <form class="auth-form active" id="loginForm">
+                    <h2>Welcome Back</h2>
+                    <div class="form-group">
+                        <label for="loginEmail">Email Address</label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="form-btn">Login</button>
+                    <p class="form-text">Forgot password? <a href="#">Reset here</a></p>
+                </form>
+
+                <!-- Signup Form -->
+                <form class="auth-form" id="signupForm">
+                    <h2>Create Account</h2>
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" id="signupName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email Address</label>
+                        <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupRole">Role</label>
+                        <select id="signupRole" required>
+                            <option value="">Select your role</option>
+                            <option value="student">Student</option>
+                            <option value="recruiter">Recruiter</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" placeholder="Create a password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupConfirm">Confirm Password</label>
+                        <input type="password" id="signupConfirm" placeholder="Confirm your password" required>
+                    </div>
+                    <button type="submit" class="form-btn">Create Account</button>
+                    <p class="form-text">Already have an account? <a href="#" class="switch-form">Login here</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core CDN Libraries (defer = ordered, after HTML parsed) -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script defer src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
+
+    <!-- Firebase SDK (v10.0.0 compat) - compat build exposes global `firebase` object used by firebase-config.js -->
+    <script defer src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.0.0/firebase-storage-compat.js"></script>
+
+    <!-- Firebase Configuration (Initialize Firebase) -->
+    <script defer src="js/firebase-config.js"></script>
+
+    <!-- Firebase Helper Modules -->
+    <script defer src="js/modules/firebaseAuth.js"></script>
+    <script defer src="js/modules/firebaseStorage.js"></script>
+    <script defer src="js/modules/firebaseRealtimeListeners.js"></script>
+
+    <!-- Advanced Feature Modules -->
+    <script defer src="js/modules/toastNotification.js"></script>
+    <script defer src="js/modules/searchFilter.js"></script>
+    <script defer src="js/modules/analytics.js"></script>
+    <script defer src="js/modules/pdfPreview.js"></script>
+    <script defer src="js/modules/saveJob.js"></script>
+    <script defer src="js/modules/emailNotifications.js"></script>
+
+    <!-- Premium UI Effects -->
+    <!-- mouse-effects.js removed -->
+    <script defer src="js/effects/card-3d-tilt.js"></script>
+    <script defer src="js/effects/smooth-scroll.js"></script>
+    <script defer src="js/effects/glass-panels.js"></script>
+    <script defer src="js/effects/gradient-text.js"></script>
+
+    <!-- GSAP Animations -->
+    <script defer src="js/animations/gsap-animations.js"></script>
+
+    <!-- Premium UI Master Init -->
+    <script defer src="js/premium-ui-init.js"></script>
+
+    <!-- Application Modules -->
+    <script defer src="js/modules/auth.js"></script>
+    <script defer src="js/modules/animations.js"></script>
+    <script defer src="js/modules/theme.js"></script>
+    <script defer src="js/modules/carousel.js"></script>
+    <script defer src="js/modules/browse-jobs.js"></script>
+
+    <!-- Main Application -->
+    <script defer src="js/main.js"></script>
+    <script defer src="js/page-animations.js"></script>
+
+    <!-- Mobile nav toggle -->
+    <script>
+    (function(){
+        const toggle   = document.getElementById('menuToggle');
+        const menu     = document.getElementById('navMenu');
+        const backdrop = document.getElementById('navBackdrop');
+        if (!toggle || !menu) return;
+        function openMenu() {
+            menu.classList.add('open');
+            toggle.classList.add('active');
+            if (backdrop) backdrop.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeMenu() {
+            menu.classList.remove('open');
+            toggle.classList.remove('active');
+            if (backdrop) backdrop.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        toggle.addEventListener('click', () => menu.classList.contains('open') ? closeMenu() : openMenu());
+        if (backdrop) backdrop.addEventListener('click', closeMenu);
+        menu.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // ============================================
+    // AUTHENTICATION CHECK
+    // ============================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return request.auth.token.role == 'admin';
+    }
+
+    function isStudent() {
+      return request.auth.token.role == 'student';
+    }
+
+    // ============================================
+    // RESUMES DIRECTORY
+    // ============================================
+    // Students can upload their own resumes
+    match /resumes/{userId}/{allPaths=**} {
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      allow read: if isAuthenticated() && request.auth.token.role == 'recruiter';
+      allow write: if isAuthenticated() && request.auth.uid == userId && 
+        request.resource.size < 5 * 1024 * 1024 && // Max 5MB
+        request.resource.contentType.matches('application/pdf');
+      allow delete: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Admin can access all resumes
+      allow read, write, delete: if isAdmin();
+    }
+
+    // ============================================
+    // PROFILE PICTURES DIRECTORY
+    // ============================================
+    // Users can upload their own profile pictures
+    match /profilePictures/{userId}/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && request.auth.uid == userId && 
+        request.resource.size < 2 * 1024 * 1024 && // Max 2MB
+        request.resource.contentType.matches('image/(png|jpeg|webp|gif)');
+      allow delete: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Admin can manage all profile pictures
+      allow read, write, delete: if isAdmin();
+    }
+
+    // ============================================
+    // JOB LOGOS DIRECTORY
+    // ============================================
+    // Recruiters can upload company logos
+    match /jobLogos/{recruiterId}/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && request.auth.uid == recruiterId && 
+        request.resource.size < 2 * 1024 * 1024 && // Max 2MB
+        request.resource.contentType.matches('image/(png|jpeg|webp|gif|svg)');
+      allow delete: if isAuthenticated() && request.auth.uid == recruiterId;
+      
+      // Admin can manage all logos
+      allow read, write, delete: if isAdmin();
+    }
+
+    // ============================================
+    // DEFAULT DENY
+    // ============================================
+    // Deny all other uploads/downloads
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - JobNexus Portal</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/light-theme.css">
+    <link rel="stylesheet" href="css/page-animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23e53935'/><text x='50' y='60' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>J</text></svg>">
+    <style>
+      *,
+      *:after,
+      *:before {
+        box-sizing: border-box;
+      }
+
+      :root {
+        --cord: hsl(210, 0%, calc((40 + (var(--on, 0) * 50)) * 1%));
+        --opening: hsl(
+          50,
+          calc((10 + (var(--on, 0) * 80)) * 1%),
+          calc((20 + (var(--on, 0) * 70)) * 1%)
+        );
+        --feature: #0a0a0a;
+        --accent: 210;
+        --tongue: #e06952;
+        --base-top: hsl(
+          var(--accent),
+          0%,
+          calc((40 + (var(--on, 0) * 40)) * 1%)
+        );
+        --base-side: hsl(
+          var(--accent),
+          0%,
+          calc((20 + (var(--on, 0) * 40)) * 1%)
+        );
+        --post: hsl(
+          var(--accent),
+          0%,
+          calc((20 + (var(--on, 0) * 40)) * 1%)
+        );
+        --b-1: hsla(
+          45,
+          calc((0 + (var(--on, 0) * 0)) * 1%),
+          calc((50 + (var(--on, 0) * 50)) * 1%),
+          0.85
+        );
+        --b-2: hsla(
+          45,
+          calc((0 + (var(--on, 0) * 0)) * 1%),
+          calc((20 + (var(--on, 0) * 30)) * 1%),
+          0.25
+        );
+        --b-3: hsla(
+          45,
+          calc((0 + (var(--on, 0) * 0)) * 1%),
+          calc((20 + (var(--on, 0) * 30)) * 1%),
+          0.5
+        );
+        --b-4: hsla(
+          45,
+          calc((0 + (var(--on, 0) * 0)) * 1%),
+          calc((20 + (var(--on, 0) * 30)) * 1%),
+          0.25
+        );
+        --l-1: hsla(
+          45,
+          calc((0 + (var(--on, 0) * 20)) * 1%),
+          calc((50 + (var(--on, 0) * 50)) * 1%),
+          0.85
+        );
+        --l-2: hsla(
+          45,
+          calc((0 + (var(--on, 0) * 20)) * 1%),
+          calc((50 + (var(--on, 0) * 50)) * 1%),
+          0.85
+        );
+        --shade-hue: 260;
+        --t-1: hsl(
+          var(--shade-hue),
+          calc((0 + (var(--on, 0) * 20)) * 1%),
+          calc((30 + (var(--on, 0) * 60)) * 1%)
+        );
+        --t-2: hsl(
+          var(--shade-hue),
+          calc((0 + (var(--on, 0) * 20)) * 1%),
+          calc((20 + (var(--on, 0) * 35)) * 1%)
+        );
+        --t-3: hsl(
+          var(--shade-hue),
+          calc((0 + (var(--on, 0) * 20)) * 1%),
+          calc((10 + (var(--on, 0) * 20)) * 1%)
+        );
+        --glow-color: #e53935;
+        --glow-color-dark: hsl(3, 70%, 45%);
+      }
+
+      body {
+        background: #0f0f1f;
+        color: #fff;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+      }
+
+      .lamp-page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 5vw;
+        position: relative;
+      }
+
+      .lamp-page::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+        pointer-events: none;
+      }
+
+      .lamp-stage {
+        width: min(1200px, 100%);
+        background: rgba(18, 25, 33, 0.6);
+        backdrop-filter: blur(20px);
+        border-radius: 28px;
+        padding: 3rem 2rem;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8vmin;
+        flex-wrap: wrap;
+        padding: 1rem 0;
+      }
+
+      .login-form {
+        background: rgba(18, 25, 33, 0.9);
+        padding: 3rem 2.5rem;
+        border-radius: 20px;
+        min-width: 320px;
+        max-width: 440px;
+        width: 100%;
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+        pointer-events: none;
+        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        border: 2px solid transparent;
+        box-shadow: 0 0 0px rgba(255, 255, 255, 0);
+        display: block;
+      }
+
+      .login-form.active {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        pointer-events: all;
+        border-color: var(--glow-color);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.1),
+          0 0 30px var(--glow-color),
+          inset 0 0 15px rgba(255, 255, 255, 0.05);
+      }
+
+      .login-form h2 {
+        color: #fff;
+        font-size: 2rem;
+        margin: 0 0 2rem 0;
+        text-align: center;
+        text-shadow: 0 0 8px var(--glow-color);
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        color: #aaa;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 0 5px var(--glow-color);
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        color: #fff;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: var(--glow-color);
+        box-shadow: 0 0 10px var(--glow-color);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .form-group input::placeholder {
+        color: #666;
+      }
+
+      .login-btn {
+        width: 100%;
+        padding: 0.875rem;
+        background: linear-gradient(
+          135deg,
+          var(--glow-color),
+          var(--glow-color-dark)
+        );
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        margin-top: 0.5rem;
+      }
+
+      .login-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3),
+          0 0 20px var(--glow-color);
+      }
+
+      .login-btn:active {
+        transform: translateY(0);
+      }
+
+      .form-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+      }
+
+      .forgot-link {
+        color: #888;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .forgot-link:hover {
+        color: var(--glow-color);
+        text-shadow: 0 0 10px var(--glow-color);
+      }
+
+      .auth-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .tab {
+        flex: 1;
+        padding: 0.75rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        color: #888;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .tab.active {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: var(--glow-color);
+        color: #fff;
+        text-shadow: 0 0 5px var(--glow-color);
+      }
+
+      .tab:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .auth-message {
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        text-align: center;
+        color: #fff;
+        background: rgba(255, 255, 255, 0.05);
+        min-height: 1.5rem;
+      }
+
+      .auth-message:empty {
+        display: none;
+      }
+
+      .auth-message.success {
+        background: rgba(52, 168, 83, 0.2);
+        border: 1px solid #34a853;
+        color: #34a853;
+      }
+
+      .auth-message.error {
+        background: rgba(234, 67, 53, 0.2);
+        border: 1px solid #ea4335;
+        color: #ea4335;
+      }
+
+      /* Form animations */
+      form {
+        animation: fadeSlideIn 0.4s ease;
+      }
+
+      @keyframes fadeSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Password toggle */
+      .password-wrapper {
+        position: relative;
+      }
+
+      .password-toggle {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #666;
+        cursor: pointer;
+        padding: 4px;
+        transition: color 0.3s ease;
+      }
+
+      .password-toggle:hover {
+        color: var(--glow-color);
+      }
+
+      .password-wrapper input {
+        padding-right: 40px;
+      }
+
+      /* Loading state */
+      .login-btn.loading {
+        pointer-events: none;
+        opacity: 0.7;
+      }
+
+      .login-btn.loading::after {
+        content: '';
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid transparent;
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* Password strength indicator */
+      .password-strength {
+        height: 4px;
+        border-radius: 2px;
+        margin-top: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+      }
+
+      .password-strength-bar {
+        height: 100%;
+        width: 0;
+        transition: width 0.3s ease, background 0.3s ease;
+        border-radius: 2px;
+      }
+
+      .password-strength-bar.weak { width: 33%; background: #ea4335; }
+      .password-strength-bar.medium { width: 66%; background: #fbbc05; }
+      .password-strength-bar.strong { width: 100%; background: #34a853; }
+
+      .password-hint {
+        font-size: 0.75rem;
+        color: #666;
+        margin-top: 4px;
+      }
+
+      .divider {
+        display: flex;
+        align-items: center;
+        margin: 1.5rem 0;
+        color: #666;
+        font-size: 0.85rem;
+      }
+
+      .divider::before,
+      .divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .divider span {
+        padding: 0 1rem;
+      }
+
+      .google-btn {
+        width: 100%;
+        padding: 0.875rem;
+        background: #fff;
+        border: none;
+        border-radius: 10px;
+        color: #333;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+      }
+
+      .google-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+      }
+
+      .google-btn.loading {
+        pointer-events: none;
+        opacity: 0.7;
+      }
+
+      .google-btn svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .radio-controls {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+      }
+
+      .lamp {
+        display: block;
+        height: 40vmin;
+        max-height: 400px;
+        overflow: visible !important;
+      }
+
+      .cord {
+        stroke: var(--cord);
+      }
+
+      .cord--rig {
+        display: none;
+      }
+
+      .lamp__tongue {
+        fill: var(--tongue);
+      }
+
+      .lamp__hit {
+        cursor: pointer;
+        opacity: 0;
+      }
+
+      .lamp__feature {
+        fill: var(--feature);
+      }
+
+      .lamp__stroke {
+        stroke: var(--feature);
+      }
+
+      .lamp__mouth,
+      .lamp__light {
+        opacity: var(--on, 0);
+      }
+
+      .lamp__eye {
+        transform-origin: 50% 50%;
+      }
+
+      .shade__opening {
+        fill: var(--opening);
+      }
+
+      .shade__opening-shade {
+        opacity: calc(1 - var(--on, 0));
+      }
+
+      .post__body {
+        fill: var(--post);
+      }
+
+      .base__top {
+        fill: var(--base-top);
+      }
+
+      .base__side {
+        fill: var(--base-side);
+      }
+
+      .top__body {
+        fill: var(--t-3);
+      }
+
+      .back-link {
+        position: absolute;
+        top: 2rem;
+        left: 2rem;
+        color: #888;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+      }
+
+      .back-link:hover {
+        color: var(--glow-color);
+      }
+
+      .back-link i {
+        transition: transform 0.3s ease;
+      }
+
+      .back-link:hover i {
+        transform: translateX(-4px);
+      }
+
+      .hint-text {
+        position: absolute;
+        bottom: 3rem;
+        left: 50%;
+        transform: translateX(-50%);
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.9rem;
+        text-align: center;
+        animation: pulse 2s ease-in-out infinite;
+        pointer-events: none;
+      }
+
+      .hint-text i {
+        display: block;
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        animation: bounce 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 1; }
+      }
+
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+
+      .hint-text.hidden {
+        display: none;
+      }
+
+      @media (max-width: 900px) {
+        .lamp-page {
+          min-height: auto;
+          padding: 2rem 4vw;
+        }
+
+        .lamp-stage {
+          padding: 2rem 1.5rem;
+        }
+
+        .container {
+          gap: 6vmin;
+        }
+
+        .login-form {
+          min-width: 0;
+          width: min(420px, 100%);
+        }
+
+        .lamp {
+          max-height: 300px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .lamp-stage {
+          padding: 1.5rem 1.2rem;
+        }
+
+        .login-form {
+          padding: 2rem 1.5rem;
+        }
+
+        .login-form h2 {
+          font-size: 1.6rem;
+        }
+
+        .container {
+          flex-direction: column;
+        }
+
+        .lamp {
+          max-height: 250px;
+        }
+
+        .back-link {
+          top: 1rem;
+          left: 1rem;
+        }
+      }
+    </style>
+</head>
+<body>
+    <main class="lamp-page">
+      <a href="index.html" class="back-link">
+        <i class="fas fa-arrow-left"></i>
+        Back to Home
+      </a>
+
+      <div class="hint-text" id="hintText">
+        <i class="fas fa-hand-pointer"></i>
+        Pull the string to turn on the lamp
+      </div>
+
+      <div class="lamp-stage">
+        <form class="radio-controls">
+          <input type="radio" id="on" name="status" value="on" />
+          <label for="on">On</label>
+          <input type="radio" id="off" name="status" value="off" />
+          <label for="off">Off</label>
+        </form>
+
+        <div class="container">
+          <svg
+            class="lamp"
+            viewBox="0 0 333 484"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+        <g class="lamp__shade shade">
+          <ellipse
+            class="shade__opening"
+            cx="165"
+            cy="220"
+            rx="130"
+            ry="20"
+          />
+          <ellipse
+            class="shade__opening-shade"
+            cx="165"
+            cy="220"
+            rx="130"
+            ry="20"
+            fill="url(#opening-shade)"
+          />
+        </g>
+        <g class="lamp__base base">
+          <path
+            class="base__side"
+            d="M165 464c44.183 0 80-8.954 80-20v-14h-22.869c-14.519-3.703-34.752-6-57.131-6-22.379 0-42.612 2.297-57.131 6H85v14c0 11.046 35.817 20 80 20z"
+          />
+          <path
+            d="M165 464c44.183 0 80-8.954 80-20v-14h-22.869c-14.519-3.703-34.752-6-57.131-6-22.379 0-42.612 2.297-57.131 6H85v14c0 11.046 35.817 20 80 20z"
+            fill="url(#side-shading)"
+          />
+          <ellipse
+            class="base__top"
+            cx="165"
+            cy="430"
+            rx="80"
+            ry="20"
+          />
+          <ellipse
+            cx="165"
+            cy="430"
+            rx="80"
+            ry="20"
+            fill="url(#base-shading)"
+          />
+        </g>
+        <g class="lamp__post post">
+          <path
+            class="post__body"
+            d="M180 142h-30v286c0 3.866 6.716 7 15 7 8.284 0 15-3.134 15-7V142z"
+          />
+          <path
+            d="M180 142h-30v286c0 3.866 6.716 7 15 7 8.284 0 15-3.134 15-7V142z"
+            fill="url(#post-shading)"
+          />
+        </g>
+        <g class="lamp__cords cords">
+          <path
+            class="cord cord--rig"
+            d="M124 187.033V347"
+            stroke-width="6"
+            stroke-linecap="round"
+          />
+          <path
+            class="cord cord--rig"
+            d="M124 187.023s17.007 21.921 17.007 34.846c0 12.925-11.338 23.231-17.007 34.846-5.669 11.615-17.007 21.921-17.007 34.846 0 12.925 17.007 34.846 17.007 34.846"
+            stroke-width="6"
+            stroke-linecap="round"
+          />
+          <path
+            class="cord cord--rig"
+            d="M124 187.017s-21.259 17.932-21.259 30.26c0 12.327 14.173 20.173 21.259 30.26 7.086 10.086 21.259 17.933 21.259 30.26 0 12.327-21.259 30.26-21.259 30.26"
+            stroke-width="6"
+            stroke-linecap="round"
+          />
+          <path
+            class="cord cord--rig"
+            d="M124 187s29.763 8.644 29.763 20.735-19.842 13.823-29.763 20.734c-9.921 6.912-29.763 8.644-29.763 20.735S124 269.939 124 269.939"
+            stroke-width="6"
+            stroke-linecap="round"
+          />
+          <path
+            class="cord cord--rig"
+            d="M124 187.029s-10.63 26.199-10.63 39.992c0 13.794 7.087 26.661 10.63 39.992 3.543 13.331 10.63 26.198 10.63 39.992 0 13.793-10.63 39.992-10.63 39.992"
+            stroke-width="6"
+            stroke-linecap="round"
+          />
+          <path
+            class="cord cord--rig"
+            d="M124 187.033V347"
+            stroke-width="6"
+            stroke-linecap="round"
+          />
+          <line
+            class="cord cord--dummy"
+            x1="124"
+            y2="348"
+            x2="124"
+            y1="190"
+            stroke-width="6"
+            stroke-linecap="round"
+          />
+        </g>
+        <path
+          class="lamp__light"
+          d="M290.5 193H39L0 463.5c0 11.046 75.478 20 165.5 20s167-11.954 167-23l-42-267.5z"
+          fill="url(#light)"
+        />
+        <g class="lamp__top top">
+          <path
+            class="top__body"
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M164.859 0c55.229 0 100 8.954 100 20l29.859 199.06C291.529 208.451 234.609 200 164.859 200S38.189 208.451 35 219.06L64.859 20c0-11.046 44.772-20 100-20z"
+          />
+          <path
+            class="top__shading"
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M164.859 0c55.229 0 100 8.954 100 20l29.859 199.06C291.529 208.451 234.609 200 164.859 200S38.189 208.451 35 219.06L64.859 20c0-11.046 44.772-20 100-20z"
+            fill="url(#top-shading)"
+          />
+        </g>
+        <g class="lamp__face face">
+          <g class="lamp__mouth">
+            <path
+              d="M165 178c19.882 0 36-16.118 36-36h-72c0 19.882 16.118 36 36 36z"
+              fill="#141414"
+            />
+            <clipPath
+              class="lamp__feature"
+              id="mouth"
+              x="129"
+              y="142"
+              width="72"
+              height="36"
+            >
+              <path
+                d="M165 178c19.882 0 36-16.118 36-36h-72c0 19.882 16.118 36 36 36z"
+                fill="#141414"
+              />
+            </clipPath>
+            <g clip-path="url(#mouth)">
+              <circle
+                class="lamp__tongue"
+                cx="179.4"
+                cy="172.6"
+                r="18"
+              />
+            </g>
+          </g>
+          <g class="lamp__eyes">
+            <path
+              class="lamp__eye lamp__stroke"
+              d="M115 135c0-5.523-5.82-10-13-10s-13 4.477-13 10"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              class="lamp__eye lamp__stroke"
+              d="M241 135c0-5.523-5.82-10-13-10s-13 4.477-13 10"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </g>
+        </g>
+        <defs>
+          <linearGradient
+            id="opening-shade"
+            x1="35"
+            y1="220"
+            x2="295"
+            y2="220"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop />
+            <stop
+              offset="1"
+              stop-color="var(--shade)"
+              stop-opacity="0"
+            />
+          </linearGradient>
+          <linearGradient
+            id="base-shading"
+            x1="85"
+            y1="444"
+            x2="245"
+            y2="444"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="var(--b-1)" />
+            <stop
+              offset="0.8"
+              stop-color="var(--b-2)"
+              stop-opacity="0"
+            />
+          </linearGradient>
+          <linearGradient
+            id="side-shading"
+            x1="119"
+            y1="430"
+            x2="245"
+            y2="430"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="var(--b-3)" />
+            <stop
+              offset="1"
+              stop-color="var(--b-4)"
+              stop-opacity="0"
+            />
+          </linearGradient>
+          <linearGradient
+            id="post-shading"
+            x1="150"
+            y1="288"
+            x2="180"
+            y2="288"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="var(--b-1)" />
+            <stop
+              offset="1"
+              stop-color="var(--b-2)"
+              stop-opacity="0"
+            />
+          </linearGradient>
+          <linearGradient
+            id="light"
+            x1="165.5"
+            y1="218.5"
+            x2="165.5"
+            y2="483.5"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="var(--l-1)" stop-opacity=".2" />
+            <stop
+              offset="1"
+              stop-color="var(--l-2)"
+              stop-opacity="0"
+            />
+          </linearGradient>
+          <linearGradient
+            id="top-shading"
+            x1="56"
+            y1="110"
+            x2="295"
+            y2="110"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="var(--t-1)" stop-opacity=".8" />
+            <stop
+              offset="1"
+              stop-color="var(--t-2)"
+              stop-opacity="0"
+            />
+          </linearGradient>
+        </defs>
+        <circle
+          class="lamp__hit"
+          cx="124"
+          cy="347"
+          r="66"
+          fill="#C4C4C4"
+          fill-opacity=".1"
+        />
+          </svg>
+
+          <div class="login-form">
+            <h2>Welcome to JobNexus</h2>
+            
+            <div class="auth-tabs">
+              <button class="tab active" data-tab="login">Login</button>
+              <button class="tab" data-tab="signup">Sign Up</button>
+            </div>
+
+            <p id="authMessage" class="auth-message"></p>
+
+            <!-- Login Form -->
+            <form id="loginForm">
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input
+                  type="email"
+                  name="email"
+                  id="loginEmail"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <div class="password-wrapper">
+                  <input
+                    type="password"
+                    name="password"
+                    id="loginPassword"
+                    placeholder="Enter your password"
+                    required
+                  />
+                  <button type="button" class="password-toggle" data-target="loginPassword">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <button type="submit" class="login-btn">Login</button>
+              <div class="form-footer">
+                <a href="#" class="forgot-link" id="forgotPasswordLink">Forgot Password?</a>
+              </div>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signupForm" class="hidden">
+              <div class="form-group">
+                <label for="name">Full Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  id="signupName"
+                  placeholder="Enter your full name"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input
+                  type="email"
+                  name="email"
+                  id="signupEmail"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <div class="password-wrapper">
+                  <input
+                    type="password"
+                    name="password"
+                    id="signupPassword"
+                    placeholder="Create a password"
+                    minlength="6"
+                    required
+                  />
+                  <button type="button" class="password-toggle" data-target="signupPassword">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+                </div>
+                <div class="password-strength">
+                  <div class="password-strength-bar" id="passwordStrengthBar"></div>
+                </div>
+                <p class="password-hint">Min 6 characters with letters and numbers</p>
+              </div>
+              <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <div class="password-wrapper">
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    id="confirmPassword"
+                    placeholder="Confirm your password"
+                    minlength="6"
+                    required
+                  />
+                  <button type="button" class="password-toggle" data-target="confirmPassword">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="role">I am a</label>
+                <select id="signupRole" name="role" required style="width: 100%; padding: 0.75rem 1rem; background: #1a1a2e; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 10px; color: #fff; font-size: 1rem; appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 12 12%22%3E%3Cpath fill=%22%23fff%22 d=%22M6 8L1 3h10z%22/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 1rem center; cursor: pointer;">
+                  <option value="student" style="background: #1a1a2e; color: #fff; padding: 0.5rem;">Student</option>
+                  <option value="recruiter" style="background: #1a1a2e; color: #fff; padding: 0.5rem;">Recruiter</option>
+                </select>
+              </div>
+              <button type="submit" class="login-btn">Create Account</button>
+            </form>
+
+            <div class="divider"><span>or</span></div>
+
+            <button id="googleSignIn" class="google-btn">
+              <svg viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              Continue with Google
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Role Selection Modal for Google Sign-In new users -->
+    <div id="roleSelectModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;">
+      <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:2.5rem;max-width:420px;width:90%;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,0.6);">
+        <div style="width:60px;height:60px;background:linear-gradient(135deg,#e53935,#c62828);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;">
+          <i class="fas fa-user-tag" style="font-size:1.5rem;color:#fff;"></i>
+        </div>
+        <h2 style="color:#fff;font-size:1.5rem;margin-bottom:0.5rem;">Welcome!</h2>
+        <p style="color:#aaa;margin-bottom:2rem;font-size:0.95rem;">Please select your role to continue. This cannot be changed later.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
+          <button id="roleSelectStudent" onclick="selectGoogleRole('student')" style="padding:1.2rem 1rem;background:rgba(102,126,234,0.1);border:2px solid rgba(102,126,234,0.4);border-radius:12px;color:#fff;cursor:pointer;transition:all 0.3s;font-size:0.95rem;">
+            <i class="fas fa-graduation-cap" style="font-size:1.8rem;color:#e53935;display:block;margin-bottom:0.6rem;"></i>
+            <strong>Student</strong><br>
+            <span style="font-size:0.8rem;color:#aaa;">Browse & apply for jobs</span>
+          </button>
+          <button id="roleSelectRecruiter" onclick="selectGoogleRole('recruiter')" style="padding:1.2rem 1rem;background:rgba(16,185,129,0.1);border:2px solid rgba(16,185,129,0.3);border-radius:12px;color:#fff;cursor:pointer;transition:all 0.3s;font-size:0.95rem;">
+            <i class="fas fa-briefcase" style="font-size:1.8rem;color:#10b981;display:block;margin-bottom:0.6rem;"></i>
+            <strong>Recruiter</strong><br>
+            <span style="font-size:0.8rem;color:#aaa;">Post jobs & hire talent</span>
+          </button>
+        </div>
+        <p id="roleSelectError" style="color:#ef4444;font-size:0.85rem;display:none;">Something went wrong. Please try again.</p>
+      </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- GSAP for animations -->
+    <script src="https://unpkg.co/gsap@3/dist/gsap.min.js"></script>
+    <script src="https://unpkg.com/gsap@3/dist/Draggable.min.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="js/firebase-config.js"></script>
+    
+    <!-- Login Auth Script -->
+    <script src="js/modules/login-auth.js"></script>
+
+    <script>
+      // Interactive lamp animation with draggable string (no MorphSVGPlugin needed)
+      const ON = document.querySelector("#on");
+      const OFF = document.querySelector("#off");
+      const LOGIN_FORM = document.querySelector(".login-form");
+      const HINT_TEXT = document.querySelector("#hintText");
+
+      let startX;
+      let startY;
+      let hasInteracted = false;
+
+      const PROXY = document.createElement("div");
+
+      const HIT = document.querySelector(".lamp__hit");
+      const DUMMY_CORD = document.querySelector(".cord--dummy");
+      const ENDX = parseFloat(DUMMY_CORD.getAttribute("x2"));
+      const ENDY = parseFloat(DUMMY_CORD.getAttribute("y2"));
+      const STARTX = parseFloat(DUMMY_CORD.getAttribute("x1"));
+      const STARTY = parseFloat(DUMMY_CORD.getAttribute("y1"));
+
+      const RESET = () => {
+        gsap.set(PROXY, { x: ENDX, y: ENDY });
+      };
+      RESET();
+
+      const STATE = { ON: false };
+
+      // Initial setup
+      gsap.set([".cords", HIT], { x: -10 });
+      gsap.set(".lamp__eye", {
+        rotate: 180,
+        transformOrigin: "50% 50%",
+        yPercent: 50,
+      });
+
+      // Hide the morphing cord paths — we only use the dummy cord line
+      gsap.utils.toArray(".cord--rig").forEach(c => gsap.set(c, { display: "none" }));
+
+      // Toggle lamp state
+      function toggleLamp() {
+        STATE.ON = !STATE.ON;
+        gsap.set(document.documentElement, { "--on": STATE.ON ? 1 : 0 });
+
+        // Hide hint text after first interaction
+        if (!hasInteracted && HINT_TEXT) {
+          HINT_TEXT.classList.add("hidden");
+          hasInteracted = true;
+        }
+
+        // Random color for lamp shade when turned on
+        const hue = gsap.utils.random(0, 359);
+        gsap.set(document.documentElement, { "--shade-hue": hue });
+        const glowColor = `hsl(${hue}, 70%, 55%)`;
+        const glowColorDark = `hsl(${hue}, 70%, 45%)`;
+        gsap.set(document.documentElement, { "--glow-color": glowColor });
+        gsap.set(document.documentElement, { "--glow-color-dark": glowColorDark });
+
+        // Animate lamp eyes
+        gsap.set(".lamp__eye", { rotate: STATE.ON ? 0 : 180 });
+
+        // Show/hide login form
+        if (STATE.ON) {
+          ON.setAttribute("checked", true);
+          OFF.removeAttribute("checked");
+          LOGIN_FORM.classList.add("active");
+        } else {
+          ON.removeAttribute("checked");
+          OFF.setAttribute("checked", true);
+          LOGIN_FORM.classList.remove("active");
+        }
+      }
+
+      // Cord bounce animation (spring back effect — no MorphSVG needed)
+      function playCordBounce() {
+        // Disable interaction during animation
+        gsap.set(HIT, { pointerEvents: "none" });
+
+        toggleLamp();
+
+        // Animate the dummy cord with a spring-like bounce
+        const tl = gsap.timeline({
+          onComplete: () => {
+            gsap.set(HIT, { pointerEvents: "auto" });
+            RESET();
+          },
+        });
+
+        tl.to(DUMMY_CORD, {
+          attr: { x2: ENDX + 15, y2: ENDY + 40 },
+          duration: 0.1,
+          ease: "power2.out",
+        })
+        .to(DUMMY_CORD, {
+          attr: { x2: ENDX - 10, y2: ENDY + 25 },
+          duration: 0.08,
+          ease: "power1.inOut",
+        })
+        .to(DUMMY_CORD, {
+          attr: { x2: ENDX + 6, y2: ENDY + 15 },
+          duration: 0.08,
+          ease: "power1.inOut",
+        })
+        .to(DUMMY_CORD, {
+          attr: { x2: ENDX - 3, y2: ENDY + 8 },
+          duration: 0.07,
+          ease: "power1.inOut",
+        })
+        .to(DUMMY_CORD, {
+          attr: { x2: ENDX, y2: ENDY },
+          duration: 0.12,
+          ease: "elastic.out(1, 0.4)",
+        });
+      }
+
+      // Make the cord draggable
+      Draggable.create(PROXY, {
+        trigger: HIT,
+        type: "x,y",
+        onPress: (e) => {
+          startX = e.x;
+          startY = e.y;
+        },
+        onDrag: function () {
+          gsap.set(DUMMY_CORD, {
+            attr: {
+              x2: this.x,
+              y2: Math.max(ENDY, this.y),
+            },
+          });
+        },
+        onRelease: function (e) {
+          const DISTX = Math.abs(e.x - startX);
+          const DISTY = Math.abs(e.y - startY);
+          const TRAVELLED = Math.sqrt(DISTX * DISTX + DISTY * DISTY);
+
+          if (TRAVELLED > 50) {
+            // Snap cord back then trigger toggle
+            gsap.to(DUMMY_CORD, {
+              attr: { x2: ENDX, y2: ENDY },
+              duration: 0.1,
+              onComplete: () => playCordBounce(),
+            });
+          } else {
+            // Not far enough, just snap back
+            gsap.to(DUMMY_CORD, {
+              attr: { x2: ENDX, y2: ENDY },
+              duration: 0.15,
+              ease: "power2.out",
+            });
+          }
+        },
+      });
+
+      // Also allow clicking the lamp hit area to toggle
+      HIT.addEventListener("click", (e) => {
+        // Only trigger on click if not dragging
+        if (!startX && !startY) {
+          playCordBounce();
+        }
+        startX = null;
+        startY = null;
+      });
+
+      // Show lamp
+      gsap.set(".lamp", { display: "block" });
+    </script>
+    <script src="js/page-animations.js"></script>
+</body>
+</html>

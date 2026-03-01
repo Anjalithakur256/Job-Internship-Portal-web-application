@@ -1,0 +1,669 @@
+/* ============================================================
+   JOBNEXUS — COMPREHENSIVE RESPONSIVE STYLESHEET
+   Covers all 5 pages across every breakpoint.
+   Linked LAST so it wins the cascade.
+   ============================================================ */
+
+/* ── BASE: fluid container padding ─────────────────────────── */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(1rem, 4vw, 2rem);
+  padding-right: clamp(1rem, 4vw, 2rem);
+}
+
+/* ── BASE: fluid root font-size ─────────────────────────────── */
+html {
+  font-size: clamp(14px, 1.6vw, 16px);
+  /* Fix: mobile browsers scroll the HTML element, not body */
+  overflow-x: hidden !important;
+  max-width: 100vw;
+  /* Stop rubber-band horizontal scroll on iOS/Android */
+  overscroll-behavior-x: none;
+}
+
+/* ── Prevent horizontal overflow on EVERY element ───────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ── Images and media never overflow their container ─────────── */
+img,
+video,
+canvas,
+svg,
+iframe,
+embed,
+object {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ── Prevent horizontal scrollbar on body ─────────────────── */
+body {
+  overflow-x: hidden !important;
+  max-width: 100vw;
+  overscroll-behavior-x: none;
+}
+
+/* ── All page sections clamp to viewport width ──────────────── */
+section,
+footer,
+nav,
+header,
+main,
+.browse-layout,
+.browse-main,
+.browse-header {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* ── Animated background: force GPU layer so overflow:hidden clips transforms ── */
+.animated-background {
+  /* Creates a stacking context so child transforms are clipped correctly    */
+  /* on mobile Chrome/Safari (they ignore overflow:hidden without this fix). */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+}
+
+/* ── Override float animation on mobile — remove X component ────
+   @keyframes float uses translateX(15px) which forces the browser
+   to expand the scrollable area even inside overflow:hidden containers
+   on mobile Webkit. Replacing it with a Y-only version fixes this.  */
+@media (max-width: 900px) {
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(24px); }
+  }
+
+  /* Dashboard orbs: the orbDrift @keyframes is defined INLINE in the
+     dashboard <style> tags which comes AFTER this stylesheet, so it
+     wins @keyframes re-definition. Use animation:none !important on
+     the ELEMENTS instead — this beats any cascade order.
+     Orbs are purely decorative; hiding them on mobile is fine.        */
+  .amb-orb-1,
+  .amb-orb-2,
+  .amb-orb-3 {
+    animation: none !important;
+    /* Reset transforms so they don't occupy off-screen space */
+    transform: none !important;
+    /* Move the off-screen orbs further off-screen so they don't scroll */
+    top: -300px !important;
+    left: -300px !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 1px !important;
+    height: 1px !important;
+  }
+
+  /* float-element (premium UI fixed elements) — stop X movement */
+  .float-element { animation: none !important; transform: none !important; }
+
+  /* Floating shapes on index/browse: force Y-only via animation stop;
+     translateZ(0) on .animated-background already clips them, but
+     belt-and-suspenders on very old mobile browsers:             */
+  .floating-shape {
+    animation: float var(--dur, 20s) ease-in-out infinite !important;
+  }
+}
+
+/* ── Disable horizontal slide-in entrance animations on mobile
+   These start elements at translateX(±30px) and can clip content ── */
+@media (max-width: 768px) {
+  .hero-anim-left,
+  .hero-anim-right {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* ── Kill WebGL globe background everywhere ─────────────────── */
+#webgl-container { display: none !important; }
+
+/* ── Nav backdrop (blur layer behind slide-in menu) ─────────── */
+.nav-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 998;          /* above page content, BELOW navbar bar */
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.nav-backdrop.show {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Navbar bar stays ABOVE the backdrop so it is never blurred */
+.navbar { z-index: 999 !important; overflow: visible !important; }
+
+/* ── Login link visibility: desktop vs mobile ────────────── */
+.nav-mobile-login { display: none; }   /* hidden on desktop */
+.nav-desktop-login { display: inline-flex; } /* shown on desktop */
+
+/* ── Dashboard topbar hamburger: hidden on desktop ─────────── */
+.topbar-hamburger { display: none; }
+
+/* ────────────────────────────────────────────────────────────
+   NAV-CONTAINER — always a horizontal row.
+   light-theme.css forces .container { flex-direction:column }
+   at ≤600px which breaks the navbar. This override wins.
+──────────────────────────────────────────────────────────── */
+.nav-container {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important;
+  width: 100% !important;
+}
+
+/* ============================================================
+   NAVBAR — hamburger/toggle foundations (all pages)
+   ============================================================ */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 1001;
+  position: relative;
+}
+.menu-toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: #e6edf3;
+  transition: all 0.28s ease;
+}
+/* Hamburger → X animation */
+.menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-toggle.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ============================================================
+   FILTER TOGGLE BUTTON — browse-jobs mobile only
+   ============================================================ */
+.filter-toggle-btn {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  background: rgba(229,57,53,0.1);
+  border: 1px solid rgba(229,57,53,0.3);
+  border-radius: 8px;
+  color: #e53935;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  min-height: 44px;
+  transition: background 0.2s;
+}
+.filter-toggle-btn:hover { background: rgba(229,57,53,0.18); }
+.filter-toggle-btn i { font-size: 0.85rem; transition: transform 0.25s; }
+.filter-toggle-btn.open i { transform: rotate(180deg); }
+
+/* ============================================================
+   BREAKPOINT ≤ 1024px — Tablet landscape
+   ============================================================ */
+@media (max-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.5rem !important;
+  }
+  .hero-title { font-size: clamp(2rem, 5vw, 3rem) !important; }
+  .browse-layout { grid-template-columns: 260px 1fr !important; }
+  .jobs-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important; }
+}
+
+/* ============================================================
+   BREAKPOINT ≤ 900px — Tablet portrait
+   ============================================================ */
+@media (max-width: 900px) {
+  /* Hero */
+  .hero-container {
+    grid-template-columns: 1fr !important;
+    text-align: center !important;
+    gap: 2rem !important;
+    padding: 2rem 0 !important;
+  }
+  .hero-visual { display: none !important; }
+  .hero-content { max-width: 100% !important; text-align: center !important; }
+  .hero-badge { margin: 0 auto 1.5rem !important; }
+  .hero-subtitle { margin-left: auto !important; margin-right: auto !important; max-width: 520px; }
+  .hero-buttons { justify-content: center !important; flex-wrap: wrap !important; }
+  .hero-stats { justify-content: center !important; flex-wrap: wrap !important; }
+  .hero-trust { text-align: center !important; }
+
+  /* Stop AOS fade-right causing horizontal overflow on sidebar */
+  [data-aos="fade-right"] {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  /* Browse layout: stack */
+  .browse-layout {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+  .filter-sidebar { position: static !important; }
+
+  /* Why / Steps: 2-col */
+  .why-grid { grid-template-columns: 1fr 1fr !important; gap: 1rem !important; }
+  .steps-grid { grid-template-columns: 1fr 1fr !important; gap: 1rem !important; }
+}
+
+/* ============================================================
+   BREAKPOINT ≤ 768px — Mobile landscape / large phone
+   ============================================================ */
+@media (max-width: 768px) {
+
+  /* ══ NAVBAR ════════════════════════════════════════════════ */
+  .menu-toggle {
+    display: flex !important;
+    flex-shrink: 0 !important;
+    z-index: 1001 !important;          /* above panel (1000) so always tappable */
+    position: relative !important;
+  }
+  .navbar .logo { flex-shrink: 0 !important; }
+  /* Hide desktop Login button; show mobile one inside panel */
+  .nav-desktop-login { display: none !important; }
+  .nav-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Right-side slide-in panel — closed state */
+  .nav-menu {
+    display: flex !important;          /* always in DOM for animation */
+    visibility: hidden !important;
+    pointer-events: none !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    gap: 0 !important;
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: auto !important;
+    width: min(300px, 82vw) !important;
+    height: 100vh !important;
+    background: #161b22 !important;
+    border-left: 1px solid rgba(229,57,53,0.18) !important;
+    box-shadow: -8px 0 32px rgba(0,0,0,0.55) !important;
+    z-index: 1000 !important;          /* above navbar bar (999) */
+    padding: 5rem 0 2rem !important;
+    transform: translateX(100%) !important;
+    transition: transform 0.3s cubic-bezier(.25,.8,.25,1),
+                visibility 0.3s !important;
+    overflow-y: auto !important;
+  }
+  /* Open state */
+  .nav-menu.open {
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: translateX(0) !important;
+  }
+  /* Nav links inside panel */
+  .nav-link {
+    width: 100% !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    color: #8b949e !important;
+    text-decoration: none !important;
+    padding: 0.9rem 1.5rem !important;
+    border-left: 3px solid transparent !important;
+    transition: color 0.2s, background 0.2s, border-color 0.2s !important;
+    display: block !important;
+  }
+  .nav-link:hover, .nav-link.active {
+    color: #e6edf3 !important;
+    background: rgba(229,57,53,0.07) !important;
+    border-left-color: #e53935 !important;
+  }
+  /* Login button at bottom of panel */
+  .nav-mobile-login {
+    display: inline-flex !important;
+    margin: 1.5rem 1.5rem 0 !important;
+    padding: 0.6rem 1.4rem !important;
+    background: #e53935 !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    align-self: flex-start !important;
+    min-height: 44px !important;
+    align-items: center !important;
+  }
+
+  /* ══ HERO ══════════════════════════════════════════════════ */
+  .hero { padding: 5.5rem 0 2.5rem !important; min-height: auto !important; overflow-x: hidden !important; }
+  .hero-title { font-size: clamp(1.8rem, 7vw, 2.6rem) !important; line-height: 1.2 !important; }
+  .hero-subtitle { font-size: 1rem !important; }
+  .hero-buttons {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+  }
+  .cta-button {
+    width: 100% !important;
+    max-width: 340px !important;
+    justify-content: center !important;
+  }
+
+  /* ══ STOP AOS HORIZONTAL ANIMATIONS causing overflow ═══════ */
+  [data-aos="fade-left"],
+  [data-aos="fade-right"],
+  [data-aos="slide-left"],
+  [data-aos="slide-right"] {
+    transform: translateY(28px) !important;  /* fall back to vertical-only */
+  }
+  [data-aos="fade-left"].aos-animate,
+  [data-aos="fade-right"].aos-animate,
+  [data-aos="slide-left"].aos-animate,
+  [data-aos="slide-right"].aos-animate {
+    transform: none !important;
+  }
+
+  /* ══ FIX min-width on search/filter inputs ══════════════════ */
+  .search-input-wrapper { min-width: 0 !important; width: 100% !important; flex: 1 1 100% !important; }
+  .search-container { flex-direction: column !important; }
+
+  /* ══ SECTIONS ══════════════════════════════════════════════ */
+  .section-header { margin-bottom: 1.5rem !important; }
+  .section-header h2 { font-size: clamp(1.5rem, 6vw, 2rem) !important; }
+  .section-header p { font-size: 0.95rem !important; }
+  .why-choose { padding: 2.5rem 0 !important; }
+  .how-it-works { padding: 2.5rem 0 !important; }
+  .testimonials { padding: 2.5rem 0 !important; }
+  .featured-jobs { padding: 2.5rem 0 !important; }
+
+  /* ══ GRIDS ═════════════════════════════════════════════════ */
+  .why-grid { grid-template-columns: 1fr 1fr !important; gap: 0.85rem !important; }
+  .steps-grid { grid-template-columns: 1fr 1fr !important; gap: 0.85rem !important; }
+  .testimonials-grid { grid-template-columns: 1fr !important; }
+  .jobs-carousel { grid-template-columns: 1fr !important; }
+  .jobs-grid { grid-template-columns: 1fr !important; }
+
+  /* ══ CTA SECTION ═══════════════════════════════════════════ */
+  .cta-section { margin: 1.5rem 0 !important; padding: 2rem 1rem !important; }
+  .cta-content h2 { font-size: 1.6rem !important; }
+  .cta-content p { font-size: 0.95rem !important; }
+  .cta-buttons {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+  }
+
+  /* ══ FOOTER ════════════════════════════════════════════════ */
+  .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 1.25rem !important; }
+  .footer { padding: 2rem 0 1rem !important; }
+
+  /* ══ BROWSE JOBS ═══════════════════════════════════════════ */
+  .browse-hero { padding: 5.5rem 1rem 2rem !important; }
+  .browse-hero h1 { font-size: clamp(1.6rem, 6vw, 2.2rem) !important; }
+  .browse-hero p { font-size: 0.95rem !important; }
+  .filter-toggle-btn { display: flex !important; }
+  .filter-sidebar {
+    display: none !important;
+    width: 100% !important;
+    position: static !important;
+    margin-bottom: 1rem !important;
+  }
+  .filter-sidebar.filter-open { display: block !important; }
+  .chip-group { flex-wrap: wrap !important; gap: 0.4rem !important; }
+  .chip { flex-shrink: 0 !important; }
+  .jobs-panel-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+  }
+  .sort-select { width: 100% !important; }
+
+  /* ══ DASHBOARD — SIDEBAR ═══════════════════════════════════ */
+  .sidebar {
+    display: block !important;  /* override inline `display: none` from dashboard pages */
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s cubic-bezier(.25,.8,.25,1) !important;
+    position: fixed !important;
+    z-index: 200 !important;
+    width: 260px !important;
+    top: 0 !important; bottom: 0 !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain !important;
+    box-shadow: 4px 0 28px rgba(0,0,0,0.55) !important;
+  }
+  .sidebar.open { transform: translateX(0) !important; }
+  .sidebar-backdrop {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0,0,0,0.6) !important;
+    z-index: 199 !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    transition: opacity 0.3s, visibility 0.3s !important;
+  }
+  .sidebar-backdrop.show { visibility: visible !important; opacity: 1 !important; }
+
+  /* ══ DASHBOARD — LAYOUT ════════════════════════════════════ */
+  .layout { margin-top: 56px !important; }
+  .main { margin-left: 0 !important; padding: 1rem 0.9rem !important; width: 100% !important; }
+
+  /* ══ DASHBOARD — TOPBAR ════════════════════════════════════ */
+  .topbar { padding: 0 0.75rem !important; height: 56px !important; gap: 0.5rem !important; }
+  .topbar .logo { font-size: 1rem !important; }
+  .topbar-right { gap: 0.75rem !important; }
+  .topbar-user span { display: none !important; }
+  .logout-btn { padding: 0.35rem 0.65rem !important; font-size: 0.78rem !important; }
+  .topbar-hamburger {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+    background: none !important;
+    border: none !important;
+    cursor: pointer !important;
+    padding: 6px !important;
+    margin-right: 0.4rem !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .topbar-hamburger span {
+    display: block !important;
+    width: 20px !important;
+    height: 2px !important;
+    border-radius: 2px !important;
+    background: #e6edf3 !important;
+    transition: all 0.25s !important;
+  }
+
+  /* ══ DASHBOARD — STAT CARDS ════════════════════════════════ */
+  .stats-row { grid-template-columns: 1fr 1fr !important; gap: 0.75rem !important; }
+  .recent-hiring-grid { grid-template-columns: 1fr !important; }
+  .page-header { margin-bottom: 1.25rem !important; }
+  .page-header h1 { font-size: 1.35rem !important; }
+  .section-card { padding: 1rem !important; margin-bottom: 1rem !important; }
+  .job-detail .detail-row { gap: 0.75rem !important; }
+
+  /* ══ SEARCH BAR ════════════════════════════════════════════ */
+  .search-bar { flex-direction: column !important; gap: 0.6rem !important; }
+  .search-bar input,
+  .search-bar select { min-width: 100% !important; width: 100% !important; }
+
+  /* ══ FORM ══════════════════════════════════════════════════ */
+  .form-grid { grid-template-columns: 1fr !important; }
+  /* Prevent iOS auto-zoom on input focus */
+  .form-group input,
+  .form-group select,
+  .form-group textarea,
+  .search-bar input,
+  .search-bar select,
+  .modal input,
+  .modal textarea,
+  .filter-group input,
+  .filter-group select { font-size: 16px !important; }
+
+  /* ══ MODAL ═════════════════════════════════════════════════ */
+  .modal-content { width: 95% !important; max-width: 100% !important; border-radius: 14px !important; }
+  .modal-overlay.active .modal,
+  .modal { width: 95% !important; max-width: 460px !important; margin: 0 auto !important; }
+
+  /* ══ NOTIFICATION DROPDOWN ═════════════════════════════════ */
+  .notif-dropdown {
+    width: calc(100vw - 24px) !important;
+    right: 12px !important;
+    left: auto !important;
+  }
+
+  /* ══ LOGIN PAGE ════════════════════════════════════════════ */
+  .lamp-page {
+    flex-direction: column !important;
+    padding: 5rem 1rem 1.5rem !important;
+    gap: 1.5rem !important;
+    min-height: auto !important;
+  }
+  .lamp-stage { padding: 1.5rem 1rem !important; flex: none !important; }
+  .lamp { max-height: 180px !important; }
+  .login-form {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 1.8rem 1.2rem !important;
+  }
+  .login-form h2 { font-size: 1.5rem !important; }
+  .back-link { top: 0.85rem !important; left: 0.85rem !important; font-size: 0.82rem !important; }
+
+  /* ══ TOUCH TARGETS ═════════════════════════════════════════ */
+  .btn, .cta-button, .apply-btn, .apply-now-btn,
+  .auth-btn, .clear-filters-btn, .logout-btn,
+  .carousel-btn, .filter-group input, .filter-group select,
+  .sort-select, .nav-item { min-height: 44px !important; }
+  .chip { min-height: 36px !important; }
+  .notif-bell {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* ============================================================
+   BREAKPOINT ≤ 480px — Mobile portrait
+   ============================================================ */
+@media (max-width: 480px) {
+
+  /* Tighter container */
+  .container { padding-left: 0.9rem !important; padding-right: 0.9rem !important; }
+
+  /* Logo */
+  .logo span { font-size: 0.95rem !important; }
+  .logo i { font-size: 1rem !important; }
+
+  /* Hero */
+  .hero-title { font-size: 1.75rem !important; line-height: 1.22 !important; }
+  .hero-subtitle { font-size: 0.92rem !important; }
+  .hero-stats {
+    flex-direction: column !important;
+    gap: 0.6rem !important;
+    align-items: center !important;
+  }
+  .stat-divider { display: none !important; }
+  .stat-item { display: flex; flex-direction: column; align-items: center; }
+
+  /* All grids → single column */
+  .why-grid { grid-template-columns: 1fr !important; }
+  .steps-grid { grid-template-columns: 1fr !important; }
+  .testimonials-grid { grid-template-columns: 1fr !important; }
+  .footer-grid { grid-template-columns: 1fr !important; }
+
+  /* Typography */
+  .section-header h2 { font-size: 1.35rem !important; }
+  .why-card h3, .step-card h3 { font-size: 1rem !important; }
+  .why-card p, .step-card p, .testimonial-text { font-size: 0.88rem !important; }
+
+  /* Cards */
+  .why-card { padding: 1.25rem !important; }
+  .step-card { padding: 1.25rem !important; }
+  .testimonial-card { padding: 1.1rem !important; }
+  .job-card { padding: 1rem !important; }
+
+  /* Dashboard */
+  .stats-row { grid-template-columns: 1fr 1fr !important; }
+  .stat-card { padding: 0.9rem 1rem !important; }
+  .stat-card .value { font-size: 1.45rem !important; }
+  .stat-card .label { font-size: 0.75rem !important; }
+  .section-card { padding: 1rem !important; }
+  .section-card h2 { font-size: 0.95rem !important; }
+  .job-card-header { flex-wrap: wrap !important; gap: 0.5rem !important; }
+  .job-card-actions { flex-wrap: wrap !important; gap: 0.5rem !important; }
+  .btn { font-size: 0.78rem !important; padding: 0.4rem 0.75rem !important; }
+
+  /* Applicant cards */
+  .applicant-header { flex-wrap: wrap !important; gap: 0.5rem !important; }
+  .applicant-actions { flex-wrap: wrap !important; gap: 0.5rem !important; }
+  .applicant-actions .btn { flex: 1 1 auto !important; min-width: 80px !important; }
+
+  /* Browse */
+  .browse-hero { padding: 5rem 0.9rem 1.5rem !important; }
+  .browse-hero p { font-size: 0.88rem !important; }
+  .chip { font-size: 0.76rem !important; padding: 3px 10px !important; }
+
+  /* Footer */
+  .footer-bottom { font-size: 0.78rem !important; }
+  .social-links { gap: 1rem !important; }
+
+  /* Scroll-to-top */
+  #scroll-to-top {
+    bottom: 1rem !important;
+    right: 1rem !important;
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 0.85rem !important;
+  }
+}
+
+/* ============================================================
+   BREAKPOINT ≤ 360px — Very small phones
+   ============================================================ */
+@media (max-width: 360px) {
+  .hero-title { font-size: 1.5rem !important; }
+  .cta-button { font-size: 0.82rem !important; padding: 0.7rem 0.9rem !important; }
+  .stats-row { grid-template-columns: 1fr !important; }
+  .nav-link { font-size: 1.15rem !important; }
+  .topbar-right { gap: 0.75rem !important; }
+}
+
+/* ============================================================
+   PRINT — hide non-content elements
+   ============================================================ */
+@media print {
+  .navbar, .topbar, .sidebar, .sidebar-backdrop,
+  #scroll-to-top, .notif-dropdown, .loading-overlay { display: none !important; }
+  .main { margin: 0 !important; padding: 0 !important; }
+  body { background: #fff !important; color: #000 !important; }
+}

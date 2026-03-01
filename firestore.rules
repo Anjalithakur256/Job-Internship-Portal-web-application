@@ -1,0 +1,78 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // ============================================
+    // USERS COLLECTION
+    // ============================================
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isOwner(userId);
+      allow update: if isAuthenticated() && isOwner(userId);
+      allow delete: if false;
+    }
+
+    // ============================================
+    // JOBS COLLECTION
+    // ============================================
+    match /jobs/{jobId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+      allow delete: if isAuthenticated();
+    }
+
+    // ============================================
+    // APPLICATIONS COLLECTION
+    // ============================================
+    match /applications/{appId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+      allow delete: if false;
+    }
+
+    // ============================================
+    // SAVED JOBS COLLECTION
+    // ============================================
+    match /savedJobs/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ============================================
+    // NOTIFICATIONS COLLECTION
+    // ============================================
+    match /notifications/{notifId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+      allow delete: if isAuthenticated();
+    }
+
+    // ============================================
+    // RESUMES COLLECTION
+    // ============================================
+    match /resumes/{resumeId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ============================================
+    // ADMIN LOGS
+    // ============================================
+    match /adminLogs/{logId} {
+      allow read, create: if isAuthenticated();
+      allow delete: if false;
+    }
+  }
+}

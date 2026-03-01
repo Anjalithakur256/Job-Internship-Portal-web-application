@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Jobs - JobNexus</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/dark-mode.css">
+    <link rel="stylesheet" href="../css/premium-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/light-theme.css">
+    <link rel="stylesheet" href="../css/page-animations.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23e53935'/><text x='50' y='60' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>J</text></svg>">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <div class="nav-backdrop" id="navBackdrop"></div>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <a href="../index.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;">
+                    <i class="fas fa-briefcase"></i>
+                    <span>JobNexus</span>
+                </a>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="browse-jobs.html" class="nav-link active">Browse Jobs</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+                <a href="../login.html" class="auth-btn nav-mobile-login" id="loginBtnMobile">Login</a>
+            </div>
+            <div class="nav-actions">
+                <a href="../login.html" class="auth-btn nav-desktop-login" id="loginBtn">Login</a>
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Browse Hero -->
+    <section class="browse-hero">
+        <div class="container">
+            <h1 data-aos="fade-up">Explore <span class="gradient-text">10,000+</span> Opportunities</h1>
+            <p data-aos="fade-up" data-aos-delay="100">Internships, freelance gigs, and full-time roles — filtered to match you.</p>
+        </div>
+    </section>
+
+    <!-- Main Browse Layout -->
+    <main class="container">
+        <div class="browse-layout">
+
+            <!-- Filter Sidebar -->
+            <aside class="filter-sidebar" data-aos="fade-right">
+                <h3><i class="fas fa-sliders-h"></i> Filters</h3>
+
+                <!-- Keyword Search -->
+                <div class="filter-group">
+                    <label>Search by Keyword</label>
+                    <input type="text" id="filterKeyword" placeholder="e.g. React Developer…">
+                </div>
+
+                <!-- Location -->
+                <div class="filter-group">
+                    <label>Location</label>
+                    <select id="filterLocation">
+                        <option value="">All Locations</option>
+                        <option value="Remote">Remote</option>
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Pune">Pune</option>
+                        <option value="Hyderabad">Hyderabad</option>
+                        <option value="Chennai">Chennai</option>
+                    </select>
+                </div>
+
+                <!-- Job Type -->
+                <div class="filter-group">
+                    <label>Job Type</label>
+                    <div class="chip-group" id="filterType">
+                        <button class="chip active" data-value="">All</button>
+                        <button class="chip" data-value="Full-time">Full-time</button>
+                        <button class="chip" data-value="Internship">Internship</button>
+                        <button class="chip" data-value="Freelance">Freelance</button>
+                        <button class="chip" data-value="Part-time">Part-time</button>
+                    </div>
+                </div>
+
+                <!-- Skills -->
+                <div class="filter-group">
+                    <label>Skills</label>
+                    <input type="text" id="filterSkills" placeholder="e.g. Python, React…">
+                </div>
+
+                <!-- Salary Range -->
+                <div class="filter-group">
+                    <label>Max Salary (₹/month)</label>
+                    <input type="range" id="filterSalary" min="0" max="200000" step="5000" value="200000">
+                    <div class="salary-range-display">
+                        <span>₹0</span>
+                        <span id="salaryDisplay">Any</span>
+                    </div>
+                </div>
+
+                <button class="clear-filters-btn" id="clearFiltersBtn">
+                    <i class="fas fa-times"></i> Clear All Filters
+                </button>
+            </aside>
+
+            <!-- Jobs Panel -->
+            <div class="jobs-panel">
+                <!-- Mobile filter toggle -->
+                <button class="filter-toggle-btn" id="filterToggleBtn" aria-expanded="false">
+                    <i class="fas fa-sliders-h"></i>
+                    <span>Filters</span>
+                </button>
+                <div class="jobs-panel-header">
+                    <p class="jobs-count">Showing <span id="jobsCountDisplay">—</span> jobs</p>
+                    <select class="sort-select" id="sortSelect">
+                        <option value="latest">Sort: Latest</option>
+                        <option value="salary-high">Highest Pay</option>
+                        <option value="salary-low">Lowest Pay</option>
+                    </select>
+                </div>
+
+                <!-- Job Cards Grid -->
+                <div class="jobs-grid" id="jobsGrid">
+                    <!-- Skeleton placeholders while loading -->
+                    <div class="job-skeleton">
+                        <div class="skel skel-logo"></div>
+                        <div class="skel skel-title"></div>
+                        <div class="skel skel-text"></div>
+                        <div class="skel skel-meta"></div>
+                        <div class="skel skel-btn"></div>
+                    </div>
+                    <div class="job-skeleton">
+                        <div class="skel skel-logo"></div>
+                        <div class="skel skel-title"></div>
+                        <div class="skel skel-text"></div>
+                        <div class="skel skel-meta"></div>
+                        <div class="skel skel-btn"></div>
+                    </div>
+                    <div class="job-skeleton">
+                        <div class="skel skel-logo"></div>
+                        <div class="skel skel-title"></div>
+                        <div class="skel skel-text"></div>
+                        <div class="skel skel-meta"></div>
+                        <div class="skel skel-btn"></div>
+                    </div>
+                    <div class="job-skeleton">
+                        <div class="skel skel-logo"></div>
+                        <div class="skel skel-title"></div>
+                        <div class="skel skel-text"></div>
+                        <div class="skel skel-meta"></div>
+                        <div class="skel skel-btn"></div>
+                    </div>
+                    <div class="job-skeleton">
+                        <div class="skel skel-logo"></div>
+                        <div class="skel skel-title"></div>
+                        <div class="skel skel-text"></div>
+                        <div class="skel skel-meta"></div>
+                        <div class="skel skel-btn"></div>
+                    </div>
+                    <div class="job-skeleton">
+                        <div class="skel skel-logo"></div>
+                        <div class="skel skel-title"></div>
+                        <div class="skel skel-text"></div>
+                        <div class="skel skel-meta"></div>
+                        <div class="skel skel-btn"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toastContainer" style="position:fixed;bottom:24px;right:24px;z-index:10000;display:flex;flex-direction:column;gap:10px;"></div>
+
+    <!-- Scripts (all defer — ordered execution) -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Firebase SDK (compat build - required for firebase-config.js global `firebase` usage) -->
+    <script defer src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.0.0/firebase-storage-compat.js"></script>
+    <script defer src="../js/firebase-config.js"></script>
+
+    <!-- Premium UI Effects -->
+    <script defer src="../js/effects/mouse-effects.js"></script>
+    <script defer src="../js/effects/card-3d-tilt.js"></script>
+    <script defer src="../js/effects/glass-panels.js"></script>
+    <script defer src="../js/effects/gradient-text.js"></script>
+
+    <!-- App Modules -->
+    <script defer src="../js/modules/theme.js"></script>
+    <script defer src="../js/modules/auth.js"></script>
+
+    <!-- Browse Jobs Module (main logic) -->
+    <script defer src="../js/modules/browse-jobs.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof AOS !== 'undefined') AOS.init({ duration: 800, once: true });
+        });
+    </script>
+    <script defer src="../js/page-animations.js"></script>
+    <script>
+    // Mobile navbar toggle
+    (function(){
+        var toggle   = document.getElementById('menuToggle');
+        var menu     = document.getElementById('navMenu');
+        var backdrop = document.getElementById('navBackdrop');
+        if (!toggle || !menu) return;
+        function openMenu() {
+            menu.classList.add('open');
+            toggle.classList.add('active');
+            if (backdrop) backdrop.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeMenu() {
+            menu.classList.remove('open');
+            toggle.classList.remove('active');
+            if (backdrop) backdrop.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        toggle.addEventListener('click', function(){ menu.classList.contains('open') ? closeMenu() : openMenu(); });
+        if (backdrop) backdrop.addEventListener('click', closeMenu);
+        menu.querySelectorAll('a').forEach(function(link){ link.addEventListener('click', closeMenu); });
+    })();
+    // Mobile filter sidebar toggle
+    (function(){
+        var btn     = document.getElementById('filterToggleBtn');
+        var sidebar = document.querySelector('.filter-sidebar');
+        if (!btn || !sidebar) return;
+        btn.addEventListener('click', function(){
+            var isOpen = sidebar.classList.toggle('filter-open');
+            btn.classList.toggle('open', isOpen);
+            btn.setAttribute('aria-expanded', isOpen);
+            var span = btn.querySelector('span');
+            if (span) span.textContent = isOpen ? 'Hide Filters' : 'Filters';
+        });
+    })();
+    </script>
+</html>

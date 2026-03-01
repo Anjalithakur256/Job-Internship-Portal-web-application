@@ -1,0 +1,40 @@
+{
+  "name": "jobnexus-portal",
+  "version": "1.0.0",
+  "description": "A modern Job & Internship Portal with advanced features and role-based authentication",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server -p 8000 -c-1",
+    "build": "echo 'Static site, no build needed'",
+    "dev": "http-server -p 8000 -c-1",
+    "test": "echo 'Add tests here'",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "job-portal",
+    "internship",
+    "recruitment",
+    "firebase",
+    "vercel",
+    "vanilla-javascript",
+    "modern-ui"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "aos": "^2.3.4",
+    "chart.js": "^3.9.1",
+    "firebase": "^10.0.0",
+    "gsap": "^3.12.2"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "vercel": "^33.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not IE 11"
+  ]
+}

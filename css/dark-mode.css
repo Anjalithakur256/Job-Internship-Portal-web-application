@@ -1,0 +1,142 @@
+/* ============================================
+   DARK MODE / NIGHT THEME ONLY STYLES
+   Light Mode Has Been Disabled
+   ============================================ */
+
+/* Force Dark Mode Always */
+:root {
+    --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --primary-solid: #667eea;
+    --secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --secondary-solid: #f5576c;
+    --accent: #00d4ff;
+    --accent-light: #7c3aed;
+    
+    --bg-primary: #0f0f1e;
+    --bg-secondary: #1a1a2e;
+    --bg-tertiary: #16213e;
+    --text-primary: #ffffff;
+    --text-secondary: #b0b0b0;
+    --text-muted: #707070;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+}
+
+/* Hide Light Mode Styles */
+:root.light-mode {
+    --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    --primary-solid: #667eea !important;
+    --secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+    --secondary-solid: #f5576c !important;
+    --accent: #00d4ff !important;
+    --accent-light: #7c3aed !important;
+    
+    --bg-primary: #0f0f1e !important;
+    --bg-secondary: #1a1a2e !important;
+    --bg-tertiary: #16213e !important;
+    --text-primary: #ffffff !important;
+    --text-secondary: #b0b0b0 !important;
+    --text-muted: #707070 !important;
+    --border-color: rgba(255, 255, 255, 0.1) !important;
+    --success: #10b981 !important;
+    --warning: #f59e0b !important;
+    --danger: #ef4444 !important;
+}
+
+/* Dark Mode Default Values */
+:root.dark-mode {
+    --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --primary-solid: #667eea;
+    --secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --secondary-solid: #f5576c;
+    --accent: #00d4ff;
+    --accent-light: #7c3aed;
+    
+    --bg-primary: #0f0f1e;
+    --bg-secondary: #1a1a2e;
+    --bg-tertiary: #16213e;
+    --text-primary: #ffffff;
+    --text-secondary: #b0b0b0;
+    --text-muted: #707070;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+
+/* Theme Toggle Button */
+.theme-toggle {
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-toggle::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: var(--radius-full);
+    background: rgba(102, 126, 234, 0.1);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.theme-toggle:hover::before {
+    width: 35px;
+    height: 35px;
+}
+
+.theme-toggle i {
+    position: relative;
+    z-index: 1;
+    color: var(--text-secondary);
+}
+
+/* Smooth Transitions (Dark Mode) */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Preserve Animation Transitions */
+[class*="animation"],
+[data-aos],
+.floating-shape,
+.hero-floating-card,
+.job-card,
+.cta-button,
+.nav-link::after {
+    transition: none !important;
+}
+
+/* Text Selection (Dark Mode) */
+::selection {
+    background: rgba(102, 126, 234, 0.4);
+    color: var(--text-primary);
+}
+
+/* Scrollbar Styling (Dark Mode Only) */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.4);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.6);
+}
+
+/* Firefox Scrollbar (Dark Mode) */
+* {
+    scrollbar-color: rgba(102, 126, 234, 0.4) rgba(255, 255, 255, 0.05);
+    scrollbar-width: thin;
+}

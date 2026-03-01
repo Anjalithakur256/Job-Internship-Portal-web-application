@@ -201,7 +201,6 @@
                 position: fixed !important;
                 inset: 0 !important;
                 background: rgba(0,0,0,0.65) !important;
-                backdrop-filter: blur(2px) !important;
                 z-index: 999 !important;
                 visibility: hidden !important;
                 opacity: 0 !important;
@@ -211,6 +210,9 @@
                 visibility: visible !important;
                 opacity: 1 !important;
             }
+            /* ── Blur only the main content, not the sidebar ── */
+            .main { transition: filter 0.3s ease !important; }
+            body.sidebar-open .main { filter: blur(4px) !important; }
             /* ── Hamburger ── */
             .topbar-hamburger {
                 display: flex !important;
@@ -950,11 +952,13 @@
         function openSidebar() {
             sidebar.classList.add('open');
             backdrop.classList.add('show');
+            document.body.classList.add('sidebar-open');
             document.body.style.overflow = 'hidden';
         }
         function closeSidebar() {
             sidebar.classList.remove('open');
             backdrop.classList.remove('show');
+            document.body.classList.remove('sidebar-open');
             document.body.style.overflow = '';
         }
         toggle.addEventListener('click', () => {

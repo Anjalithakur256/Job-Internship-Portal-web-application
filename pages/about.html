@@ -472,6 +472,19 @@
             line-height: 1.4; padding: 0 0.5rem; text-align: center;
         }
         /* Ring animation */
+        .dev-photo-wrap {
+            position: relative;
+            width: 160px; height: 160px;
+            margin: 0 auto 1.4rem;
+        }
+        .dev-photo {
+            width: 160px; height: 160px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: top center;
+            border: 3px solid rgba(229,57,53,0.3);
+            display: block;
+        }
         .dev-photo-wrap::after {
             content: '';
             position: absolute; inset: -6px;
@@ -964,7 +977,9 @@
         <div class="team-lead-wrap" data-aos="fade-up" data-aos-delay="60">
             <!-- Left card -->
             <div class="team-card">
-                <div class="team-avatar lead">AT</div>
+                <div class="dev-photo-wrap">
+                    <img src="../Public/Anjali Thakur.jpeg" alt="Anjali Thakur" class="dev-photo">
+                </div>
                 <div style="margin-bottom:0.5rem;"><span class="lead-tag"><i class="fas fa-crown" style="margin-right:4px;"></i>Lead Developer</span></div>
 
                 <div class="dev-name">Anjali Thakur</div>

@@ -465,15 +465,130 @@ function initHomePageStats() {
         db.collection('users').get().catch(() => null),
         db.collection('applications').get().catch(() => null),
     ]).then(([jobs, users, apps]) => {
-        animateCount(statJobs, jobs?.size ?? fallback.jobs);
-        animateCount(statUsers, users?.size ?? fallback.users);
-        animateCount(statApps, apps?.size ?? fallback.applications);
+        // Use real counts when available; fall back only on error (null)
+        const jobCount = jobs !== null ? (jobs.size || fallback.jobs) : fallback.jobs;
+        const userCount = users !== null ? (users.size || fallback.users) : fallback.users;
+        const appCount = apps !== null ? (apps.size || fallback.applications) : fallback.applications;
+        animateCount(statJobs, jobCount);
+        animateCount(statUsers, userCount);
+        animateCount(statApps, appCount);
     }).catch(() => {
         animateCount(statJobs, fallback.jobs);
         animateCount(statUsers, fallback.users);
         animateCount(statApps, fallback.applications);
     });
 }
+
+// ── HOME PAGE: Featured Jobs Carousel ────────────
+
+function initFeaturedJobs() {
+    const carousel = document.getElementById('jobsCarousel');
+    if (!carousel) return;
+    if (typeof firebase === 'undefined' || !firebase.firestore) return;
+
+    const db = firebase.firestore();
+    const esc = s => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : '';
+    const colors = ['5b21b6','0ea5e9','ec4899','10b981','f59e0b','6366f1'];
+
+    db.collection('jobs')
+        .orderBy('createdAt', 'desc')
+        .limit(6)
+        .get()
+        .then(snap => {
+            if (snap.empty) return; // Keep static fallback cards
+
+            carousel.innerHTML = snap.docs.map((doc, idx) => {
+                const job = { id: doc.id, ...doc.data() };
+                const type = job.type || job.jobType || 'Full-time';
+                const salary = job.salary ? `₹${(parseInt(job.salary)/1000).toFixed(0)}K` : 'Competitive';
+                const skills = (job.skills || []).slice(0, 3);
+                const initials = encodeURIComponent((job.company || 'C').substring(0, 2).toUpperCase());
+                const color = colors[idx % colors.length];
+                const logoSrc = job.logoUrl || `https://ui-avatars.com/api/?name=${initials}&background=${color}&color=fff&bold=true&rounded=true&size=50`;
+                const desc = (job.description || '').substring(0, 100);
+
+                return `
+                <div class="job-card" data-aos="fade-up" data-aos-delay="${idx * 100}">
+                    <div class="job-card-header">
+                        <img src="${logoSrc}" alt="${esc(job.company)}" class="company-logo"
+                             onerror="this.src='https://ui-avatars.com/api/?name=${initials}&background=667eea&color=fff&bold=true&rounded=true&size=50'">
+                        <div class="save-job-btn"><i class="far fa-bookmark"></i></div>
+                    </div>
+                    <h3 class="job-title">${esc(job.title)}</h3>
+                    <p class="company-name">${esc(job.company || 'Company')}</p>
+                    <div class="job-meta">
+                        <span class="job-type">${esc(type)}</span>
+                        <span class="job-location"><i class="fas fa-map-marker-alt"></i> ${esc(job.location || 'Remote')}</span>
+                        <span class="job-salary">${salary}/mo</span>
+                    </div>
+                    <p class="job-description">${esc(desc)}${(job.description || '').length > 100 ? '...' : ''}</p>
+                    <div class="job-tags">${skills.map(s => `<span class="tag">${esc(s)}</span>`).join('')}</div>
+                    <button class="apply-btn" data-job-id="${job.id}">Apply Now</button>
+                </div>`;
+            }).join('');
+
+            if (typeof AOS !== 'undefined') AOS.refresh();
+
+            // Re-attach apply button handlers
+            carousel.querySelectorAll('.apply-btn[data-job-id]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const jobId = this.dataset.jobId;
+                    const user = typeof firebase !== 'undefined' ? firebase.auth().currentUser : null;
+                    if (!user) {
+                        document.getElementById('authModal')?.classList.add('active');
+                        return;
+                    }
+                    window.location.href = `dashboard/student-dashboard.html?applyJob=${jobId}`;
+                });
+            });
+        })
+        .catch(() => {}); // silently keep static fallback cards on any error
+}
+
+// ── SEED: Populate Firestore with demo jobs ────────
+
+async function seedDemoJobsIfEmpty() {
+    if (typeof firebase === 'undefined' || !firebase.auth || !firebase.firestore) return;
+    const user = firebase.auth().currentUser;
+    if (!user) return; // Only seed when authenticated
+
+    const db = firebase.firestore();
+    try {
+        const snap = await db.collection('jobs').limit(1).get();
+        if (!snap.empty) return; // Already has real data
+
+        const demoData = [
+            { title: 'Frontend Developer', company: 'TechCorp Inc.', location: 'Remote', type: 'Full-time', skills: ['React', 'JavaScript', 'CSS'], salary: 70000, description: 'Build modern web applications with React and ensure exceptional user experiences across all devices.' },
+            { title: 'Backend Engineer', company: 'CloudSys Ltd.', location: 'Bangalore', type: 'Full-time', skills: ['Node.js', 'Python', 'MongoDB'], salary: 80000, description: 'Design and implement scalable backend solutions and REST APIs using Node.js and Python.' },
+            { title: 'UI/UX Designer', company: 'DesignHub Co.', location: 'Pune', type: 'Internship', skills: ['Figma', 'UI Design', 'Prototyping'], salary: 25000, description: 'Create beautiful and intuitive user interfaces for mobile and web applications.' },
+            { title: 'Data Analyst Intern', company: 'DataMinds', location: 'Mumbai', type: 'Internship', skills: ['Python', 'Excel', 'SQL'], salary: 20000, description: 'Analyze large datasets to discover trends and insights that drive business decisions.' },
+            { title: 'Mobile Developer', company: 'AppFactory', location: 'Delhi', type: 'Full-time', skills: ['Flutter', 'Dart', 'Firebase'], salary: 90000, description: 'Develop high-quality cross-platform mobile apps using Flutter for iOS and Android.' },
+            { title: 'Content Writer', company: 'WriteWell', location: 'Remote', type: 'Freelance', skills: ['SEO', 'Copywriting', 'WordPress'], salary: 30000, description: 'Create engaging content for blogs, websites, and social media that drives organic traffic.' },
+            { title: 'DevOps Engineer', company: 'InfraCloud', location: 'Hyderabad', type: 'Full-time', skills: ['Docker', 'Kubernetes', 'AWS'], salary: 120000, description: 'Manage CI/CD pipelines and cloud infrastructure on AWS using Docker and Kubernetes.' },
+            { title: 'Marketing Intern', company: 'GrowthLabs', location: 'Chennai', type: 'Internship', skills: ['Social Media', 'Analytics', 'Canva'], salary: 15000, description: 'Assist in planning and executing digital marketing campaigns across social platforms.' },
+        ];
+
+        const batch = db.batch();
+        demoData.forEach(job => {
+            const ref = db.collection('jobs').doc();
+            batch.set(ref, {
+                ...job,
+                status: 'active',
+                recruiterId: user.uid,
+                applicationsCount: 0,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                postedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            });
+        });
+        await batch.commit();
+        console.log('%c[JobNexus] ✅ Sample jobs seeded to Firestore.', 'color: #10b981; font-weight: bold;');
+    } catch (e) {
+        // Silently fail — user may not have write permission yet
+    }
+}
+
+// Expose for manual console use
+window.seedDemoData = seedDemoJobsIfEmpty;
 
 // ── BOOT ─────────────────────────────────────────
 
@@ -485,6 +600,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Run stats on home page
     initHomePageStats();
+
+    // Load real featured jobs into home page carousel
+    initFeaturedJobs();
+
+    // Auto-seed sample data if Firestore is empty (runs after auth state resolves)
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) seedDemoJobsIfEmpty();
+        });
+    }
 
     // Hook hero "Create Free Profile" button on home page
     const heroSignupBtn = document.getElementById('heroSignupBtn');

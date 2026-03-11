@@ -27,7 +27,7 @@ service cloud.firestore {
     // JOBS COLLECTION
     // ============================================
     match /jobs/{jobId} {
-      allow read: if isAuthenticated();
+      allow read: if true;  // Public: anyone can browse job listings
       allow create: if isAuthenticated();
       allow update: if isAuthenticated();
       allow delete: if isAuthenticated();

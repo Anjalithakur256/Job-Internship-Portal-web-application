@@ -117,7 +117,7 @@ class AuthManager {
     async handleLogin(e) {
         e.preventDefault();
 
-        const email = document.getElementById('loginEmail').value;
+        const email = document.getElementById('loginEmail').value.trim();
         const password = document.getElementById('loginPassword').value;
 
         if (!this.validateEmail(email)) {
@@ -130,35 +130,43 @@ class AuthManager {
             return;
         }
 
+        const btn = this.loginForm.querySelector('button[type="submit"]');
+        const originalText = btn ? btn.textContent : '';
+        if (btn) { btn.disabled = true; btn.textContent = 'Signing in...'; }
+
         try {
-            // Simulate login (In real app, use Firebase)
-            const user = {
-                id: Date.now().toString(),
-                email: email,
-                role: 'student',
-                createdAt: new Date(),
-                lastLogin: new Date()
-            };
+            if (typeof firebase === 'undefined' || !firebase.auth) throw new Error('Firebase not available');
 
-            // Save to localStorage
-            localStorage.setItem('currentUser', JSON.stringify(user));
-            this.currentUser = user;
+            const userCred = await firebase.auth().signInWithEmailAndPassword(email, password);
 
-            // Show success message
+            // Get role from Firestore profile
+            let role = 'student';
+            try {
+                const doc = await firebase.firestore().collection('users').doc(userCred.user.uid).get();
+                if (doc.exists) role = doc.data().role || 'student';
+            } catch (_) {}
+
             this.showFormSuccess('Login successful! Redirecting...');
 
-            // Close modal and redirect
             setTimeout(() => {
                 this.closeAuthModal();
-                window.location.href = '/dashboard/student-dashboard.html';
+                const base = window.location.pathname.includes('/pages/') || window.location.pathname.includes('/dashboard/') ? '../' : '';
+                window.location.href = role === 'recruiter'
+                    ? `${base}dashboard/recruiter-dashboard.html`
+                    : `${base}dashboard/student-dashboard.html`;
             }, 1500);
 
         } catch (error) {
-            this.showFormError('Login failed: ' + error.message);
+            const errorMessages = {
+                'auth/user-not-found': 'No account found with this email.',
+                'auth/wrong-password': 'Incorrect password.',
+                'auth/invalid-credential': 'Invalid email or password.',
+                'auth/too-many-requests': 'Too many failed attempts. Try again later.',
+                'auth/invalid-email': 'Invalid email address.',
+            };
+            this.showFormError(errorMessages[error.code] || 'Login failed. Please try again.');
+            if (btn) { btn.disabled = false; btn.textContent = originalText; }
         }
-
-        // Reset form
-        this.loginForm.reset();
     }
 
     async handleSignup(e) {
@@ -196,40 +204,46 @@ class AuthManager {
             return;
         }
 
+        const btn = this.signupForm.querySelector('button[type="submit"]');
+        const originalText = btn ? btn.textContent : '';
+        if (btn) { btn.disabled = true; btn.textContent = 'Creating account...'; }
+
         try {
-            // Simulate signup (In real app, use Firebase)
-            const user = {
-                id: Date.now().toString(),
-                name: name,
-                email: email,
-                role: role,
-                createdAt: new Date(),
-                verified: false
-            };
+            if (typeof firebase === 'undefined' || !firebase.auth) throw new Error('Firebase not available');
 
-            // Save to localStorage
-            localStorage.setItem('currentUser', JSON.stringify(user));
-            this.currentUser = user;
+            const userCred = await firebase.auth().createUserWithEmailAndPassword(email, password);
 
-            // Show success message
-            this.showFormSuccess('Account created successfully! Redirecting...');
+            // Update Firebase display name
+            await userCred.user.updateProfile({ displayName: name }).catch(() => {});
 
-            // Close modal and redirect
+            // Save profile to Firestore
+            await firebase.firestore().collection('users').doc(userCred.user.uid).set({
+                name,
+                email,
+                role,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                verified: false,
+            }).catch(() => {});
+
+            this.showFormSuccess('Account created! Redirecting...');
+
             setTimeout(() => {
                 this.closeAuthModal();
-                if (role === 'recruiter') {
-                    window.location.href = '/dashboard/recruiter-dashboard.html';
-                } else {
-                    window.location.href = '/dashboard/student-dashboard.html';
-                }
+                const base = window.location.pathname.includes('/pages/') || window.location.pathname.includes('/dashboard/') ? '../' : '';
+                window.location.href = role === 'recruiter'
+                    ? `${base}dashboard/recruiter-dashboard.html`
+                    : `${base}dashboard/student-dashboard.html`;
             }, 1500);
 
         } catch (error) {
-            this.showFormError('Signup failed: ' + error.message);
+            const errorMessages = {
+                'auth/email-already-in-use': 'Email already registered. Try logging in.',
+                'auth/weak-password': 'Password is too weak (min 6 chars).',
+                'auth/invalid-email': 'Invalid email address.',
+            };
+            this.showFormError(errorMessages[error.code] || 'Signup failed. Please try again.');
+            if (btn) { btn.disabled = false; btn.textContent = originalText; }
         }
-
-        // Reset form
-        this.signupForm.reset();
     }
 
     validateEmail(email) {
@@ -296,10 +310,35 @@ class AuthManager {
     }
 
     loadUserFromStorage() {
-        const userJson = localStorage.getItem('currentUser');
-        if (userJson) {
-            this.currentUser = JSON.parse(userJson);
-            this.updateUIForLoggedInUser();
+        if (typeof firebase !== 'undefined' && firebase.auth) {
+            // Use Firebase Auth real-time state
+            firebase.auth().onAuthStateChanged(async (user) => {
+                if (user) {
+                    let role = 'student';
+                    let name = user.displayName || user.email.split('@')[0];
+                    try {
+                        const doc = await firebase.firestore().collection('users').doc(user.uid).get();
+                        if (doc.exists) {
+                            role = doc.data().role || 'student';
+                            name = doc.data().name || name;
+                        }
+                    } catch (_) {}
+                    this.currentUser = { uid: user.uid, email: user.email, name, role };
+                    this.updateUIForLoggedInUser();
+                } else {
+                    this.currentUser = null;
+                    const menu = document.getElementById('userMenu');
+                    if (menu) menu.remove();
+                    if (this.loginBtn) this.loginBtn.style.display = '';
+                    if (this.signupBtn) this.signupBtn.style.display = '';
+                }
+            });
+        } else {
+            // Fallback to localStorage when Firebase is unavailable
+            const userJson = localStorage.getItem('currentUser');
+            if (userJson) {
+                try { this.currentUser = JSON.parse(userJson); this.updateUIForLoggedInUser(); } catch (_) {}
+            }
         }
     }
 
@@ -334,9 +373,16 @@ class AuthManager {
     }
 
     logout() {
-        localStorage.removeItem('currentUser');
-        this.currentUser = null;
-        window.location.href = '/';
+        if (typeof firebase !== 'undefined' && firebase.auth) {
+            firebase.auth().signOut().then(() => {
+                localStorage.removeItem('currentUser');
+                const isSubDir = window.location.pathname.includes('/pages/') || window.location.pathname.includes('/dashboard/');
+                window.location.href = isSubDir ? '../index.html' : '/';
+            });
+        } else {
+            localStorage.removeItem('currentUser');
+            window.location.href = '/';
+        }
     }
 }
 

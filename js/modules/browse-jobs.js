@@ -367,9 +367,17 @@ class BrowseJobs {
     }
 
     buildJobCard(job) {
-        const skills = (job.skills || []).slice(0, 4);
+        const rawSkills = job.skills || [];
+        const skillsArr = Array.isArray(rawSkills)
+            ? rawSkills
+            : rawSkills.split(',').map(s => s.trim()).filter(Boolean);
+        const skills = skillsArr.slice(0, 4);
         const isSaved = this.savedJobIds.has(job.id);
-        const salary = job.salary ? `₹${(parseInt(job.salary)/1000).toFixed(0)}K` : 'Not specified';
+        const salaryRaw = job.salary || '';
+        const salaryNum = parseInt(String(salaryRaw).replace(/[^\d]/g, ''));
+        const salary = salaryNum > 0
+            ? (salaryNum >= 100000 ? `₹${(salaryNum/100000).toFixed(1)}L/yr` : `₹${(salaryNum/1000).toFixed(0)}K/mo`)
+            : (salaryRaw || 'Not disclosed');
         const postedAgo = this.timeAgo(job.postedAt);
         const type = job.type || job.jobType || 'Full-time';
         const logoChar = (job.company || 'C')[0].toUpperCase();
@@ -379,7 +387,7 @@ class BrowseJobs {
             <div class="card-top">
                 <div class="company-logo-wrap">
                     ${job.logoUrl
-                        ? `<img src="${job.logoUrl}" alt="${job.company}" onerror="this.parentElement.textContent='${logoChar}'">`
+                        ? `<img src="${job.logoUrl}" alt="${this.esc(job.company)}" onerror="this.outerHTML='${logoChar}'">`
                         : logoChar}
                 </div>
                 <button class="save-btn" data-job-id="${job.id}" title="${isSaved ? 'Unsave' : 'Save job'}">
@@ -388,18 +396,24 @@ class BrowseJobs {
             </div>
             <h3>${this.esc(job.title)}</h3>
             <p class="card-company"><i class="fas fa-building" style="margin-right:5px;opacity:0.5;"></i>${this.esc(job.company || 'Company')}</p>
+            ${job.companyTagline ? `<p style="font-size:0.75rem;color:#888;margin:-0.3rem 0 0.4rem;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${this.esc(job.companyTagline)}">${this.esc(job.companyTagline)}</p>` : ''}
             <div class="card-meta">
                 <span class="meta-badge"><i class="fas fa-map-marker-alt"></i> ${this.esc(job.location || 'Remote')}</span>
                 <span class="meta-badge type"><i class="fas fa-briefcase"></i> ${this.esc(type)}</span>
-                <span class="meta-badge salary"><i class="fas fa-rupee-sign"></i> ${salary}/mo</span>
+                <span class="meta-badge salary"><i class="fas fa-rupee-sign"></i> ${this.esc(salary)}</span>
             </div>
             ${skills.length ? `
             <div class="skills-row">
                 ${skills.map(s => `<span class="skill-tag">${this.esc(s)}</span>`).join('')}
-                ${(job.skills || []).length > 4 ? `<span class="skill-tag">+${(job.skills || []).length - 4}</span>` : ''}
+                ${skillsArr.length > 4 ? `<span class="skill-tag">+${skillsArr.length - 4}</span>` : ''}
             </div>` : ''}
             <div class="card-footer">
-                <span class="posted-date"><i class="fas fa-clock" style="margin-right:4px;opacity:0.5;"></i>${postedAgo}</span>
+                <span class="posted-date">
+                    ${job.recruiterName
+                        ? `<span title="Posted by ${this.esc(job.recruiterName)}${job.recruiterDesignation ? ', ' + job.recruiterDesignation : ''}"><i class="fas fa-user-tie" style="margin-right:4px;opacity:0.5;"></i>${this.esc(job.recruiterName.split(' ')[0])}</span>&ensp;&bull;&ensp;`
+                        : ''}
+                    <i class="fas fa-clock" style="margin-right:4px;opacity:0.5;"></i>${postedAgo}
+                </span>
                 <button class="apply-now-btn" onclick="window.browseJobs.handleApply('${job.id}')">Apply Now</button>
             </div>
         </div>`;

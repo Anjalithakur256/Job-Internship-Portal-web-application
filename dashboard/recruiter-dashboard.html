@@ -179,6 +179,43 @@
         .empty-state p { font-size: 0.95rem; }
         .loading-spinner { text-align: center; padding: 2rem; color: #e53935; }
 
+        /* ===== PROFILE PAGE STYLES ===== */
+        .profile-banner { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
+        .logo-upload-wrap { position: relative; flex-shrink: 0; width: 110px; height: 110px; }
+        .logo-upload-circle {
+            width: 110px; height: 110px; border-radius: 50%;
+            background: rgba(229,57,53,0.10);
+            border: 2px dashed rgba(229,57,53,0.45);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; overflow: hidden; position: relative; transition: border-color 0.2s, background 0.2s;
+        }
+        .logo-upload-circle:hover { border-color: #e53935; background: rgba(229,57,53,0.18); }
+        #logoPreviewImg { display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; position: absolute; top: 0; left: 0; }
+        .logo-upload-placeholder { text-align: center; pointer-events: none; z-index: 1; }
+        .logo-upload-placeholder i { font-size: 1.5rem; color: #e53935; display: block; margin-bottom: 4px; }
+        .logo-upload-placeholder span { font-size: 0.7rem; color: #888; }
+        #logoFileInput { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 2; }
+        #removeLogoBtn {
+            display: none; position: absolute; bottom: 3px; right: 3px;
+            background: #ef4444; border: none; border-radius: 50%;
+            width: 24px; height: 24px; color: #fff; font-size: 0.65rem;
+            cursor: pointer; align-items: center; justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4); z-index: 3;
+        }
+        .profile-preview-info { flex: 1; min-width: 0; }
+        .profile-preview-info .pv-name { font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 0.2rem; }
+        .profile-preview-info .pv-company { font-size: 0.95rem; color: #e53935; margin-bottom: 0.25rem; font-weight: 600; }
+        .profile-preview-info .pv-designation { font-size: 0.85rem; color: #aaa; margin-bottom: 0.2rem; }
+        .profile-preview-info .pv-location { font-size: 0.82rem; color: #666; }
+        .profile-hint {
+            display: flex; align-items: center; gap: 0.6rem;
+            background: rgba(229,57,53,0.07); border: 1px solid rgba(229,57,53,0.2);
+            border-radius: 8px; padding: 0.65rem 1rem; margin-bottom: 1.2rem;
+            font-size: 0.82rem; color: #bbb;
+        }
+        .profile-hint i { color: #e53935; flex-shrink: 0; font-size: 0.9rem; }
+        .profile-website-link { font-size: 0.82rem; color: #667eea; word-break: break-all; }
+
         @media (max-width: 768px) {
             /* ── Sidebar: hidden off-screen by default, slides in on .open ── */
             .sidebar {
@@ -394,6 +431,9 @@
         <a class="nav-item" data-page="applicants">
             <i class="fas fa-users"></i> Applicants
         </a>
+        <a class="nav-item" data-page="profile">
+            <i class="fas fa-user-circle"></i> My Profile
+        </a>
     </aside>
 
     <div class="layout">
@@ -515,6 +555,94 @@
                 </div>
             </div>
 
+            <!-- Profile Page -->
+            <div class="page-section" id="page-profile">
+                <div class="page-header">
+                    <h1>My Profile</h1>
+                    <p>Your company info auto-fills job postings, and your logo appears on job cards</p>
+                </div>
+
+                <!-- Banner card: logo + preview -->
+                <div class="section-card" style="margin-bottom:1.5rem;">
+                    <div class="profile-banner">
+                        <!-- Logo upload -->
+                        <div class="logo-upload-wrap">
+                            <div class="logo-upload-circle" title="Click to upload company logo">
+                                <img id="logoPreviewImg" src="" alt="Company Logo">
+                                <div class="logo-upload-placeholder" id="logoUploadPlaceholder">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Upload Logo</span>
+                                </div>
+                                <input type="file" id="logoFileInput" accept="image/*">
+                            </div>
+                            <button id="removeLogoBtn" onclick="removeLogo()" title="Remove logo">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <!-- Live preview -->
+                        <div class="profile-preview-info">
+                            <div class="pv-name" id="pvName">—</div>
+                            <div class="pv-company" id="pvCompany">—</div>
+                            <div class="pv-designation" id="pvDesignation"></div>
+                            <div class="pv-location" id="pvLocation"><i class="fas fa-map-marker-alt" style="margin-right:4px;opacity:0.6;"></i>—</div>
+                            <div id="pvWebsite" class="profile-website-link" style="margin-top:0.3rem;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Form -->
+                <div class="section-card">
+                    <h2><i class="fas fa-id-card"></i> Recruiter &amp; Company Details</h2>
+                    <div class="profile-hint">
+                        <i class="fas fa-magic"></i>
+                        Filling this once auto-fills <strong style="color:#e53935;margin:0 3px;">Company Name</strong>, <strong style="color:#e53935;margin:0 3px;">Location</strong> and <strong style="color:#e53935;margin:0 3px;">About the Company</strong> every time you post a new job.
+                    </div>
+                    <form id="profileForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Your Full Name *</label>
+                                <input type="text" id="profName" placeholder="e.g. Anjali Thakur" required oninput="updateProfilePreview()">
+                            </div>
+                            <div class="form-group">
+                                <label>Designation / Role</label>
+                                <input type="text" id="profDesignation" placeholder="e.g. HR Manager" oninput="updateProfilePreview()">
+                            </div>
+                            <div class="form-group">
+                                <label>Company Name *</label>
+                                <input type="text" id="profCompany" placeholder="e.g. TechCorp India" required oninput="updateProfilePreview()">
+                            </div>
+                            <div class="form-group">
+                                <label>Company Location</label>
+                                <input type="text" id="profLocation" placeholder="e.g. Bengaluru, India" oninput="updateProfilePreview()">
+                            </div>
+                            <div class="form-group">
+                                <label>Company Email</label>
+                                <input type="email" id="profEmail" placeholder="e.g. hr@techcorp.in">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone / WhatsApp</label>
+                                <input type="tel" id="profPhone" placeholder="e.g. +91 98765 43210">
+                            </div>
+                            <div class="form-group full">
+                                <label>Company Website</label>
+                                <input type="url" id="profWebsite" placeholder="e.g. https://techcorp.in" oninput="updateProfilePreview()">
+                            </div>
+                            <div class="form-group full">
+                                <label>Company Tagline</label>
+                                <input type="text" id="profTagline" placeholder="e.g. Building tomorrow's products today">
+                            </div>
+                            <div class="form-group full">
+                                <label>About the Company</label>
+                                <textarea id="profAbout" rows="4" placeholder="Brief description about your company — this auto-fills when you post a job..."></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save"></i> Save Profile
+                        </button>
+                    </form>
+                </div>
+            </div>
+
             <!-- View Applicants for Specific Job -->
             <div class="page-section" id="page-job-applicants">
                 <button class="btn btn-outline" id="backToMyJobs" style="margin-bottom:1rem;">
@@ -599,6 +727,7 @@
 
             loadOverview();
             loadMyJobs();
+            loadProfile();
         });
 
         // ===== NAVIGATION =====
@@ -609,6 +738,7 @@
                 document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
                 document.getElementById('page-' + item.dataset.page).classList.add('active');
                 document.querySelector('.main').scrollTo({ top: 0, behavior: 'smooth' });
+                if (item.dataset.page === 'post-job') fillPostJobFromProfile();
             });
         });
 
@@ -630,7 +760,140 @@
             setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        // ===== POST JOB =====
+        // ===== PROFILE =====
+        let recruiterProfile = null;
+
+        async function loadProfile() {
+            if (!currentUser) return;
+            try {
+                const doc = await db.collection('users').doc(currentUser.uid).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (data.companyName || data.fullName || data.logoDataURL) {
+                        recruiterProfile = data;
+                        applyProfileToUI(data);
+                    }
+                }
+            } catch(e) { console.warn('Load profile:', e); }
+        }
+
+        function applyProfileToUI(p) {
+            if (!p) return;
+            const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+            set('profName', p.fullName);
+            set('profDesignation', p.designation);
+            set('profCompany', p.companyName);
+            set('profLocation', p.location);
+            set('profEmail', p.companyEmail);
+            set('profPhone', p.phone);
+            set('profWebsite', p.website);
+            set('profTagline', p.tagline);
+            set('profAbout', p.about);
+            // Logo
+            if (p.logoDataURL) {
+                const img = document.getElementById('logoPreviewImg');
+                img.src = p.logoDataURL;
+                img.style.display = 'block';
+                document.getElementById('logoUploadPlaceholder').style.display = 'none';
+                document.getElementById('removeLogoBtn').style.display = 'flex';
+            }
+            // Update live topbar avatar with logo
+            const avatarEl = document.getElementById('userAvatar');
+            if (avatarEl && p.logoDataURL) {
+                avatarEl.style.background = 'none';
+                avatarEl.innerHTML = `<img src="${p.logoDataURL}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+            }
+            updateProfilePreview();
+        }
+
+        function updateProfilePreview() {
+            const name  = document.getElementById('profName')?.value || '—';
+            const co    = document.getElementById('profCompany')?.value || '—';
+            const desig = document.getElementById('profDesignation')?.value || '';
+            const loc   = document.getElementById('profLocation')?.value || '—';
+            const web   = document.getElementById('profWebsite')?.value || '';
+            const el = (id) => document.getElementById(id);
+            if (el('pvName'))    el('pvName').textContent   = name;
+            if (el('pvCompany')) el('pvCompany').textContent = co;
+            if (el('pvDesignation')) el('pvDesignation').textContent = desig;
+            if (el('pvLocation'))
+                el('pvLocation').innerHTML = `<i class="fas fa-map-marker-alt" style="margin-right:4px;opacity:0.6;"></i>${loc}`;
+            if (el('pvWebsite')) {
+                el('pvWebsite').innerHTML = web
+                    ? `<i class="fas fa-globe" style="margin-right:4px;opacity:0.6;"></i><a href="${web}" target="_blank" rel="noopener noreferrer" class="profile-website-link">${web}</a>`
+                    : '';
+            }
+        }
+
+        function fillPostJobFromProfile() {
+            if (!recruiterProfile) return;
+            const softSet = (id, val) => {
+                const el = document.getElementById(id);
+                if (el && !el.value.trim() && val) el.value = val;
+            };
+            softSet('jobCompany',     recruiterProfile.companyName);
+            softSet('jobLocation',    recruiterProfile.location);
+            softSet('jobCompanyDesc', recruiterProfile.about);
+        }
+
+        function removeLogo() {
+            const img = document.getElementById('logoPreviewImg');
+            img.src = '';
+            img.style.display = 'none';
+            document.getElementById('logoUploadPlaceholder').style.display = '';
+            document.getElementById('removeLogoBtn').style.display = 'none';
+            document.getElementById('logoFileInput').value = '';
+        }
+
+        document.getElementById('logoFileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) { showToast('Please select an image file.', 'error'); return; }
+            if (file.size > 2 * 1024 * 1024) { showToast('Logo too large. Max 2 MB.', 'error'); return; }
+            const reader = new FileReader();
+            reader.onload = () => {
+                const img = document.getElementById('logoPreviewImg');
+                img.src = reader.result;
+                img.style.display = 'block';
+                document.getElementById('logoUploadPlaceholder').style.display = 'none';
+                document.getElementById('removeLogoBtn').style.display = 'flex';
+            };
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+            const img = document.getElementById('logoPreviewImg');
+            const logoDataURL = (img.style.display !== 'none' && img.src && img.src !== window.location.href) ? img.src : null;
+            const profile = {
+                fullName:     document.getElementById('profName').value.trim(),
+                designation:  document.getElementById('profDesignation').value.trim(),
+                companyName:  document.getElementById('profCompany').value.trim(),
+                location:     document.getElementById('profLocation').value.trim(),
+                companyEmail: document.getElementById('profEmail').value.trim(),
+                phone:        document.getElementById('profPhone').value.trim(),
+                website:      document.getElementById('profWebsite').value.trim(),
+                tagline:      document.getElementById('profTagline').value.trim(),
+                about:        document.getElementById('profAbout').value.trim(),
+                logoDataURL:  logoDataURL,
+                profileUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            try {
+                await db.collection('users').doc(currentUser.uid).set(profile, { merge: true });
+                recruiterProfile = { ...recruiterProfile, ...profile };
+                applyProfileToUI(recruiterProfile);
+                showToast('Profile saved! It will auto-fill your next job post.');
+            } catch(err) {
+                console.error('Save profile error:', err);
+                showToast('Failed to save profile.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Profile';
+            }
+        });
         document.getElementById('postJobForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const title = document.getElementById('jobTitle').value.trim();
@@ -659,6 +922,7 @@
                     description,
                     recruiterId: currentUser.uid,
                     recruiterEmail: currentUser.email,
+                    logoUrl: recruiterProfile?.logoDataURL || null,
                     status: 'active',
                     applicationsCount: 0,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()

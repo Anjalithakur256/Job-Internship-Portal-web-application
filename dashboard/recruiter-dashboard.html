@@ -71,9 +71,12 @@
             background: rgba(255,255,255,0.04);
             border: 1px solid rgba(255,255,255,0.08);
             border-radius: 12px; padding: 1.2rem 1.5rem; transition: all 0.2s;
+            cursor: pointer; position: relative;
         }
         .stat-card:hover { border-color: rgba(245,158,11,0.3); }
-        .stat-card .label { font-size: 0.8rem; color: #888; margin-bottom: 0.5rem; }
+        .stat-card .label { font-size: 0.8rem; color: #888; margin-bottom: 0.5rem; display:flex; align-items:center; justify-content:space-between; }
+        .stat-card .label .nav-arrow { opacity: 0; transition: opacity 0.2s, transform 0.2s; font-size: 0.75rem; color: #e53935; transform: translateX(-4px); }
+        .stat-card:hover .label .nav-arrow { opacity: 1; transform: translateX(0); }
         .stat-card .value { font-size: 1.8rem; font-weight: 700; color: #e53935; }
 
         /* Section Card */
@@ -447,28 +450,31 @@
                     <p>Manage your job postings and applicants</p>
                 </div>
                 <div class="stats-row">
-                    <div class="stat-card">
-                        <div class="label">Jobs Posted</div>
-                        <div class="value" id="statJobs">0</div>
+                    <div class="stat-card" onclick="navigateTo('my-jobs')" title="View my posted jobs">
+                        <div class="label">Jobs Posted <span class="nav-arrow"><i class="fas fa-arrow-right"></i></span></div>
+                        <div class="value" id="statJobs">—</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="label">Total Applications</div>
-                        <div class="value" id="statApps">0</div>
+                    <div class="stat-card" onclick="navigateTo('applicants')" title="View all applications">
+                        <div class="label">Total Applications <span class="nav-arrow"><i class="fas fa-arrow-right"></i></span></div>
+                        <div class="value" id="statApps">—</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="label">Pending Review</div>
-                        <div class="value" id="statPending">0</div>
+                    <div class="stat-card" onclick="navigateTo('applicants')" title="Review pending applications">
+                        <div class="label">Pending Review <span class="nav-arrow"><i class="fas fa-arrow-right"></i></span></div>
+                        <div class="value" id="statPending">—</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="label">Accepted</div>
-                        <div class="value" id="statAccepted">0</div>
+                    <div class="stat-card" onclick="navigateTo('applicants')" title="View accepted applicants">
+                        <div class="label">Accepted <span class="nav-arrow"><i class="fas fa-arrow-right"></i></span></div>
+                        <div class="value" id="statAccepted">—</div>
                     </div>
                 </div>
 
                 <div class="section-card">
-                    <h2><i class="fas fa-clock"></i> Recent Applications</h2>
+                    <h2 style="display:flex;align-items:center;justify-content:space-between;">
+                        <span><i class="fas fa-clock"></i> Recent Applications</span>
+                        <a href="#" onclick="navigateTo('applicants');return false;" style="font-size:0.8rem;color:#e53935;font-weight:500;text-decoration:none;opacity:0.85;">View All <i class="fas fa-arrow-right" style="font-size:0.7rem;"></i></a>
+                    </h2>
                     <div id="recentApplicants">
-                        <div class="empty-state"><i class="fas fa-inbox"></i><p>No applications yet.</p></div>
+                        <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
                     </div>
                 </div>
             </div>
@@ -752,6 +758,20 @@
             auth.signOut().then(() => { window.location.href = '../login.html'; });
         });
 
+        // ===== NAVIGATE =====
+        function navigateTo(page) {
+            document.querySelectorAll('.nav-item').forEach(n => {
+                n.classList.toggle('active', n.dataset.page === page);
+            });
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById('page-' + page);
+            if (target) {
+                target.classList.add('active');
+                document.querySelector('.main').scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            if (page === 'post-job') fillPostJobFromProfile();
+        }
+
         // ===== TOAST =====
         function showToast(msg, type = 'success') {
             const t = document.getElementById('toast');
@@ -990,17 +1010,20 @@
                     return;
                 }
                 container.innerHTML = recent.map(app => `
-                    <div class="applicant-card">
+                    <div class="applicant-card" style="cursor:pointer;" onclick="navigateTo('applicants')" title="Go to Applicants tab to review">
                         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;flex:1;">
                             <div class="applicant-info">
                                 <div class="applicant-avatar">${(app.studentName || 'S')[0].toUpperCase()}</div>
                                 <div class="applicant-details">
-                                    <h4>${app.studentName || 'Unknown'}</h4>
-                                    <p>${app.studentEmail || ''} &bull; Applied ${app.createdAt ? timeAgo(app.createdAt.toDate()) : 'recently'}</p>
-                                    ${app.resumeFileName ? `<p style="color:#10b981;font-size:0.8rem;margin-top:0.3rem;"><i class="fas fa-file"></i> ${app.resumeFileName}</p>` : ''}
+                                    <h4>${esc(app.studentName || 'Unknown')}</h4>
+                                    <p>${esc(app.jobTitle || '')}${app.jobTitle ? ' &bull; ' : ''}${esc(app.studentEmail || '')} &bull; Applied ${app.createdAt ? timeAgo(app.createdAt.toDate()) : 'recently'}</p>
+                                    ${app.resumeFileName ? `<p style="color:#10b981;font-size:0.8rem;margin-top:0.3rem;"><i class="fas fa-file"></i> ${esc(app.resumeFileName)}</p>` : ''}
                                 </div>
                             </div>
-                            <span class="badge badge-${app.status}">${app.status === 'pending' ? 'Pending' : app.status === 'accepted' ? 'Accepted' : 'Rejected'}</span>
+                            <div style="display:flex;align-items:center;gap:0.75rem;">
+                                <span class="badge badge-${app.status}">${app.status === 'pending' ? 'Pending' : app.status === 'accepted' ? 'Accepted' : 'Rejected'}</span>
+                                <span style="color:#e53935;font-size:0.78rem;opacity:0.8;white-space:nowrap;">Review <i class="fas fa-arrow-right" style="font-size:0.65rem;"></i></span>
+                            </div>
                         </div>
                     </div>
                 `).join('');

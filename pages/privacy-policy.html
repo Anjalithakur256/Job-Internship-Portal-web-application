@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#e53935">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="JobNexus">
+    <link rel="apple-touch-icon" href="/Public/icons/icon-192.svg">
     <title>Privacy Policy — JobNexus</title>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/animations.css">
@@ -242,5 +248,6 @@ document.addEventListener('scroll',()=>{const b=document.getElementById('scroll-
 window.addEventListener('scroll',()=>{const n=document.querySelector('.navbar');if(n)n.classList.toggle('scrolled',window.scrollY>50);});
 (function(){const t=document.getElementById('menuToggle'),m=document.getElementById('navMenu'),b=document.getElementById('navBackdrop');if(!t||!m)return;function o(){m.classList.add('open');t.classList.add('active');if(b)b.classList.add('show');document.body.style.overflow='hidden';}function c(){m.classList.remove('open');t.classList.remove('active');if(b)b.classList.remove('show');document.body.style.overflow='';}t.addEventListener('click',()=>m.classList.contains('open')?c():o());if(b)b.addEventListener('click',c);m.querySelectorAll('a').forEach(l=>l.addEventListener('click',c));})();
 </script>
+<script src="/js/pwa.js"></script>
 </body>
 </html>

@@ -58,7 +58,7 @@
         .nav-item i { width: 20px; text-align: center; font-size: 0.95rem; }
 
         /* Main */
-        .main { margin-left: 240px; padding: 2rem; flex: 1; }
+        .main { margin-left: 240px; padding: 2rem; flex: 1; height: calc(100vh - 60px); overflow-y: auto; }
 
         /* Page Header */
         .page-header { margin-bottom: 2rem; }
@@ -237,7 +237,7 @@
                 transition: all 0.25s !important;
             }
             /* ── Layout ── */
-            .main { margin-left: 0 !important; padding: 1rem !important; }
+            .main { margin-left: 0 !important; padding: 1rem !important; height: calc(100vh - 60px) !important; overflow-y: auto !important; }
             .layout { margin-top: 60px !important; }
             .topbar { padding: 0 0.75rem !important; }
             .form-grid { grid-template-columns: 1fr !important; }
@@ -608,6 +608,7 @@
                 item.classList.add('active');
                 document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
                 document.getElementById('page-' + item.dataset.page).classList.add('active');
+                document.querySelector('.main').scrollTo({ top: 0, behavior: 'smooth' });
             });
         });
 

@@ -90,7 +90,7 @@
         .nav-item:hover { color: #fff; background: rgba(229,57,53,0.08); }
         .nav-item.active { color: #e53935; background: rgba(229,57,53,0.12); border-left-color: #e53935; }
         .nav-item i { width: 20px; text-align: center; font-size: 0.95rem; }
-        .main { margin-left: 240px; padding: 2rem; flex: 1; }
+        .main { margin-left: 240px; padding: 2rem; flex: 1; height: calc(100vh - 60px); overflow-y: auto; }
         .page-header { margin-bottom: 2rem; }
         .page-header h1 { font-size: 1.6rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
         .page-header p { color: #777; font-size: 0.9rem; }
@@ -262,7 +262,7 @@
                 transition: all 0.25s !important;
             }
             /* ── Layout ── */
-            .main { margin-left: 0 !important; padding: 1rem !important; }
+            .main { margin-left: 0 !important; padding: 1rem !important; height: calc(100vh - 60px) !important; overflow-y: auto !important; }
             .layout { margin-top: 60px !important; }
             .topbar { padding: 0 0.75rem !important; }
             .notif-dropdown { right: 10px !important; width: calc(100vw - 20px) !important; }
@@ -591,6 +591,7 @@
                 document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
                 document.getElementById('page-' + item.dataset.page).classList.add('active');
                 lastNavPage = item.dataset.page;
+                document.querySelector('.main').scrollTo({ top: 0, behavior: 'smooth' });
             });
         });
         document.getElementById('backToJobs').addEventListener('click', () => {

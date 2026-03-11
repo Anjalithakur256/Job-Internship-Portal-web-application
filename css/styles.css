@@ -73,6 +73,12 @@ body {
     position: relative;
 }
 
+/* Ensure all native dropdown lists use dark colours across every browser */
+select, select option, select optgroup {
+    background-color: #1a1a2e;
+    color: #ffffff;
+}
+
 body::before {
     content: '';
     position: fixed;

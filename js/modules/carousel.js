@@ -318,7 +318,7 @@ class JobCarouselWithFilters {
                 padding: 0.5rem 1rem;
                 border-radius: 6px;
                 border: 1px solid rgba(255, 255, 255, 0.2);
-                background: rgba(255, 255, 255, 0.05);
+                background: #1a1a2e;
                 color: white;
                 font-size: 1rem;
             ">
@@ -327,12 +327,13 @@ class JobCarouselWithFilters {
                     padding: 0.5rem 1rem;
                     border-radius: 6px;
                     border: 1px solid rgba(255, 255, 255, 0.2);
-                    background: rgba(255, 255, 255, 0.05);
+                    background: #1a1a2e;
                     color: white;
                     cursor: pointer;
+                    color-scheme: dark;
                 ">
-                    <option>${f.label}</option>
-                    ${f.options.map(opt => `<option>${opt}</option>`).join('')}
+                    <option style="background:#1a1a2e;color:#fff;">${f.label}</option>
+                    ${f.options.map(opt => `<option style="background:#1a1a2e;color:#fff;">${opt}</option>`).join('')}
                 </select>
             `).join('')}
         `;

@@ -360,6 +360,9 @@ class BrowseJobs {
         // Apply save state
         this.updateSaveButtons();
 
+        // Lazy-load recruiter profile photos for cards that have none
+        this.lazyLoadRecruiterPhotos(grid);
+
         // Animate cards in
         if (typeof gsap !== 'undefined') {
             gsap.from('.browse-job-card', {
@@ -371,6 +374,42 @@ class BrowseJobs {
                 clearProps: 'all',
             });
         }
+    }
+
+    // ── LAZY-LOAD recruiter profile photos ──────
+    // For job cards that have no logoUrl stored in the job document,
+    // batch-fetch the recruiter's user profile (logoDataURL or photoURL)
+    // and inject the image into the card.
+    async lazyLoadRecruiterPhotos(container) {
+        if (typeof firebase === 'undefined' || !firebase.firestore) return;
+        const wraps = Array.from((container || document).querySelectorAll('.company-logo-wrap[data-recruiter-id]'));
+        if (!wraps.length) return;
+
+        // Build a unique set of recruiter UIDs
+        const uniqueIds = [...new Set(wraps.map(w => w.dataset.recruiterId).filter(Boolean))];
+
+        const db = firebase.firestore();
+        // Fetch each recruiter's user doc (max 10 parallel)
+        const profiles = {};
+        await Promise.all(uniqueIds.map(async uid => {
+            try {
+                const snap = await db.collection('users').doc(uid).get();
+                if (snap.exists) {
+                    const d = snap.data();
+                    profiles[uid] = d.logoDataURL || d.photoURL || null;
+                }
+            } catch (_) { /* ignore permission errors */ }
+        }));
+
+        // Inject images into the DOM
+        wraps.forEach(wrap => {
+            const uid = wrap.dataset.recruiterId;
+            const src = profiles[uid];
+            if (!src) return;
+            wrap.removeAttribute('data-recruiter-id');
+            // Replace the text-initial with an <img>
+            wrap.innerHTML = `<img src="${src}" alt="Company" onerror="this.remove()">`;
+        });
     }
 
     buildJobCard(job) {
@@ -388,13 +427,14 @@ class BrowseJobs {
         const postedAgo = this.timeAgo(job.postedAt);
         const type = job.type || job.jobType || 'Full-time';
         const logoChar = (job.company || 'C')[0].toUpperCase();
+        const logoSrc = job.logoUrl || job.recruiterPhotoURL || null;
 
         return `
         <div class="browse-job-card">
             <div class="card-top">
-                <div class="company-logo-wrap">
-                    ${job.logoUrl
-                        ? `<img src="${job.logoUrl}" alt="${this.esc(job.company)}" onerror="this.outerHTML='${logoChar}'">`
+                <div class="company-logo-wrap"${!logoSrc && job.recruiterId ? ` data-recruiter-id="${job.recruiterId}"` : ''}>
+                    ${logoSrc
+                        ? `<img src="${logoSrc}" alt="${this.esc(job.company)}" onerror="this.remove()">`
                         : logoChar}
                 </div>
                 <button class="save-btn" data-job-id="${job.id}" title="${isSaved ? 'Unsave' : 'Save job'}">
@@ -564,12 +604,14 @@ function initFeaturedJobs() {
             : []).slice(0, 3);
         const initials = encodeURIComponent((job.company || 'C').substring(0, 2).toUpperCase());
         const color = colors[idx % colors.length];
-        const logoSrc = job.logoUrl || `https://ui-avatars.com/api/?name=${initials}&background=${color}&color=fff&bold=true&rounded=true&size=50`;
+        const logoSrc = job.logoUrl || job.recruiterPhotoURL
+            || `https://ui-avatars.com/api/?name=${initials}&background=${color}&color=fff&bold=true&rounded=true&size=50`;
         const desc = (job.description || '').substring(0, 100);
+        const needsPhoto = !job.logoUrl && !job.recruiterPhotoURL && job.recruiterId;
         return `
         <div class="job-card" data-aos="fade-up" data-aos-delay="${idx * 80}">
             <div class="job-card-header">
-                <img src="${logoSrc}" alt="${esc(job.company)}" class="company-logo"
+                <img src="${logoSrc}" alt="${esc(job.company)}" class="company-logo"${needsPhoto ? ` data-recruiter-id="${job.recruiterId}"` : ''}
                      onerror="this.src='https://ui-avatars.com/api/?name=${initials}&background=667eea&color=fff&bold=true&rounded=true&size=50'">
                 <div class="save-job-btn"><i class="far fa-bookmark"></i></div>
             </div>
@@ -616,6 +658,23 @@ function initFeaturedJobs() {
             return;
         }
         if (typeof AOS !== 'undefined') AOS.refresh();
+        // Lazy-load recruiter photos for featured cards missing a logo
+        if (typeof firebase !== 'undefined' && firebase.firestore) {
+            const imgs = carousel.querySelectorAll('img.company-logo[data-recruiter-id]');
+            if (imgs.length) {
+                const uids = [...new Set(Array.from(imgs).map(i => i.dataset.recruiterId).filter(Boolean))];
+                const db2 = firebase.firestore();
+                Promise.all(uids.map(uid => db2.collection('users').doc(uid).get().catch(() => null)))
+                    .then(snaps => {
+                        const map = {};
+                        snaps.forEach(s => { if (s && s.exists) { const d = s.data(); map[s.id] = d.logoDataURL || d.photoURL || null; } });
+                        imgs.forEach(img => {
+                            const src = map[img.dataset.recruiterId];
+                            if (src) { img.src = src; img.removeAttribute('data-recruiter-id'); }
+                        });
+                    }).catch(() => {});
+            }
+        }
         carousel.querySelectorAll('.apply-btn[data-job-id]').forEach(btn => {
             btn.addEventListener('click', function() {
                 const jobId = this.dataset.jobId;

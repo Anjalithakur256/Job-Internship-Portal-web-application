@@ -906,6 +906,15 @@
             try {
                 await db.collection('users').doc(currentUser.uid).set(profile, { merge: true });
                 recruiterProfile = { ...recruiterProfile, ...profile };
+                // Propagate updated logo to all of this recruiter's existing job listings
+                if (logoDataURL) {
+                    try {
+                        const jobsSnap = await db.collection('jobs').where('recruiterId', '==', currentUser.uid).get();
+                        const batch = db.batch();
+                        jobsSnap.forEach(d => batch.update(d.ref, { logoUrl: logoDataURL }));
+                        await batch.commit();
+                    } catch (_) { /* non-critical */ }
+                }
                 applyProfileToUI(recruiterProfile);
                 showToast('Profile saved! It will auto-fill your next job post.');
             } catch(err) {
@@ -949,6 +958,7 @@
                     companyTagline: recruiterProfile?.tagline || null,
                     companyWebsite: recruiterProfile?.website || null,
                     logoUrl: recruiterProfile?.logoDataURL || null,
+                    recruiterPhotoURL: currentUser.photoURL || null,
                     status: 'active',
                     applicationsCount: 0,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()

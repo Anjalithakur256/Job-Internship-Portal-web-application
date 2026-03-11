@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-mode">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Talent — JobNexus for Recruiters</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/dark-mode.css">
+    <link rel="stylesheet" href="../css/advanced-features.css">
+    <link rel="stylesheet" href="../css/premium-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/light-theme.css">
+    <link rel="stylesheet" href="../css/page-animations.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23e53935'/><text x='50' y='60' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>J</text></svg>">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+        #scroll-progress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,#e53935,#ff6b6b,#e53935);background-size:200% 100%;animation:barShine 2s linear infinite;z-index:10000;transition:width 0.1s linear;}
+        @keyframes barShine{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+        .loading-overlay{position:fixed;inset:0;background:#0d1117;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:9999;gap:20px;}
+        .spinner{width:40px;height:40px;border:3px solid rgba(229,57,53,0.15);border-top:3px solid #e53935;border-radius:50%;animation:spin 1s linear infinite;}
+        @keyframes spin{100%{transform:rotate(360deg)}}
+        .loading-text{font-size:14px;color:rgba(255,255,255,0.6);}
+        :root{--red:#e53935;--red-dark:#c62828;--bg:#0d1117;--bg-card:#161b22;--bg-card2:#1c2128;--border:rgba(48,54,61,0.9);--text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;}
+        body{background:var(--bg);color:var(--text);font-family:'Inter','Segoe UI',sans-serif;line-height:1.6;overflow-x:hidden;}
+        .container{max-width:1140px;margin:0 auto;padding:0 1.5rem;}
+
+        /* HERO */
+        .page-hero{min-height:56vh;display:flex;align-items:center;padding:7rem 0 3.5rem;position:relative;overflow:hidden;text-align:center;}
+        .page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 50% at 50% 40%,rgba(229,57,53,0.12) 0%,transparent 65%),radial-gradient(ellipse 35% 35% at 80% 75%,rgba(198,40,40,0.07) 0%,transparent 55%);pointer-events:none;}
+        .page-hero .container{position:relative;z-index:1;}
+        .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(229,57,53,0.08);border:1px solid rgba(229,57,53,0.22);border-radius:50px;padding:6px 18px;font-size:0.78rem;font-weight:600;color:var(--red);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:1.4rem;}
+        .page-hero h1{font-size:clamp(2.2rem,5vw,3.5rem);font-weight:800;line-height:1.15;letter-spacing:-0.02em;margin-bottom:1.1rem;}
+        .page-hero h1 .highlight{background:linear-gradient(135deg,#e53935 0%,#ff6b6b 50%,#e53935 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:gradShift 4s ease infinite;}
+        @keyframes gradShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+        .page-hero p{font-size:clamp(0.97rem,2vw,1.1rem);color:var(--text-muted);max-width:580px;margin:0 auto 2rem;line-height:1.8;}
+        .hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+        .btn-red{display:inline-flex;align-items:center;gap:8px;padding:0.85rem 2rem;background:linear-gradient(135deg,var(--red-dark),var(--red));color:#fff;font-weight:700;font-size:0.95rem;border-radius:12px;text-decoration:none;transition:opacity 0.2s,transform 0.2s;}
+        .btn-red:hover{opacity:0.88;transform:translateY(-2px);}
+        .btn-outline{display:inline-flex;align-items:center;gap:8px;padding:0.85rem 2rem;border:1.5px solid rgba(229,57,53,0.4);color:var(--text);font-weight:600;font-size:0.95rem;border-radius:12px;text-decoration:none;transition:border-color 0.2s,background 0.2s,transform 0.2s;}
+        .btn-outline:hover{border-color:var(--red);background:rgba(229,57,53,0.07);transform:translateY(-2px);}
+
+        /* STATS */
+        .stats-strip{background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:2.5rem 0;}
+        .stats-row{display:flex;justify-content:center;gap:4rem;flex-wrap:wrap;}
+        .stat-item{text-align:center;}
+        .stat-num{font-size:2rem;font-weight:800;color:var(--red);display:block;}
+        .stat-lbl{font-size:0.82rem;color:var(--text-muted);}
+
+        /* SECTIONS */
+        .section{padding:5rem 0;}
+        .section.alt{background:#111820;}
+        .section-label{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--red);margin-bottom:0.5rem;display:block;}
+        .section-title{font-size:clamp(1.75rem,3.5vw,2.4rem);font-weight:800;line-height:1.2;color:var(--text);letter-spacing:-0.02em;margin-bottom:0.5rem;}
+        .section-title .accent{background:linear-gradient(135deg,#e53935,#ff6b6b);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+
+        /* FEATURES */
+        .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:2.5rem;}
+        .feat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:18px;padding:1.8rem;transition:border-color 0.25s,transform 0.25s,box-shadow 0.25s;position:relative;overflow:hidden;}
+        .feat-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,#e53935,#ff6b6b,#e53935);background-size:200% 100%;}
+        .feat-card:hover{border-color:rgba(229,57,53,0.3);transform:translateY(-4px);box-shadow:0 12px 36px rgba(229,57,53,0.09);}
+        .feat-icon{width:48px;height:48px;border-radius:13px;background:rgba(229,57,53,0.09);border:1px solid rgba(229,57,53,0.18);display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--red);margin-bottom:1rem;}
+        .feat-card h3{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;}
+        .feat-card p{font-size:0.86rem;color:var(--text-muted);line-height:1.75;}
+
+        /* STEPS */
+        .steps-wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:2.5rem;}
+        .step{text-align:center;}
+        .step-num{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--red-dark),var(--red));color:#fff;font-size:1.1rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;}
+        .step h4{font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;}
+        .step p{font-size:0.83rem;color:var(--text-muted);line-height:1.7;}
+
+        /* CTA BAND */
+        .cta-band{padding:5rem 0;text-align:center;background:linear-gradient(135deg,rgba(229,57,53,0.09),rgba(198,40,40,0.04));border-top:1px solid rgba(229,57,53,0.14);border-bottom:1px solid rgba(229,57,53,0.14);}
+        .cta-band h2{font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;margin-bottom:0.7rem;}
+        .cta-band p{color:var(--text-muted);max-width:480px;margin:0 auto 2rem;font-size:0.97rem;}
+
+        @media(max-width:960px){.feat-grid{grid-template-columns:1fr 1fr;}.steps-wrap{grid-template-columns:1fr 1fr;}}
+        @media(max-width:600px){.feat-grid{grid-template-columns:1fr;}.steps-wrap{grid-template-columns:1fr 1fr;gap:1rem;}.stats-row{gap:2rem;}.hero-btns{flex-direction:column;align-items:center;}}
+    </style>
+</head>
+<body>
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><span class="loading-text">Loading…</span></div>
+<div id="scroll-progress"></div>
+<div class="animated-background"><div class="floating-shape shape-1"></div><div class="floating-shape shape-2"></div><div class="floating-shape shape-3"></div><div class="gradient-overlay"></div></div>
+
+<!-- NAVBAR -->
+<div class="nav-backdrop" id="navBackdrop"></div>
+<nav class="navbar"><div class="container nav-container">
+    <a href="../index.html" class="logo" style="text-decoration:none;"><i class="fas fa-briefcase"></i><span>JobNexus</span></a>
+    <div class="nav-menu" id="navMenu">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="browse-jobs.html" class="nav-link">Browse Jobs</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+        <a href="../login.html" class="auth-btn nav-mobile-login">Login</a>
+    </div>
+    <div class="nav-actions"><a href="../login.html" class="auth-btn nav-desktop-login">Login</a><button class="menu-toggle" id="menuToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button></div>
+</div></nav>
+
+<!-- HERO -->
+<section class="page-hero">
+    <div class="container">
+        <div class="hero-badge" data-aos="fade-down"><i class="fas fa-users"></i> For Recruiters</div>
+        <h1 data-aos="fade-up" data-aos-delay="80">Find the <span class="highlight">Right Talent</span>, Fast</h1>
+        <p data-aos="fade-up" data-aos-delay="160">Connect with thousands of verified students and fresh graduates. Post a job in minutes and start receiving applications from top candidates today.</p>
+        <div class="hero-btns" data-aos="fade-up" data-aos-delay="240">
+            <a href="../login.html" class="btn-red"><i class="fas fa-plus"></i> Post a Job Free</a>
+            <a href="contact.html" class="btn-outline"><i class="fas fa-envelope"></i> Contact Us</a>
+        </div>
+    </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip">
+    <div class="container"><div class="stats-row">
+        <div class="stat-item"><span class="stat-num">5K+</span><span class="stat-lbl">Registered Students</span></div>
+        <div class="stat-item"><span class="stat-num">48h</span><span class="stat-lbl">Avg. First Application</span></div>
+        <div class="stat-item"><span class="stat-num">Free</span><span class="stat-lbl">Always Free to Post</span></div>
+        <div class="stat-item"><span class="stat-num">100%</span><span class="stat-lbl">Verified Profiles</span></div>
+    </div></div>
+</div>
+
+<!-- FEATURES -->
+<section class="section">
+    <div class="container">
+        <div style="text-align:center;" data-aos="fade-up"><span class="section-label">Why JobNexus</span><h2 class="section-title">Everything You Need to <span class="accent">Hire Smarter</span></h2></div>
+        <div class="feat-grid">
+            <div class="feat-card" data-aos="fade-up" data-aos-delay="60"><div class="feat-icon"><i class="fas fa-bolt"></i></div><h3>Instant Job Posting</h3><p>Create and publish a job listing in under 5 minutes. No lengthy approval process — your post goes live immediately.</p></div>
+            <div class="feat-card" data-aos="fade-up" data-aos-delay="100"><div class="feat-icon"><i class="fas fa-filter"></i></div><h3>Smart Applicant Filtering</h3><p>Filter candidates by skills, experience, location and education. Our dashboard makes it easy to shortlist the best matches.</p></div>
+            <div class="feat-card" data-aos="fade-up" data-aos-delay="140"><div class="feat-icon"><i class="fas fa-bell"></i></div><h3>Real-time Notifications</h3><p>Get instant alerts when new applications arrive. Accept or reject candidates directly from your dashboard with one click.</p></div>
+            <div class="feat-card" data-aos="fade-up" data-aos-delay="60"><div class="feat-icon"><i class="fas fa-file-pdf"></i></div><h3>Resume & PDF Preview</h3><p>Review candidate resumes directly within the platform. No downloading required — preview PDFs inline instantly.</p></div>
+            <div class="feat-card" data-aos="fade-up" data-aos-delay="100"><div class="feat-icon"><i class="fas fa-chart-line"></i></div><h3>Application Analytics</h3><p>Track how many views and applications each listing receives. Understand which roles attract the most talent.</p></div>
+            <div class="feat-card" data-aos="fade-up" data-aos-delay="140"><div class="feat-icon"><i class="fas fa-lock"></i></div><h3>Secure & Private</h3><p>All candidate data is protected by Firebase Security Rules. Role-based access ensures you only see your own listings.</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section alt">
+    <div class="container">
+        <div style="text-align:center;" data-aos="fade-up"><span class="section-label">Getting Started</span><h2 class="section-title">Hire in <span class="accent">4 Simple Steps</span></h2></div>
+        <div class="steps-wrap">
+            <div class="step" data-aos="fade-up" data-aos-delay="60"><div class="step-num">1</div><h4>Create Account</h4><p>Sign up as a recruiter for free. Verify your email and access your dashboard instantly.</p></div>
+            <div class="step" data-aos="fade-up" data-aos-delay="120"><div class="step-num">2</div><h4>Post a Job</h4><p>Fill in the role details, required skills, salary range and deadline. Publish in minutes.</p></div>
+            <div class="step" data-aos="fade-up" data-aos-delay="180"><div class="step-num">3</div><h4>Review Applications</h4><p>Browse applicants, preview resumes, and shortlist candidates from your dashboard.</p></div>
+            <div class="step" data-aos="fade-up" data-aos-delay="240"><div class="step-num">4</div><h4>Select & Notify</h4><p>Accept or reject candidates — they receive instant notifications. Close the role when filled.</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA BAND -->
+<div class="cta-band">
+    <div class="container">
+        <h2 data-aos="fade-up">Start Hiring <span style="color:var(--red);">Today — It's Free</span></h2>
+        <p data-aos="fade-up" data-aos-delay="80">Join recruiters already using JobNexus to discover talented students. No credit card required.</p>
+        <div data-aos="fade-up" data-aos-delay="160">
+            <a href="../login.html" class="btn-red"><i class="fas fa-user-tie"></i> Create Recruiter Account</a>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer"><div class="container">
+    <div class="footer-grid">
+        <div class="footer-section"><h3>JobNexus</h3><p>Your gateway to career success</p><div class="social-links"><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a><a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a></div></div>
+        <div class="footer-section"><h4>For Students</h4><ul><li><a href="browse-jobs.html">Browse Jobs</a></li><li><a href="internships.html">Internships</a></li><li><a href="../login.html">Create Profile</a></li><li><a href="career-tips.html">Career Tips</a></li></ul></div>
+        <div class="footer-section"><h4>For Recruiters</h4><ul><li><a href="../login.html">Post a Job</a></li><li><a href="find-talent.html">Find Talent</a></li><li><a href="resources.html">Resources</a></li></ul></div>
+        <div class="footer-section"><h4>Company</h4><ul><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li><li><a href="privacy-policy.html">Privacy Policy</a></li><li><a href="terms-of-service.html">Terms of Service</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2026 JobNexus. All rights reserved. | Crafted with <i class="fas fa-heart" style="color:#e53935;"></i> by <strong>Team JobNexus</strong> &ndash; Centurion University</p></div>
+</div></footer>
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+window.addEventListener('load',()=>{const lo=document.getElementById('loadingOverlay');if(lo){lo.style.opacity='0';lo.style.transition='opacity 0.4s';setTimeout(()=>lo.remove(),450);}});
+document.addEventListener('DOMContentLoaded',()=>{if(typeof AOS!=='undefined')AOS.init({duration:700,offset:80,easing:'ease-out-cubic',once:true});});
+document.addEventListener('scroll',()=>{const b=document.getElementById('scroll-progress');if(b)b.style.width=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)*100)+'%';});
+window.addEventListener('scroll',()=>{const n=document.querySelector('.navbar');if(n)n.classList.toggle('scrolled',window.scrollY>50);});
+(function(){const t=document.getElementById('menuToggle'),m=document.getElementById('navMenu'),b=document.getElementById('navBackdrop');if(!t||!m)return;function o(){m.classList.add('open');t.classList.add('active');if(b)b.classList.add('show');document.body.style.overflow='hidden';}function c(){m.classList.remove('open');t.classList.remove('active');if(b)b.classList.remove('show');document.body.style.overflow='';}t.addEventListener('click',()=>m.classList.contains('open')?c():o());if(b)b.addEventListener('click',c);m.querySelectorAll('a').forEach(l=>l.addEventListener('click',c));})();
+</script>
+</body>
+</html>

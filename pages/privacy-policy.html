@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-mode">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy — JobNexus</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/dark-mode.css">
+    <link rel="stylesheet" href="../css/advanced-features.css">
+    <link rel="stylesheet" href="../css/premium-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/light-theme.css">
+    <link rel="stylesheet" href="../css/page-animations.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23e53935'/><text x='50' y='60' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>J</text></svg>">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+        #scroll-progress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,#e53935,#ff6b6b,#e53935);background-size:200% 100%;animation:barShine 2s linear infinite;z-index:10000;transition:width 0.1s linear;}
+        @keyframes barShine{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+        .loading-overlay{position:fixed;inset:0;background:#0d1117;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:9999;gap:20px;}
+        .spinner{width:40px;height:40px;border:3px solid rgba(229,57,53,0.15);border-top:3px solid #e53935;border-radius:50%;animation:spin 1s linear infinite;}
+        @keyframes spin{100%{transform:rotate(360deg)}}
+        .loading-text{font-size:14px;color:rgba(255,255,255,0.6);}
+        :root{--red:#e53935;--red-dark:#c62828;--bg:#0d1117;--bg-card:#161b22;--bg-card2:#1c2128;--border:rgba(48,54,61,0.9);--text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;}
+        body{background:var(--bg);color:var(--text);font-family:'Inter','Segoe UI',sans-serif;line-height:1.6;overflow-x:hidden;}
+        .container{max-width:1140px;margin:0 auto;padding:0 1.5rem;}
+
+        /* HERO */
+        .page-hero{min-height:45vh;display:flex;align-items:center;padding:7rem 0 3rem;position:relative;overflow:hidden;text-align:center;}
+        .page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 50% at 50% 40%,rgba(229,57,53,0.1) 0%,transparent 65%);pointer-events:none;}
+        .page-hero .container{position:relative;z-index:1;}
+        .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(229,57,53,0.08);border:1px solid rgba(229,57,53,0.22);border-radius:50px;padding:6px 18px;font-size:0.78rem;font-weight:600;color:var(--red);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:1.4rem;}
+        .page-hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;letter-spacing:-0.02em;margin-bottom:0.8rem;}
+        .page-hero h1 .highlight{background:linear-gradient(135deg,#e53935 0%,#ff6b6b 50%,#e53935 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:gradShift 4s ease infinite;}
+        @keyframes gradShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+        .effective-date{font-size:0.85rem;color:var(--text-dim);margin-top:0.5rem;}
+
+        /* LEGAL CONTENT */
+        .legal-layout{display:grid;grid-template-columns:270px 1fr;gap:2.5rem;align-items:start;padding:4rem 0 6rem;}
+        .toc{position:sticky;top:90px;background:var(--bg-card);border:1px solid var(--border);border-radius:18px;padding:1.5rem;}
+        .toc h4{font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--red);margin-bottom:1rem;}
+        .toc a{display:block;padding:0.42rem 0;font-size:0.84rem;color:var(--text-muted);text-decoration:none;border-left:2px solid transparent;padding-left:0.8rem;transition:color 0.2s,border-color 0.2s;}
+        .toc a:hover{color:var(--text);border-left-color:var(--red);}
+        .legal-content section{margin-bottom:3rem;}
+        .legal-content section:last-child{margin-bottom:0;}
+        .legal-content h2{font-size:1.3rem;font-weight:700;color:var(--text);margin-bottom:1rem;display:flex;align-items:center;gap:10px;}
+        .legal-content h2 i{color:var(--red);font-size:1rem;}
+        .legal-content p{font-size:0.9rem;color:var(--text-muted);line-height:1.85;margin-bottom:0.9rem;}
+        .legal-content ul{list-style:none;padding:0;margin-bottom:0.9rem;}
+        .legal-content ul li{font-size:0.89rem;color:var(--text-muted);padding:0.35rem 0 0.35rem 1.5rem;position:relative;line-height:1.7;}
+        .legal-content ul li::before{content:'';position:absolute;left:0;top:0.75rem;width:6px;height:6px;border-radius:50%;background:var(--red);}
+        .legal-content a{color:var(--red);text-decoration:none;}
+        .legal-content a:hover{text-decoration:underline;}
+        .info-box{background:rgba(229,57,53,0.06);border:1px solid rgba(229,57,53,0.2);border-radius:12px;padding:1.2rem 1.4rem;margin-bottom:1rem;}
+        .info-box p{color:var(--text-muted);font-size:0.87rem;margin:0;}
+        .divider{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
+
+        @media(max-width:880px){.legal-layout{grid-template-columns:1fr;}.toc{position:static;}}
+        @media(max-width:600px){.page-hero h1{font-size:1.9rem;}}
+    </style>
+</head>
+<body>
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><span class="loading-text">Loading…</span></div>
+<div id="scroll-progress"></div>
+<div class="animated-background"><div class="floating-shape shape-1"></div><div class="floating-shape shape-2"></div><div class="floating-shape shape-3"></div><div class="gradient-overlay"></div></div>
+
+<!-- NAVBAR -->
+<div class="nav-backdrop" id="navBackdrop"></div>
+<nav class="navbar"><div class="container nav-container">
+    <a href="../index.html" class="logo" style="text-decoration:none;"><i class="fas fa-briefcase"></i><span>JobNexus</span></a>
+    <div class="nav-menu" id="navMenu">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="browse-jobs.html" class="nav-link">Browse Jobs</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+        <a href="../login.html" class="auth-btn nav-mobile-login">Login</a>
+    </div>
+    <div class="nav-actions"><a href="../login.html" class="auth-btn nav-desktop-login">Login</a><button class="menu-toggle" id="menuToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button></div>
+</div></nav>
+
+<!-- HERO -->
+<section class="page-hero">
+    <div class="container">
+        <div class="hero-badge" data-aos="fade-down"><i class="fas fa-shield-alt"></i> Legal</div>
+        <h1 data-aos="fade-up" data-aos-delay="80"><span class="highlight">Privacy</span> Policy</h1>
+        <p class="effective-date" data-aos="fade-up" data-aos-delay="160">Effective Date: March 1, 2026 &nbsp;&middot;&nbsp; Last Updated: March 1, 2026</p>
+    </div>
+</section>
+
+<!-- CONTENT -->
+<div class="container">
+    <div class="legal-layout">
+        <!-- TOC -->
+        <aside class="toc" data-aos="fade-right">
+            <h4>Contents</h4>
+            <a href="#collect">1. Data We Collect</a>
+            <a href="#use">2. How We Use Data</a>
+            <a href="#cookies">3. Cookies</a>
+            <a href="#third-party">4. Third-Party Services</a>
+            <a href="#security">5. Data Security</a>
+            <a href="#rights">6. Your Rights</a>
+            <a href="#retention">7. Data Retention</a>
+            <a href="#children">8. Children's Privacy</a>
+            <a href="#changes">9. Policy Changes</a>
+            <a href="#contact-legal">10. Contact Us</a>
+        </aside>
+
+        <!-- LEGAL TEXT -->
+        <div class="legal-content" data-aos="fade-up">
+            <div class="info-box"><p><strong style="color:var(--text);">Summary:</strong> JobNexus is a student job portal built as a project at Centurion University. We take your privacy seriously and do not sell your personal data. This policy explains what we collect and why.</p></div>
+
+            <section id="collect">
+                <h2><i class="fas fa-database"></i> 1. Data We Collect</h2>
+                <p>We collect information you provide directly to us when you register an account or use our services:</p>
+                <ul>
+                    <li><strong>Account Information:</strong> Full name, email address, and password (stored as a secure hash via Firebase Authentication).</li>
+                    <li><strong>Profile Information:</strong> Skills, educational qualifications, work experience, resume PDF, and profile photo (optional).</li>
+                    <li><strong>Recruiter Information:</strong> Company name, designation, and job postings you create.</li>
+                    <li><strong>Application Data:</strong> Jobs you apply for and the status of those applications.</li>
+                    <li><strong>Usage Data:</strong> Pages visited, time spent on pages, and browser/device type (collected automatically via Firebase Analytics).</li>
+                </ul>
+            </section>
+
+            <hr class="divider">
+
+            <section id="use">
+                <h2><i class="fas fa-cogs"></i> 2. How We Use Your Data</h2>
+                <p>We use the collected information for the following purposes:</p>
+                <ul>
+                    <li>To create and manage your account and provide platform features.</li>
+                    <li>To match students with relevant job and internship opportunities.</li>
+                    <li>To allow recruiters to review applications and manage their job postings.</li>
+                    <li>To send transactional emails — such as application status updates and account notifications.</li>
+                    <li>To improve the platform through aggregated, anonymised analytics.</li>
+                    <li>To comply with legal obligations when required.</li>
+                </ul>
+                <p>We do <strong>not</strong> sell, rent, or trade your personal information to any third party.</p>
+            </section>
+
+            <hr class="divider">
+
+            <section id="cookies">
+                <h2><i class="fas fa-cookie-bite"></i> 3. Cookies</h2>
+                <p>JobNexus uses essential cookies and browser local storage to maintain your session state (i.e., to keep you logged in) and store UI preferences such as theme selection. We do not use advertising cookies or tracking pixels.</p>
+                <p>You can clear cookies and local storage data at any time via your browser settings. Doing so will log you out of the platform.</p>
+            </section>
+
+            <hr class="divider">
+
+            <section id="third-party">
+                <h2><i class="fas fa-link"></i> 4. Third-Party Services</h2>
+                <p>JobNexus is built on the following third-party services, each with their own privacy practices:</p>
+                <ul>
+                    <li><strong>Google Firebase</strong> — Authentication, Firestore database, and file storage. Data is stored in Firebase servers. See <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener">Firebase Privacy Policy</a>.</li>
+                    <li><strong>Vercel</strong> — Hosting and deployment. See <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener">Vercel Privacy Policy</a>.</li>
+                    <li><strong>EmailJS</strong> — Used to send contact form submissions to our team. See <a href="https://www.emailjs.com/legal/privacy-policy/" target="_blank" rel="noopener">EmailJS Privacy Policy</a>.</li>
+                </ul>
+            </section>
+
+            <hr class="divider">
+
+            <section id="security">
+                <h2><i class="fas fa-lock"></i> 5. Data Security</h2>
+                <p>We implement reasonable technical and organisational measures to protect your data:</p>
+                <ul>
+                    <li>Passwords are never stored in plain text — Firebase Authentication handles credential management securely.</li>
+                    <li>Firebase Security Rules restrict database and storage access so users can only read/write their own data.</li>
+                    <li>All data is transmitted over HTTPS.</li>
+                </ul>
+                <p>While we take security seriously, no system is completely immune to breaches. We encourage you to use a strong, unique password and to log out from shared devices.</p>
+            </section>
+
+            <hr class="divider">
+
+            <section id="rights">
+                <h2><i class="fas fa-user-shield"></i> 6. Your Rights</h2>
+                <p>You have the following rights with respect to your personal data:</p>
+                <ul>
+                    <li><strong>Access:</strong> Request a copy of the data we hold about you.</li>
+                    <li><strong>Correction:</strong> Update inaccurate information directly from your profile settings.</li>
+                    <li><strong>Deletion:</strong> Request deletion of your account and all associated data by contacting us.</li>
+                    <li><strong>Portability:</strong> Request an export of your profile data in a machine-readable format.</li>
+                </ul>
+                <p>To exercise any of these rights, contact us at <a href="mailto:privacy@jobnexus.in">privacy@jobnexus.in</a> or via our <a href="contact.html">Contact page</a>.</p>
+            </section>
+
+            <hr class="divider">
+
+            <section id="retention">
+                <h2><i class="fas fa-history"></i> 7. Data Retention</h2>
+                <p>We retain your personal data for as long as your account is active. If you request account deletion, we will remove your personal data from our systems within 30 days, except where we are required to retain it for legal reasons.</p>
+            </section>
+
+            <hr class="divider">
+
+            <section id="children">
+                <h2><i class="fas fa-child"></i> 8. Children's Privacy</h2>
+                <p>JobNexus is intended for users aged 16 and above. We do not knowingly collect personal data from children under 16. If we become aware that a child under 16 has provided us with personal information, we will delete it promptly.</p>
+            </section>
+
+            <hr class="divider">
+
+            <section id="changes">
+                <h2><i class="fas fa-sync-alt"></i> 9. Changes to This Policy</h2>
+                <p>We may update this Privacy Policy from time to time. When we do, we will revise the "Last Updated" date at the top of this page. We encourage you to review this policy periodically. Continued use of JobNexus after changes constitutes acceptance of the updated policy.</p>
+            </section>
+
+            <hr class="divider">
+
+            <section id="contact-legal">
+                <h2><i class="fas fa-envelope"></i> 10. Contact Us</h2>
+                <p>If you have any questions or concerns about this Privacy Policy or how we handle your data, please reach out:</p>
+                <ul>
+                    <li><strong>Email:</strong> <a href="mailto:privacy@jobnexus.in">privacy@jobnexus.in</a></li>
+                    <li><strong>Address:</strong> Centurion University of Technology and Management, Bhubaneswar, Odisha, India</li>
+                    <li><strong>Contact Form:</strong> <a href="contact.html">jobnexus.in/pages/contact.html</a></li>
+                </ul>
+            </section>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer"><div class="container">
+    <div class="footer-grid">
+        <div class="footer-section"><h3>JobNexus</h3><p>Your gateway to career success</p><div class="social-links"><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a><a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a></div></div>
+        <div class="footer-section"><h4>For Students</h4><ul><li><a href="browse-jobs.html">Browse Jobs</a></li><li><a href="internships.html">Internships</a></li><li><a href="../login.html">Create Profile</a></li><li><a href="career-tips.html">Career Tips</a></li></ul></div>
+        <div class="footer-section"><h4>For Recruiters</h4><ul><li><a href="../login.html">Post a Job</a></li><li><a href="find-talent.html">Find Talent</a></li><li><a href="resources.html">Resources</a></li></ul></div>
+        <div class="footer-section"><h4>Company</h4><ul><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li><li><a href="privacy-policy.html">Privacy Policy</a></li><li><a href="terms-of-service.html">Terms of Service</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2026 JobNexus. All rights reserved. | Crafted with <i class="fas fa-heart" style="color:#e53935;"></i> by <strong>Team JobNexus</strong> &ndash; Centurion University</p></div>
+</div></footer>
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+window.addEventListener('load',()=>{const lo=document.getElementById('loadingOverlay');if(lo){lo.style.opacity='0';lo.style.transition='opacity 0.4s';setTimeout(()=>lo.remove(),450);}});
+document.addEventListener('DOMContentLoaded',()=>{if(typeof AOS!=='undefined')AOS.init({duration:700,offset:80,easing:'ease-out-cubic',once:true});});
+document.addEventListener('scroll',()=>{const b=document.getElementById('scroll-progress');if(b)b.style.width=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)*100)+'%';});
+window.addEventListener('scroll',()=>{const n=document.querySelector('.navbar');if(n)n.classList.toggle('scrolled',window.scrollY>50);});
+(function(){const t=document.getElementById('menuToggle'),m=document.getElementById('navMenu'),b=document.getElementById('navBackdrop');if(!t||!m)return;function o(){m.classList.add('open');t.classList.add('active');if(b)b.classList.add('show');document.body.style.overflow='hidden';}function c(){m.classList.remove('open');t.classList.remove('active');if(b)b.classList.remove('show');document.body.style.overflow='';}t.addEventListener('click',()=>m.classList.contains('open')?c():o());if(b)b.addEventListener('click',c);m.querySelectorAll('a').forEach(l=>l.addEventListener('click',c));})();
+</script>
+</body>
+</html>

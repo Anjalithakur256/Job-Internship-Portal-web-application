@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" class="dark-mode">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Tips — JobNexus</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/dark-mode.css">
+    <link rel="stylesheet" href="../css/advanced-features.css">
+    <link rel="stylesheet" href="../css/premium-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/light-theme.css">
+    <link rel="stylesheet" href="../css/page-animations.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23e53935'/><text x='50' y='60' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>J</text></svg>">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        #scroll-progress { position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg,#e53935,#ff6b6b,#e53935); background-size:200% 100%; animation:barShine 2s linear infinite; z-index:10000; transition:width 0.1s linear; }
+        @keyframes barShine { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+        .loading-overlay { position:fixed; inset:0; background:#0d1117; display:flex; align-items:center; justify-content:center; flex-direction:column; z-index:9999; gap:20px; }
+        .spinner { width:40px; height:40px; border:3px solid rgba(229,57,53,0.15); border-top:3px solid #e53935; border-radius:50%; animation:spin 1s linear infinite; }
+        @keyframes spin { 100%{transform:rotate(360deg)} }
+        .loading-text { font-size:14px; color:rgba(255,255,255,0.6); }
+        :root { --red:#e53935; --red-dark:#c62828; --bg:#0d1117; --bg-card:#161b22; --bg-card2:#1c2128; --border:rgba(48,54,61,0.9); --text:#e6edf3; --text-muted:#8b949e; --text-dim:#6e7681; }
+        body { background:var(--bg); color:var(--text); font-family:'Inter','Segoe UI',sans-serif; line-height:1.6; overflow-x:hidden; }
+        .container { max-width:1140px; margin:0 auto; padding:0 1.5rem; }
+
+        /* HERO */
+        .page-hero { min-height:50vh; display:flex; align-items:center; padding:7rem 0 3.5rem; position:relative; overflow:hidden; text-align:center; }
+        .page-hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 55% 50% at 50% 40%,rgba(229,57,53,0.11) 0%,transparent 65%),radial-gradient(ellipse 35% 35% at 80% 75%,rgba(198,40,40,0.06) 0%,transparent 55%); pointer-events:none; }
+        .page-hero .container { position:relative; z-index:1; }
+        .hero-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(229,57,53,0.08); border:1px solid rgba(229,57,53,0.22); border-radius:50px; padding:6px 18px; font-size:0.78rem; font-weight:600; color:var(--red); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:1.4rem; }
+        .page-hero h1 { font-size:clamp(2.2rem,5vw,3.4rem); font-weight:800; line-height:1.15; letter-spacing:-0.02em; margin-bottom:1.1rem; }
+        .page-hero h1 .highlight { background:linear-gradient(135deg,#e53935 0%,#ff6b6b 50%,#e53935 100%); background-size:200% auto; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; animation:gradShift 4s ease infinite; }
+        @keyframes gradShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+        .page-hero p { font-size:clamp(0.97rem,2vw,1.1rem); color:var(--text-muted); max-width:560px; margin:0 auto; line-height:1.8; }
+
+        /* TIPS GRID */
+        .section { padding:5rem 0; }
+        .section.alt { background:#111820; }
+        .section-label { font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--red); margin-bottom:0.5rem; display:block; }
+        .section-title { font-size:clamp(1.75rem,3.5vw,2.4rem); font-weight:800; line-height:1.2; color:var(--text); letter-spacing:-0.02em; margin-bottom:0.5rem; }
+        .section-title .accent { background:linear-gradient(135deg,#e53935,#ff6b6b); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+
+        .tips-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.4rem; margin-top:2.5rem; }
+        .tip-card { background:var(--bg-card); border:1px solid var(--border); border-radius:18px; padding:1.8rem; transition:border-color 0.25s,transform 0.25s,box-shadow 0.25s; position:relative; overflow:hidden; }
+        .tip-card::before { content:''; position:absolute; top:0; left:0; width:100%; height:3px; background:linear-gradient(90deg,#e53935,#ff6b6b,#e53935); background-size:200% 100%; }
+        .tip-card:hover { border-color:rgba(229,57,53,0.3); transform:translateY(-4px); box-shadow:0 12px 36px rgba(229,57,53,0.09); }
+        .tip-icon { width:48px; height:48px; border-radius:13px; background:rgba(229,57,53,0.09); border:1px solid rgba(229,57,53,0.18); display:flex; align-items:center; justify-content:center; font-size:1.2rem; color:var(--red); margin-bottom:1rem; }
+        .tip-tag { display:inline-block; padding:2px 9px; background:rgba(229,57,53,0.08); border:1px solid rgba(229,57,53,0.18); border-radius:50px; font-size:0.7rem; font-weight:700; color:var(--red); margin-bottom:0.7rem; letter-spacing:0.04em; text-transform:uppercase; }
+        .tip-card h3 { font-size:1.02rem; font-weight:700; color:var(--text); margin-bottom:0.6rem; }
+        .tip-card p { font-size:0.86rem; color:var(--text-muted); line-height:1.75; }
+        .tip-list { list-style:none; margin-top:0.8rem; display:flex; flex-direction:column; gap:0.45rem; }
+        .tip-list li { display:flex; align-items:flex-start; gap:0.5rem; font-size:0.84rem; color:var(--text-muted); line-height:1.6; }
+        .tip-list li::before { content:'\f00c'; font-family:'Font Awesome 6 Free'; font-weight:900; color:var(--red); font-size:0.65rem; margin-top:4px; flex-shrink:0; }
+
+        /* FEATURED TIP */
+        .featured-tip { background:linear-gradient(135deg,rgba(229,57,53,0.08),rgba(198,40,40,0.04)); border:1px solid rgba(229,57,53,0.18); border-radius:20px; padding:2.5rem; display:grid; grid-template-columns:1fr auto; gap:2rem; align-items:center; margin-top:2.5rem; }
+        .featured-tip h3 { font-size:1.3rem; font-weight:800; margin-bottom:0.6rem; }
+        .featured-tip p { color:var(--text-muted); font-size:0.93rem; line-height:1.8; }
+        .btn-red { display:inline-flex; align-items:center; gap:8px; padding:0.8rem 1.8rem; background:linear-gradient(135deg,var(--red-dark),var(--red)); color:#fff; font-weight:700; font-size:0.92rem; border-radius:12px; text-decoration:none; transition:opacity 0.2s,transform 0.2s; white-space:nowrap; }
+        .btn-red:hover { opacity:0.88; transform:translateY(-2px); }
+
+        /* CTA */
+        .cta-band { padding:4.5rem 0; text-align:center; background:linear-gradient(135deg,rgba(229,57,53,0.08),rgba(198,40,40,0.04)); border-top:1px solid rgba(229,57,53,0.12); border-bottom:1px solid rgba(229,57,53,0.12); }
+        .cta-band h2 { font-size:clamp(1.6rem,3vw,2.2rem); font-weight:800; margin-bottom:0.7rem; }
+        .cta-band p { color:var(--text-muted); max-width:480px; margin:0 auto 2rem; font-size:0.97rem; }
+        .btn-outline { display:inline-flex; align-items:center; gap:8px; padding:0.8rem 1.8rem; border:1.5px solid rgba(229,57,53,0.4); color:var(--text); font-weight:600; font-size:0.92rem; border-radius:12px; text-decoration:none; transition:border-color 0.2s,background 0.2s,transform 0.2s; margin-left:0.8rem; }
+        .btn-outline:hover { border-color:var(--red); background:rgba(229,57,53,0.07); transform:translateY(-2px); }
+
+        @media (max-width:960px) { .tips-grid { grid-template-columns:1fr 1fr; } .featured-tip { grid-template-columns:1fr; text-align:center; } }
+        @media (max-width:600px) { .tips-grid { grid-template-columns:1fr; } .btn-outline { margin-left:0; margin-top:0.8rem; } }
+    </style>
+</head>
+<body>
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><span class="loading-text">Loading…</span></div>
+<div id="scroll-progress"></div>
+<div class="animated-background"><div class="floating-shape shape-1"></div><div class="floating-shape shape-2"></div><div class="floating-shape shape-3"></div><div class="gradient-overlay"></div></div>
+
+<!-- NAVBAR -->
+<div class="nav-backdrop" id="navBackdrop"></div>
+<nav class="navbar"><div class="container nav-container">
+    <a href="../index.html" class="logo" style="text-decoration:none;"><i class="fas fa-briefcase"></i><span>JobNexus</span></a>
+    <div class="nav-menu" id="navMenu">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="browse-jobs.html" class="nav-link">Browse Jobs</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+        <a href="../login.html" class="auth-btn nav-mobile-login">Login</a>
+    </div>
+    <div class="nav-actions"><a href="../login.html" class="auth-btn nav-desktop-login">Login</a><button class="menu-toggle" id="menuToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button></div>
+</div></nav>
+
+<!-- HERO -->
+<section class="page-hero">
+    <div class="container">
+        <div class="hero-badge" data-aos="fade-down"><i class="fas fa-lightbulb"></i> Career Advice</div>
+        <h1 data-aos="fade-up" data-aos-delay="80">Level Up Your <span class="highlight">Career Game</span></h1>
+        <p data-aos="fade-up" data-aos-delay="160">Expert tips and actionable advice on resumes, interviews, networking, and more — crafted for students and early-career professionals.</p>
+    </div>
+</section>
+
+<!-- RESUME TIPS -->
+<section class="section">
+    <div class="container">
+        <div data-aos="fade-up"><span class="section-label">Resume Building</span><h2 class="section-title">Write a Resume That <span class="accent">Gets Noticed</span></h2></div>
+        <div class="featured-tip" data-aos="fade-up" data-aos-delay="60">
+            <div>
+                <h3>The Golden Rules of a Great Resume</h3>
+                <p>Your resume is your first impression. Recruiters spend an average of 6–7 seconds scanning it. Make every second count with these proven techniques.</p>
+                <ul class="tip-list" style="margin-top:1rem;">
+                    <li>Use a clean, single-column layout — readability beats creativity</li>
+                    <li>Lead with a 2-line professional summary highlighting your top skill</li>
+                    <li>Quantify achievements — "Increased app downloads by 40%" beats "Improved app"</li>
+                    <li>Tailor keywords to the job description to pass ATS filters</li>
+                    <li>Keep it to 1 page if you have under 3 years of experience</li>
+                </ul>
+            </div>
+            <a href="browse-jobs.html" class="btn-red"><i class="fas fa-search"></i> Browse Jobs</a>
+        </div>
+    </div>
+</section>
+
+<!-- TIPS GRID -->
+<section class="section alt">
+    <div class="container">
+        <div style="text-align:center;" data-aos="fade-up"><span class="section-label">Key Topics</span><h2 class="section-title">Your Complete <span class="accent">Career Toolkit</span></h2></div>
+        <div class="tips-grid">
+            <div class="tip-card" data-aos="fade-up" data-aos-delay="60">
+                <div class="tip-icon"><i class="fas fa-file-alt"></i></div>
+                <span class="tip-tag">Resume</span>
+                <h3>Craft a Winning Resume</h3>
+                <ul class="tip-list">
+                    <li>Use action verbs: Built, Designed, Led, Increased</li>
+                    <li>Include a GitHub / portfolio link for tech roles</li>
+                    <li>List relevant skills in a dedicated section</li>
+                    <li>Proofread — one typo can cost you the interview</li>
+                </ul>
+            </div>
+            <div class="tip-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="tip-icon"><i class="fas fa-comments"></i></div>
+                <span class="tip-tag">Interview</span>
+                <h3>Ace Every Interview</h3>
+                <ul class="tip-list">
+                    <li>Research the company thoroughly before the call</li>
+                    <li>Prepare STAR (Situation, Task, Action, Result) examples</li>
+                    <li>Have 3 thoughtful questions ready to ask the interviewer</li>
+                    <li>Dress professionally even for video interviews</li>
+                </ul>
+            </div>
+            <div class="tip-card" data-aos="fade-up" data-aos-delay="140">
+                <div class="tip-icon"><i class="fas fa-network-wired"></i></div>
+                <span class="tip-tag">Networking</span>
+                <h3>Build Your Network</h3>
+                <ul class="tip-list">
+                    <li>Optimise your LinkedIn profile with a clear headline</li>
+                    <li>Connect with alumni from your college — they want to help</li>
+                    <li>Engage with industry content regularly to stay visible</li>
+                    <li>Attend virtual career fairs and webinars</li>
+                </ul>
+            </div>
+            <div class="tip-card" data-aos="fade-up" data-aos-delay="60">
+                <div class="tip-icon"><i class="fas fa-envelope-open-text"></i></div>
+                <span class="tip-tag">Cover Letter</span>
+                <h3>Write Cover Letters That Work</h3>
+                <ul class="tip-list">
+                    <li>Personalise every letter — never send a generic one</li>
+                    <li>Open with a compelling hook, not "I am applying for..."</li>
+                    <li>Connect your specific skills to the role's requirements</li>
+                    <li>Keep it under 250 words — brevity signals confidence</li>
+                </ul>
+            </div>
+            <div class="tip-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="tip-icon"><i class="fas fa-laptop-code"></i></div>
+                <span class="tip-tag">Skills</span>
+                <h3>Skills That Employers Want</h3>
+                <ul class="tip-list">
+                    <li>Learn at least one cloud platform: AWS, Firebase, or GCP</li>
+                    <li>Communication and teamwork matter as much as technical skills</li>
+                    <li>Build public projects — open-source contributions shine</li>
+                    <li>Stay current: follow industry blogs and newsletters</li>
+                </ul>
+            </div>
+            <div class="tip-card" data-aos="fade-up" data-aos-delay="140">
+                <div class="tip-icon"><i class="fas fa-handshake"></i></div>
+                <span class="tip-tag">Salary</span>
+                <h3>Negotiate with Confidence</h3>
+                <ul class="tip-list">
+                    <li>Research market rates on Glassdoor and LinkedIn Salary</li>
+                    <li>Always negotiate — 70% of employers expect candidates to</li>
+                    <li>Consider the full package: stipend, equity, learning budget</li>
+                    <li>Practice your negotiation script with a friend</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-band">
+    <div class="container">
+        <h2 data-aos="fade-up">Apply Your Knowledge — <span style="color:var(--red);">Start Applying Today</span></h2>
+        <p data-aos="fade-up" data-aos-delay="80">Put these tips to work. Browse hundreds of internships and jobs waiting for you right now.</p>
+        <div data-aos="fade-up" data-aos-delay="160">
+            <a href="browse-jobs.html" class="btn-red"><i class="fas fa-search"></i> Browse Jobs</a>
+            <a href="../login.html" class="btn-outline"><i class="fas fa-user-plus"></i> Create Free Profile</a>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer"><div class="container">
+    <div class="footer-grid">
+        <div class="footer-section"><h3>JobNexus</h3><p>Your gateway to career success</p><div class="social-links"><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a><a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a><a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a></div></div>
+        <div class="footer-section"><h4>For Students</h4><ul><li><a href="browse-jobs.html">Browse Jobs</a></li><li><a href="internships.html">Internships</a></li><li><a href="../login.html">Create Profile</a></li><li><a href="career-tips.html">Career Tips</a></li></ul></div>
+        <div class="footer-section"><h4>For Recruiters</h4><ul><li><a href="../login.html">Post a Job</a></li><li><a href="find-talent.html">Find Talent</a></li><li><a href="resources.html">Resources</a></li></ul></div>
+        <div class="footer-section"><h4>Company</h4><ul><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li><li><a href="privacy-policy.html">Privacy Policy</a></li><li><a href="terms-of-service.html">Terms of Service</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2026 JobNexus. All rights reserved. | Crafted with <i class="fas fa-heart" style="color:#e53935;"></i> by <strong>Team JobNexus</strong> &ndash; Centurion University</p></div>
+</div></footer>
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+window.addEventListener('load',()=>{const lo=document.getElementById('loadingOverlay');if(lo){lo.style.opacity='0';lo.style.transition='opacity 0.4s';setTimeout(()=>lo.remove(),450);}});
+document.addEventListener('DOMContentLoaded',()=>{if(typeof AOS!=='undefined')AOS.init({duration:700,offset:80,easing:'ease-out-cubic',once:true});});
+document.addEventListener('scroll',()=>{const b=document.getElementById('scroll-progress');if(b)b.style.width=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)*100)+'%';});
+window.addEventListener('scroll',()=>{const n=document.querySelector('.navbar');if(n)n.classList.toggle('scrolled',window.scrollY>50);});
+(function(){const t=document.getElementById('menuToggle'),m=document.getElementById('navMenu'),b=document.getElementById('navBackdrop');if(!t||!m)return;function o(){m.classList.add('open');t.classList.add('active');if(b)b.classList.add('show');document.body.style.overflow='hidden';}function c(){m.classList.remove('open');t.classList.remove('active');if(b)b.classList.remove('show');document.body.style.overflow='';}t.addEventListener('click',()=>m.classList.contains('open')?c():o());if(b)b.addEventListener('click',c);m.querySelectorAll('a').forEach(l=>l.addEventListener('click',c));})();
+</script>
+</body>
+</html>

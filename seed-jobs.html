@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seed Demo Jobs – JobNexus Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0f0f1f; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
+        h1 { color: #e53935; margin-bottom: 0.5rem; font-size: 1.6rem; }
+        p { color: #888; margin-bottom: 1.5rem; font-size: 0.95rem; text-align: center; max-width: 480px; }
+        #status { min-height: 80px; text-align: left; max-width: 540px; width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; font-size: 0.85rem; line-height: 1.8; }
+        .btn { padding: 0.75rem 2rem; background: #e53935; color: #fff; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.1s; }
+        .btn:hover { background: #c62828; transform: translateY(-2px); }
+        .btn:disabled { background: #555; cursor: default; transform: none; }
+        #loginMsg { color: #f59e0b; font-size: 0.9rem; margin-bottom: 1rem; display: none; }
+        .done { color: #10b981 !important; font-weight: 600; }
+        .err  { color: #ef4444 !important; }
+    </style>
+</head>
+<body>
+    <h1>🌱 Seed Demo Jobs</h1>
+    <p>This page adds 20 realistic sample jobs to your Firestore database so the site looks populated. Open this page while logged in as a recruiter.</p>
+    <div id="loginMsg">⚠ You must be logged in to seed data. <a href="login.html" style="color:#e53935;">Login →</a></div>
+    <div id="status">Waiting to start…</div>
+    <button class="btn" id="seedBtn" onclick="seedJobs()">Seed 20 Demo Jobs</button>
+    <p style="margin-top:1.5rem; font-size:0.8rem; color:#555;">After seeding, you can delete this file from the project.</p>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsmGGTDb7V3Tts4BFsfp1GkQzrvgbSJ1w",
+            authDomain: "job-portal-web-applicati-ec86b.firebaseapp.com",
+            projectId: "job-portal-web-applicati-ec86b",
+            storageBucket: "job-portal-web-applicati-ec86b.firebasestorage.app",
+            messagingSenderId: "16738093972",
+            appId: "1:16738093972:web:20e6906e3731c0e5eb1d81"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth  = firebase.auth();
+        const db    = firebase.firestore();
+
+        auth.onAuthStateChanged(user => {
+            const msg = document.getElementById('loginMsg');
+            if (!user) { msg.style.display = 'block'; document.getElementById('seedBtn').disabled = true; }
+            else        { msg.style.display = 'none';  document.getElementById('seedBtn').disabled = false; }
+        });
+
+        const now = firebase.firestore.Timestamp.now();
+        const daysAgo = d => firebase.firestore.Timestamp.fromMillis(Date.now() - d * 86400000);
+
+        const demoJobs = [
+            {
+                title: "Frontend Developer",
+                company: "Tata Consultancy Services",
+                type: "Full-time",
+                location: "Bengaluru",
+                salary: "85000",
+                skills: ["React", "TypeScript", "CSS", "REST APIs"],
+                description: "Work on enterprise-scale React applications for Fortune 500 clients. You will design component libraries and ensure cross-browser compatibility.",
+                companyDescription: "TCS is India's largest IT services company with operations in 50+ countries.",
+                status: "active",
+                applicationsCount: 12,
+                postedAt: daysAgo(2)
+            },
+            {
+                title: "Backend Engineer (Node.js)",
+                company: "Infosys",
+                type: "Full-time",
+                location: "Hyderabad",
+                salary: "90000",
+                skills: ["Node.js", "Express", "MongoDB", "Docker"],
+                description: "Design and build scalable REST APIs consumed by millions of users. Collaborate with front-end teams to integrate services.",
+                companyDescription: "Infosys is a global leader in next-generation digital services and consulting.",
+                status: "active",
+                applicationsCount: 8,
+                postedAt: daysAgo(3)
+            },
+            {
+                title: "React Native Intern",
+                company: "Wipro Digital",
+                type: "Internship",
+                location: "Pune",
+                salary: "18000",
+                skills: ["React Native", "JavaScript", "Redux", "Firebase"],
+                description: "6-month paid internship building cross-platform mobile applications. Learn under senior engineers on live production apps.",
+                companyDescription: "Wipro Digital is the digital innovation arm of Wipro, focused on mobile-first experiences.",
+                status: "active",
+                applicationsCount: 34,
+                postedAt: daysAgo(1)
+            },
+            {
+                title: "Data Science Intern",
+                company: "Flipkart",
+                type: "Internship",
+                location: "Bengaluru",
+                salary: "25000",
+                skills: ["Python", "Pandas", "Scikit-learn", "SQL"],
+                description: "Join the Flipkart data team to analyse customer behaviour data and build predictive models for product recommendations.",
+                companyDescription: "Flipkart is India's leading e-commerce marketplace with 400M+ registered users.",
+                status: "active",
+                applicationsCount: 56,
+                postedAt: daysAgo(0)
+            },
+            {
+                title: "Full Stack Developer",
+                company: "Razorpay",
+                type: "Full-time",
+                location: "Bengaluru",
+                salary: "130000",
+                skills: ["React", "Node.js", "PostgreSQL", "Redis", "AWS"],
+                description: "Build payment infrastructure used by 8M+ Indian businesses. Solve complex distributed systems problems at massive scale.",
+                companyDescription: "Razorpay is India's leading full-stack financial solutions company.",
+                status: "active",
+                applicationsCount: 21,
+                postedAt: daysAgo(5)
+            },
+            {
+                title: "UI/UX Designer",
+                company: "Swiggy",
+                type: "Full-time",
+                location: "Bengaluru",
+                salary: "95000",
+                skills: ["Figma", "Prototyping", "User Research", "Sketch"],
+                description: "Create delightful user experiences for Swiggy's consumer apps. Conduct user research and build end-to-end flows.",
+                companyDescription: "Swiggy is India's food delivery and quick commerce unicorn operating in 500+ cities.",
+                status: "active",
+                applicationsCount: 18,
+                postedAt: daysAgo(4)
+            },
+            {
+                title: "Python Developer",
+                company: "PhonePe",
+                type: "Full-time",
+                location: "Bengaluru",
+                salary: "110000",
+                skills: ["Python", "Django", "Kafka", "MySQL", "Kubernetes"],
+                description: "Build and maintain high-throughput financial services processing 4B+ transactions per month.",
+                companyDescription: "PhonePe is India's #1 digital payments platform with 500M+ registered users.",
+                status: "active",
+                applicationsCount: 15,
+                postedAt: daysAgo(6)
+            },
+            {
+                title: "DevOps Engineer",
+                company: "Amazon India",
+                type: "Full-time",
+                location: "Hyderabad",
+                salary: "140000",
+                skills: ["AWS", "Terraform", "Kubernetes", "CI/CD", "Docker"],
+                description: "Manage cloud infrastructure for Amazon India's supply chain services. Automate deployments and improve system reliability.",
+                companyDescription: "Amazon India is one of the country's top e-commerce and cloud services providers.",
+                status: "active",
+                applicationsCount: 9,
+                postedAt: daysAgo(7)
+            },
+            {
+                title: "Machine Learning Engineer",
+                company: "Google India",
+                type: "Full-time",
+                location: "Gurugram",
+                salary: "180000",
+                skills: ["TensorFlow", "Python", "MLOps", "BigQuery", "PyTorch"],
+                description: "Train and deploy ML models powering Google Search in Indian languages. Work on multilingual NLP at global scale.",
+                companyDescription: "Google India is the hub for Google's engineering, sales and operations in South Asia.",
+                status: "active",
+                applicationsCount: 47,
+                postedAt: daysAgo(10)
+            },
+            {
+                title: "Product Manager",
+                company: "Zomato",
+                type: "Full-time",
+                location: "Gurugram",
+                salary: "120000",
+                skills: ["Product Strategy", "SQL", "A/B Testing", "Agile", "Analytics"],
+                description: "Drive product strategy for Zomato's hyperpure B2B platform. Define roadmap and work closely with engineering and design teams.",
+                companyDescription: "Zomato is a publicly listed foodtech giant operating in 25+ countries.",
+                status: "active",
+                applicationsCount: 29,
+                postedAt: daysAgo(8)
+            },
+            {
+                title: "Android Developer",
+                company: "Paytm",
+                type: "Full-time",
+                location: "Noida",
+                salary: "100000",
+                skills: ["Kotlin", "Android SDK", "Jetpack Compose", "MVVM", "Retrofit"],
+                description: "Build new features in Paytm's super-app used by 350M+ users. Own end-to-end feature development from design to deployment.",
+                companyDescription: "Paytm is India's pioneer in digital payments and financial services.",
+                status: "active",
+                applicationsCount: 22,
+                postedAt: daysAgo(9)
+            },
+            {
+                title: "iOS Developer",
+                company: "MakeMyTrip",
+                type: "Full-time",
+                location: "Gurugram",
+                salary: "105000",
+                skills: ["Swift", "SwiftUI", "XCode", "CoreData", "REST APIs"],
+                description: "Develop and ship new features on MakeMyTrip's iOS travel app with 70M+ downloads.",
+                companyDescription: "MakeMyTrip is India's leading online travel company.",
+                status: "active",
+                applicationsCount: 11,
+                postedAt: daysAgo(11)
+            },
+            {
+                title: "Data Analyst",
+                company: "BYJU'S",
+                type: "Full-time",
+                location: "Bengaluru",
+                salary: "70000",
+                skills: ["Excel", "SQL", "Tableau", "Python", "Google Analytics"],
+                description: "Analyse student learning data to improve retention and engagement across BYJU'S EdTech platforms.",
+                companyDescription: "BYJU'S is the world's largest EdTech company, teaching 150M+ students globally.",
+                status: "active",
+                applicationsCount: 37,
+                postedAt: daysAgo(12)
+            },
+            {
+                title: "Cloud Engineer",
+                company: "Microsoft India",
+                type: "Full-time",
+                location: "Hyderabad",
+                salary: "155000",
+                skills: ["Azure", "PowerShell", "ARM Templates", "AKS", "Networking"],
+                description: "Design and implement secure Azure cloud architectures for enterprise clients across India and Southeast Asia.",
+                companyDescription: "Microsoft India's engineering centre in Hyderabad is one of its largest outside the US.",
+                status: "active",
+                applicationsCount: 14,
+                postedAt: daysAgo(13)
+            },
+            {
+                title: "Java Developer",
+                company: "HCL Technologies",
+                type: "Full-time",
+                location: "Chennai",
+                salary: "75000",
+                skills: ["Java", "Spring Boot", "Microservices", "Hibernate", "Maven"],
+                description: "Develop microservices for HCL's banking domain clients. Write clean, testable code and participate in code reviews.",
+                companyDescription: "HCL Technologies is a global IT services company with $13B+ annual revenue.",
+                status: "active",
+                applicationsCount: 19,
+                postedAt: daysAgo(14)
+            },
+            {
+                title: "Graphic Design Intern",
+                company: "OYO",
+                type: "Internship",
+                location: "Gurugram",
+                salary: "15000",
+                skills: ["Adobe Illustrator", "Photoshop", "Canva", "Figma"],
+                description: "Create marketing creatives, social media assets, and in-app banners for OYO's global campaigns.",
+                companyDescription: "OYO is the world's third-largest hotel chain operating in 80+ countries.",
+                status: "active",
+                applicationsCount: 68,
+                postedAt: daysAgo(3)
+            },
+            {
+                title: "Cyber Security Analyst",
+                company: "IBM India",
+                type: "Full-time",
+                location: "Bengaluru",
+                salary: "115000",
+                skills: ["SIEM", "Penetration Testing", "OWASP", "Splunk", "Networking"],
+                description: "Monitor and respond to security incidents for Fortune 500 clients. Conduct vulnerability assessments and red-team exercises.",
+                companyDescription: "IBM India is a key part of IBM's global delivery network and R&D operations.",
+                status: "active",
+                applicationsCount: 7,
+                postedAt: daysAgo(15)
+            },
+            {
+                title: "Business Development Intern",
+                company: "Freshworks",
+                type: "Internship",
+                location: "Chennai",
+                salary: "20000",
+                skills: ["CRM", "Communication", "Excel", "Cold Outreach", "Salesforce"],
+                description: "Assist the enterprise sales team in qualifying leads, preparing pitch decks and managing the CRM pipeline.",
+                companyDescription: "Freshworks is a Nasdaq-listed SaaS company serving 68,000+ customers worldwide.",
+                status: "active",
+                applicationsCount: 43,
+                postedAt: daysAgo(2)
+            },
+            {
+                title: "QA Automation Engineer",
+                company: "Zoho Corporation",
+                type: "Full-time",
+                location: "Chennai",
+                salary: "65000",
+                skills: ["Selenium", "TestNG", "Java", "API Testing", "JIRA"],
+                description: "Build and maintain automation test suites for Zoho CRM. Ensure quality across desktop, mobile, and API layers.",
+                companyDescription: "Zoho is a privately-held software company with 90M+ users across 50+ products.",
+                status: "active",
+                applicationsCount: 16,
+                postedAt: daysAgo(16)
+            },
+            {
+                title: "Software Engineer",
+                company: "Ola Electric",
+                type: "Full-time",
+                location: "Bengaluru",
+                salary: "125000",
+                skills: ["C++", "Embedded Systems", "CAN Bus", "Python", "RTOS"],
+                description: "Build firmware and software for Ola's next-generation electric two-wheelers. Work on V2X communication and OTA update systems.",
+                companyDescription: "Ola Electric is India's leading EV manufacturer with India's largest 2-wheeler factory.",
+                status: "active",
+                applicationsCount: 33,
+                postedAt: daysAgo(5)
+            }
+        ];
+
+        async function seedJobs() {
+            const statusEl = document.getElementById('status');
+            const btn = document.getElementById('seedBtn');
+            const user = auth.currentUser;
+            if (!user) { statusEl.innerHTML = '<span class="err">✗ Not logged in. Please log in first.</span>'; return; }
+
+            btn.disabled = true;
+            btn.textContent = 'Seeding…';
+            statusEl.innerHTML = `Starting seed for ${demoJobs.length} jobs…<br>`;
+
+            let success = 0, failed = 0;
+
+            for (const job of demoJobs) {
+                try {
+                    await db.collection('jobs').add({
+                        ...job,
+                        recruiterId: user.uid,
+                        recruiterEmail: user.email,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    success++;
+                    statusEl.innerHTML += `<span style="color:#10b981;">✓</span> ${job.title} @ ${job.company}<br>`;
+                    statusEl.scrollTop = statusEl.scrollHeight;
+                } catch (err) {
+                    failed++;
+                    statusEl.innerHTML += `<span class="err">✗ ${job.title} — ${err.message}</span><br>`;
+                }
+            }
+
+            statusEl.innerHTML += `<br><span class="${failed === 0 ? 'done' : 'err'}">${success} added successfully${failed > 0 ? `, ${failed} failed` : ''}. 🎉</span>`;
+            btn.textContent = 'Done!';
+            btn.style.background = '#10b981';
+        }
+    </script>
+</body>
+</html>

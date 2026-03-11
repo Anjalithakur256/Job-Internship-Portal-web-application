@@ -342,61 +342,129 @@
         .tech-chip.red { border-color: rgba(229,57,53,0.28); color: var(--red); }
 
         /* ══════════════════════════════════════════════════════
-           DEVELOPER CARD  (Anjali Thakur)
+           TEAM SECTION
            ══════════════════════════════════════════════════════ */
-        .developer-section {
-            padding: 5rem 0;
-        }
-        .dev-wrapper {
+        .team-section { padding: 5rem 0; }
+        .team-lead-wrap {
             display: grid;
-            grid-template-columns: 340px 1fr;
-            gap: 3.5rem;
+            grid-template-columns: 280px 1fr;
+            gap: 3rem;
             align-items: start;
+            margin-bottom: 4rem;
         }
-        /* Left — photo card */
-        .dev-photo-card {
+        .team-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 22px;
-            padding: 2rem;
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
             text-align: center;
-            position: sticky;
-            top: 90px;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            transition: border-color 0.28s, box-shadow 0.28s, transform 0.28s;
+            position: relative;
+            overflow: hidden;
         }
-        .dev-photo-card:hover {
+        .team-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 3px;
+            background: linear-gradient(90deg, #e53935, #ff6b6b, #e53935);
+            background-size: 200% 100%;
+        }
+        .team-card:hover {
             border-color: rgba(229,57,53,0.32);
-            box-shadow: 0 16px 48px rgba(229,57,53,0.1);
+            box-shadow: 0 12px 40px rgba(229,57,53,0.1);
+            transform: translateY(-4px);
         }
-        .dev-photo-wrap {
-            position: relative;
-            width: 160px; height: 160px;
-            margin: 0 auto 1.4rem;
-        }
-        .dev-photo {
-            width: 160px; height: 160px;
+        .team-avatar {
+            width: 90px; height: 90px;
             border-radius: 50%;
-            object-fit: cover;
-            object-position: top center;
-            border: 3px solid rgba(229,57,53,0.3);
-            display: block;
+            background: linear-gradient(135deg, rgba(229,57,53,0.2), rgba(198,40,40,0.08));
+            border: 2px solid rgba(229,57,53,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; font-weight: 800; color: var(--red);
+            margin: 0 auto 1.1rem;
+            letter-spacing: -1px;
         }
-        /* Placeholder shown until real photo is added */
-        .dev-photo-placeholder {
-            width: 160px; height: 160px;
+        .team-avatar.lead {
+            width: 110px; height: 110px;
+            font-size: 2.4rem;
+            border: 3px solid rgba(229,57,53,0.45);
+            box-shadow: 0 0 0 6px rgba(229,57,53,0.07);
+        }
+        .team-name { font-size: 1.05rem; font-weight: 800; color: var(--text); margin-bottom: 0.2rem; }
+        .team-role { font-size: 0.8rem; color: var(--red); font-weight: 600; margin-bottom: 0.9rem; letter-spacing: 0.03em; }
+        .team-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35rem; margin-bottom: 0.9rem; }
+        .team-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 9px;
+            background: rgba(229,57,53,0.06);
+            border: 1px solid rgba(229,57,53,0.16);
+            border-radius: 50px;
+            font-size: 0.72rem; font-weight: 600; color: var(--text-muted);
+        }
+        .team-badge i { font-size: 0.62rem; color: var(--red); }
+        .lead-tag {
+            display: inline-block;
+            padding: 3px 12px;
+            background: linear-gradient(135deg, rgba(229,57,53,0.18), rgba(255,107,107,0.1));
+            border: 1px solid rgba(229,57,53,0.35);
+            border-radius: 50px;
+            font-size: 0.72rem; font-weight: 700; color: var(--red);
+            letter-spacing: 0.06em; text-transform: uppercase;
+            margin-bottom: 0.8rem;
+        }
+        /* Lead right column */
+        .lead-detail-label {
+            font-size: 0.72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.12em;
+            color: var(--red); margin-bottom: 0.7rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .lead-detail-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+        .lead-bio { font-size: 0.93rem; color: var(--text-muted); line-height: 1.85; margin-bottom: 0.85rem; }
+        /* Skill bars (reused) */
+        /* Members grid */
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.2rem;
+        }
+        .member-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.6rem 1.2rem;
+            text-align: center;
+            transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+        }
+        .member-card:hover {
+            border-color: rgba(229,57,53,0.28);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(229,57,53,0.08);
+        }
+        .member-avatar {
+            width: 64px; height: 64px;
             border-radius: 50%;
-            background: linear-gradient(135deg, rgba(229,57,53,0.15), rgba(198,40,40,0.08));
-            border: 3px dashed rgba(229,57,53,0.35);
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            gap: 0.4rem;
-            cursor: pointer;
-            transition: border-color 0.25s, background 0.25s;
-            position: relative;
+            background: rgba(229,57,53,0.09);
+            border: 1.5px solid rgba(229,57,53,0.22);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; font-weight: 800; color: var(--red);
+            margin: 0 auto 0.9rem;
         }
-        .dev-photo-placeholder:hover {
-            border-color: rgba(229,57,53,0.65);
-            background: rgba(229,57,53,0.12);
+        .member-name { font-size: 0.93rem; font-weight: 700; color: var(--text); margin-bottom: 0.2rem; }
+        .member-role { font-size: 0.76rem; color: var(--red); font-weight: 600; margin-bottom: 0.65rem; }
+        .member-dept {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 9px;
+            background: rgba(229,57,53,0.05); border: 1px solid rgba(229,57,53,0.14);
+            border-radius: 50px; font-size: 0.7rem; color: var(--text-muted);
+        }
+        .member-dept i { font-size: 0.62rem; color: var(--red); }
+        @media (max-width: 900px) {
+            .team-lead-wrap { grid-template-columns: 1fr; }
+            .members-grid   { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            .members-grid { grid-template-columns: 1fr 1fr; gap: 0.8rem; }
         }
         .dev-photo-placeholder i { font-size: 2rem; color: rgba(229,57,53,0.55); }
         .dev-photo-placeholder span {
@@ -674,22 +742,22 @@
         </p>
         <div class="hero-stats-row" data-aos="fade-up" data-aos-delay="240">
             <div class="hero-stat">
-                <span class="num">1.2K+</span>
+                <span class="num" id="aboutStatJobs">—</span>
                 <span class="lbl">Active Jobs</span>
             </div>
             <div class="hero-divider"></div>
             <div class="hero-stat">
-                <span class="num">8.7K+</span>
+                <span class="num" id="aboutStatUsers">—</span>
                 <span class="lbl">Students</span>
             </div>
             <div class="hero-divider"></div>
             <div class="hero-stat">
-                <span class="num">350+</span>
+                <span class="num" id="aboutStatRecruiters">—</span>
                 <span class="lbl">Recruiters</span>
             </div>
             <div class="hero-divider"></div>
             <div class="hero-stat">
-                <span class="num">31K+</span>
+                <span class="num" id="aboutStatApps">—</span>
                 <span class="lbl">Applications</span>
             </div>
         </div>
@@ -879,140 +947,136 @@
     </div>
 </section>
 
-<!-- ══ DEVELOPER SECTION ═════════════════════════════════════════════ -->
-<section class="developer-section" id="developer">
+<!-- ══ TEAM SECTION ══════════════════════════════════════════════════ -->
+<section class="team-section" id="developer">
     <div class="container">
         <div style="text-align:center;margin-bottom:3rem;" data-aos="fade-up">
-            <span class="section-label">The Person Behind It</span>
-            <h2 class="section-title">Meet the <span class="accent">Developer</span></h2>
+            <span class="section-label">The Team Behind It</span>
+            <h2 class="section-title">Meet the <span class="accent">Team</span></h2>
             <p class="section-desc" style="margin:0 auto;">
-                JobNexus was carefully designed, built, and shipped by a single passionate developer.
+                JobNexus is a student project built with passion by a team from
+                <strong style="color:var(--text);">Centurion University of Technology and Management</strong>,
+                Paralakhemundi &mdash; Diploma in Computer Science &amp; Engineering.
             </p>
         </div>
 
-        <div class="dev-wrapper" data-aos="fade-up" data-aos-delay="80">
-
-            <!-- ── Left: Photo card ── -->
-            <div class="dev-photo-card">
-                <div class="dev-photo-wrap">
-                    <img src="../assets/anjali-thakur.jpg"
-                         alt="Anjali Thakur" class="dev-photo" id="devPhoto">
-                </div>
+        <!-- ── Lead Developer ── -->
+        <div class="team-lead-wrap" data-aos="fade-up" data-aos-delay="60">
+            <!-- Left card -->
+            <div class="team-card">
+                <div class="team-avatar lead">AT</div>
+                <div style="margin-bottom:0.5rem;"><span class="lead-tag"><i class="fas fa-crown" style="margin-right:4px;"></i>Lead Developer</span></div>
 
                 <div class="dev-name">Anjali Thakur</div>
-                <div class="dev-role">Full-Stack Developer &amp; Designer</div>
+                <div class="dev-role">Frontend Developer &amp; Team Lead</div>
 
                 <div class="dev-badge-row">
                     <span class="dev-badge"><i class="fas fa-graduation-cap"></i> Diploma CSE</span>
-                    <span class="dev-badge"><i class="fas fa-map-marker-alt"></i> India</span>
-                    <span class="dev-badge"><i class="fas fa-circle" style="color:#10b981;font-size:0.55rem;"></i> Open to work</span>
-                </div>
-
-                <div class="dev-socials">
-                    <a href="#" class="dev-social-btn" title="LinkedIn" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#" class="dev-social-btn" title="GitHub" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                    <a href="#" class="dev-social-btn" title="Twitter / X" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="mailto:" class="dev-social-btn" title="Email" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                    <span class="dev-badge"><i class="fas fa-university"></i> Centurion Univ.</span>
+                    <span class="dev-badge"><i class="fas fa-circle" style="color:#10b981;font-size:0.55rem;"></i> Active</span>
                 </div>
             </div>
 
-            <!-- ── Right: Details ── -->
-            <div class="dev-details">
-
-                <!-- Bio -->
-                <div class="dev-detail-section">
-                    <div class="dev-section-label"><i class="fas fa-user"></i> About Me</div>
-                    <p class="dev-bio">
-                        Hi! I'm <strong style="color:var(--text);">Anjali Thakur</strong>, a passionate Diploma in Computer Science &amp; Engineering student with a deep love for building meaningful digital products.
+            <!-- Right details -->
+            <div>
+                <div style="margin-bottom:1.5rem;">
+                    <div class="lead-detail-label"><i class="fas fa-user"></i> About</div>
+                    <p class="lead-bio">
+                        Anjali leads the <strong style="color:var(--text);">JobNexus</strong> project as the primary frontend developer and overall team lead.
+                        She designed the entire UI/UX system, built every page from scratch, and architected the Firebase integration that powers the platform.
                     </p>
-                    <p class="dev-bio">
-                        I designed and developed <strong style="color:var(--text);">JobNexus</strong> from the ground up — every screen, every interaction, every line of code. My goal was to create a platform that I myself would want to use as a student looking for opportunities.
-                    </p>
-                    <p class="dev-bio">
-                        Beyond code, I'm driven by clean design, real-world problem solving, and the belief that the right opportunity can change someone's life.
+                    <p class="lead-bio">
+                        From the dark-red design language to real-time dashboards, Anjali shaped every pixel and interaction that students and recruiters experience today.
                     </p>
                 </div>
-
-                <!-- Skills -->
-                <div class="dev-detail-section">
-                    <div class="dev-section-label"><i class="fas fa-code"></i> Core Skills</div>
+                <div style="margin-bottom:1.5rem;">
+                    <div class="lead-detail-label"><i class="fas fa-code"></i> Skills</div>
                     <div class="skill-list" id="skillList">
                         <div class="skill-row">
-                            <div class="skill-header">
-                                <span class="skill-name"><i class="fab fa-html5"></i> HTML5</span>
-                                <span class="skill-pct">95%</span>
-                            </div>
+                            <div class="skill-header"><span class="skill-name"><i class="fab fa-html5"></i> HTML5 &amp; CSS3</span><span class="skill-pct">95%</span></div>
                             <div class="skill-bar"><div class="skill-fill" data-pct="95"></div></div>
                         </div>
                         <div class="skill-row">
-                            <div class="skill-header">
-                                <span class="skill-name"><i class="fab fa-css3-alt"></i> CSS3 / Responsive Design</span>
-                                <span class="skill-pct">90%</span>
-                            </div>
-                            <div class="skill-bar"><div class="skill-fill" data-pct="90"></div></div>
-                        </div>
-                        <div class="skill-row">
-                            <div class="skill-header">
-                                <span class="skill-name"><i class="fab fa-js-square"></i> JavaScript (ES6+)</span>
-                                <span class="skill-pct">85%</span>
-                            </div>
+                            <div class="skill-header"><span class="skill-name"><i class="fab fa-js-square"></i> JavaScript (ES6+)</span><span class="skill-pct">85%</span></div>
                             <div class="skill-bar"><div class="skill-fill" data-pct="85"></div></div>
                         </div>
                         <div class="skill-row">
-                            <div class="skill-header">
-                                <span class="skill-name"><i class="fas fa-cloud"></i> AWS Cloud</span>
-                                <span class="skill-pct">70%</span>
-                            </div>
-                            <div class="skill-bar"><div class="skill-fill" data-pct="70"></div></div>
-                        </div>
-                        <div class="skill-row">
-                            <div class="skill-header">
-                                <span class="skill-name"><i class="fas fa-fire"></i> Firebase (Auth, Firestore, Storage)</span>
-                                <span class="skill-pct">82%</span>
-                            </div>
+                            <div class="skill-header"><span class="skill-name"><i class="fas fa-fire"></i> Firebase</span><span class="skill-pct">82%</span></div>
                             <div class="skill-bar"><div class="skill-fill" data-pct="82"></div></div>
                         </div>
-                    </div>
-                    <div class="extra-chips">
-                        <span class="extra-chip"><i class="fab fa-git-alt" style="color:#f14e32;"></i> Git</span>
-                        <span class="extra-chip"><i class="fas fa-database"></i> SQL Basics</span>
-                        <span class="extra-chip"><i class="fab fa-python"></i> Python (Basics)</span>
-                        <span class="extra-chip"><i class="fas fa-paint-brush"></i> UI/UX Design</span>
-                        <span class="extra-chip"><i class="fas fa-terminal"></i> CLI Tools</span>
-                        <span class="extra-chip"><i class="fas fa-server"></i> REST APIs</span>
-                        <span class="extra-chip">+ more</span>
-                    </div>
-                </div>
-
-                <!-- Education -->
-                <div class="dev-detail-section">
-                    <div class="dev-section-label"><i class="fas fa-graduation-cap"></i> Education</div>
-                    <div class="edu-card">
-                        <div class="edu-icon"><i class="fas fa-university"></i></div>
-                        <div class="edu-info">
-                            <h4>Diploma in Computer Science &amp; Engineering</h4>
-                            <p>Polytechnic Institute · CSE Branch</p>
-                            <span>Currently Pursuing</span>
+                        <div class="skill-row">
+                            <div class="skill-header"><span class="skill-name"><i class="fas fa-paint-brush"></i> UI/UX Design</span><span class="skill-pct">88%</span></div>
+                            <div class="skill-bar"><div class="skill-fill" data-pct="88"></div></div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Contributions to JobNexus -->
-                <div class="dev-detail-section">
-                    <div class="dev-section-label"><i class="fas fa-star"></i> Contributions to JobNexus</div>
+                <div>
+                    <div class="lead-detail-label"><i class="fas fa-star"></i> Contributions</div>
                     <ul class="contrib-list">
-                        <li><i class="fas fa-check-circle"></i> Sole designer &amp; developer — built the entire platform from scratch</li>
-                        <li><i class="fas fa-check-circle"></i> Designed a complete dark-red themed design system across all 5 pages</li>
-                        <li><i class="fas fa-check-circle"></i> Integrated Firebase Auth, Firestore, and Storage for a live backend</li>
-                        <li><i class="fas fa-check-circle"></i> Built real-time job &amp; application dashboards for both students and recruiters</li>
-                        <li><i class="fas fa-check-circle"></i> Implemented advanced search &amp; filter, saved jobs, PDF preview, and email notifications</li>
-                        <li><i class="fas fa-check-circle"></i> Made the entire site fully responsive — mobile slide-in nav, touch-optimised controls</li>
-                        <li><i class="fas fa-check-circle"></i> Added GSAP &amp; AOS animations, page transitions, and micro-interactions throughout</li>
+                        <li><i class="fas fa-check-circle"></i> Designed the complete dark-red themed design system across all pages</li>
+                        <li><i class="fas fa-check-circle"></i> Built student &amp; recruiter dashboards with real-time Firestore listeners</li>
+                        <li><i class="fas fa-check-circle"></i> Integrated Firebase Auth, Firestore, and Storage</li>
+                        <li><i class="fas fa-check-circle"></i> Implemented search &amp; filter, saved jobs, PDF preview, notifications</li>
+                        <li><i class="fas fa-check-circle"></i> Made the entire site responsive with mobile slide-in nav</li>
+                        <li><i class="fas fa-check-circle"></i> Added GSAP &amp; AOS animations and deployed the project on Vercel</li>
                     </ul>
                 </div>
+            </div>
+        </div><!-- /.team-lead-wrap -->
 
-            </div><!-- /.dev-details -->
-        </div><!-- /.dev-wrapper -->
+        <!-- ── Other Team Members ── -->
+        <div style="text-align:center;margin-top:3rem;margin-bottom:2rem;" data-aos="fade-up">
+            <span class="section-label">Other Contributors</span>
+            <h3 style="font-size:1.3rem;font-weight:700;color:var(--text);">Rest of the <span style="background:linear-gradient(135deg,#e53935,#ff6b6b);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">Team</span></h3>
+        </div>
+        <div class="members-grid" data-aos="fade-up" data-aos-delay="80">
+
+            <!-- D. Ganesh -->
+            <div class="member-card">
+                <div class="member-avatar">DG</div>
+                <div class="member-name">D. Ganesh</div>
+                <div class="member-role"><i class="fas fa-database" style="margin-right:4px;"></i>Database &amp; Backend</div>
+                <div class="member-dept"><i class="fas fa-university"></i>&nbsp;Diploma in CSE</div>
+            </div>
+
+            <!-- Golu -->
+            <div class="member-card">
+                <div class="member-avatar">GO</div>
+                <div class="member-name">Golu</div>
+                <div class="member-role"><i class="fas fa-database" style="margin-right:4px;"></i>Database &amp; Backend</div>
+                <div class="member-dept"><i class="fas fa-university"></i>&nbsp;Diploma in CSE</div>
+            </div>
+
+            <!-- Tanisha Bharti -->
+            <div class="member-card">
+                <div class="member-avatar">TB</div>
+                <div class="member-name">Tanisha Bharti</div>
+                <div class="member-role"><i class="fas fa-chalkboard-teacher" style="margin-right:4px;"></i>Presentation &amp; Deployment</div>
+                <div class="member-dept"><i class="fas fa-university"></i>&nbsp;Diploma in CSE</div>
+            </div>
+
+            <!-- Isha -->
+            <div class="member-card">
+                <div class="member-avatar">IS</div>
+                <div class="member-name">Isha</div>
+                <div class="member-role"><i class="fas fa-chalkboard" style="margin-right:4px;"></i>Presentation</div>
+                <div class="member-dept"><i class="fas fa-university"></i>&nbsp;Diploma in CSE</div>
+            </div>
+
+        </div>
+
+        <!-- University Banner -->
+        <div style="margin-top:3rem;padding:1.5rem 2rem;background:rgba(229,57,53,0.05);border:1px solid rgba(229,57,53,0.15);border-radius:16px;display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;" data-aos="fade-up" data-aos-delay="120">
+            <div style="width:48px;height:48px;border-radius:12px;background:rgba(229,57,53,0.1);border:1px solid rgba(229,57,53,0.2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:var(--red);flex-shrink:0;">
+                <i class="fas fa-university"></i>
+            </div>
+            <div style="flex:1;min-width:220px;">
+                <div style="font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:2px;">Centurion University of Technology and Management</div>
+                <div style="font-size:0.82rem;color:var(--text-muted);">Paralakhemundi, Gajapati, Odisha &ndash; 761211 &nbsp;&middot;&nbsp; Diploma in Computer Science &amp; Engineering</div>
+            </div>
+            <span style="padding:4px 14px;background:rgba(229,57,53,0.09);border:1px solid rgba(229,57,53,0.2);border-radius:50px;font-size:0.75rem;font-weight:700;color:var(--red);white-space:nowrap;">Academic Project 2026</span>
+        </div>
+
     </div>
 </section>
 
@@ -1074,7 +1138,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 JobNexus. All rights reserved. | Crafted with <i class="fas fa-heart" style="color:#e53935;"></i> by <strong>Anjali Thakur</strong></p>
+            <p>&copy; 2026 JobNexus. All rights reserved. | Crafted with <i class="fas fa-heart" style="color:#e53935;"></i> by <strong>Team JobNexus</strong> &ndash; Centurion University</p>
         </div>
     </div>
 </footer>
@@ -1082,7 +1146,10 @@
 <!-- ══ SCRIPTS ══════════════════════════════════════════════════════ -->
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script defer src="../css/page-animations.css" type="text/css"></script>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="../js/firebase-config.js"></script>
 
 <script>
 /* ── Loading overlay ─────────────────────────────── */
@@ -1138,6 +1205,42 @@ window.addEventListener('scroll', () => {
     toggle.addEventListener('click', () => menu.classList.contains('open') ? closeMenu() : openMenu());
     if (backdrop) backdrop.addEventListener('click', closeMenu);
     menu.querySelectorAll('a').forEach(l => l.addEventListener('click', closeMenu));
+})();
+
+/* ── Live stats from Firestore ───────────────────── */
+(function loadAboutStats() {
+    function animateStat(el, target) {
+        if (!el || !target) return;
+        const dur = 1600; const t0 = performance.now();
+        const fmt = n => n >= 1000 ? (n / 1000).toFixed(1) + 'K+' : n + '+';
+        const tick = now => {
+            const p = Math.min((now - t0) / dur, 1);
+            el.textContent = fmt(Math.floor(p * target));
+            if (p < 1) requestAnimationFrame(tick); else el.textContent = fmt(target);
+        };
+        requestAnimationFrame(tick);
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof firebase === 'undefined' || !firebase.firestore) return;
+        const db = firebase.firestore();
+        // Active jobs count
+        db.collection('jobs').where('status', '==', 'active').get()
+            .then(s => animateStat(document.getElementById('aboutStatJobs'), s.size))
+            .catch(() => {});
+        // Users (students) + applications from siteStats/public
+        db.collection('siteStats').doc('public').get()
+            .then(snap => {
+                const d = snap.exists ? snap.data() : {};
+                animateStat(document.getElementById('aboutStatUsers'), d.userCount || 0);
+                animateStat(document.getElementById('aboutStatApps'),  d.appCount  || 0);
+            }).catch(() => {});
+        // Recruiters = unique recruiterId across all jobs
+        db.collection('jobs').get()
+            .then(snap => {
+                const r = new Set(snap.docs.map(d => d.data().recruiterId).filter(Boolean));
+                animateStat(document.getElementById('aboutStatRecruiters'), r.size);
+            }).catch(() => {});
+    });
 })();
 
 /* ── Stat counter animation ──────────────────────── */

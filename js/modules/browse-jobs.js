@@ -66,6 +66,12 @@ class BrowseJobs {
                         ...doc.data(),
                         postedAt: doc.data().postedAt?.toDate?.() || new Date(),
                     }));
+                    // Update browse-hero live count
+                    const heroCount = document.getElementById('browseHeroCount');
+                    if (heroCount) {
+                        const n = this.allJobs.length;
+                        heroCount.textContent = n >= 1000 ? `${(n/1000).toFixed(1)}K+` : (n > 0 ? `${n}+` : 'Live');
+                    }
                     this.applyFiltersAndRender();
                 },
                 error => {
@@ -515,10 +521,13 @@ function initFeaturedJobs() {
     const db = firebase.firestore();
     const colors = ['5b21b6','0ea5e9','ec4899','10b981','f59e0b','6366f1'];
 
-    db.collection('jobs')
-        .orderBy('createdAt', 'desc')
-        .limit(6)
-        .get()
+    // Try newest-first; fall back to unordered if no docs have createdAt
+    const featuredQuery = db.collection('jobs').orderBy('createdAt', 'desc').limit(6);
+    const fallbackQuery = db.collection('jobs').limit(6);
+
+    featuredQuery.get()
+        .catch(() => fallbackQuery.get())  // index / permission error → fallback
+        .then(snap => snap.empty ? fallbackQuery.get() : snap) // orderBy excluded all docs → fallback
         .then(snap => {
             if (snap.empty) {
                 carousel.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--text-secondary);width:100%;">
@@ -588,10 +597,13 @@ function initHeroCard() {
     if (!mainCard) return;
     if (typeof firebase === 'undefined' || !firebase.firestore) return;
 
-    firebase.firestore().collection('jobs')
-        .orderBy('createdAt', 'desc')
-        .limit(1)
-        .get()
+    const db2 = firebase.firestore();
+    const heroQuery = db2.collection('jobs').orderBy('createdAt', 'desc').limit(1);
+    const heroFallback = db2.collection('jobs').limit(1);
+
+    heroQuery.get()
+        .catch(() => heroFallback.get())
+        .then(snap => snap.empty ? heroFallback.get() : snap)
         .then(snap => {
             if (snap.empty) return;
             const job = { id: snap.docs[0].id, ...snap.docs[0].data() };

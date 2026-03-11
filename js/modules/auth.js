@@ -82,24 +82,30 @@ class AuthManager {
         this.switchAuthTab(tab);
         
         // Animate modal entrance
-        gsap.from('.modal-content', {
-            duration: 0.3,
-            scale: 0.95,
-            opacity: 0,
-            ease: 'back.out'
-        });
+        if (typeof gsap !== 'undefined') {
+            gsap.from('.modal-content', {
+                duration: 0.3,
+                scale: 0.95,
+                opacity: 0,
+                ease: 'back.out'
+            });
+        }
     }
 
     closeAuthModal() {
-        gsap.to('.modal-content', {
-            duration: 0.2,
-            scale: 0.95,
-            opacity: 0,
-            ease: 'power2.in',
-            onComplete: () => {
-                this.authModal.classList.remove('active');
-            }
-        });
+        if (typeof gsap !== 'undefined') {
+            gsap.to('.modal-content', {
+                duration: 0.2,
+                scale: 0.95,
+                opacity: 0,
+                ease: 'power2.in',
+                onComplete: () => {
+                    this.authModal.classList.remove('active');
+                }
+            });
+        } else {
+            this.authModal.classList.remove('active');
+        }
     }
 
     switchAuthTab(tab) {
@@ -275,11 +281,15 @@ class AuthManager {
             form.insertBefore(errorDiv, form.firstChild);
 
             setTimeout(() => {
-                gsap.to(errorDiv, {
-                    duration: 0.3,
-                    opacity: 0,
-                    onComplete: () => errorDiv.remove()
-                });
+                if (typeof gsap !== 'undefined') {
+                    gsap.to(errorDiv, {
+                        duration: 0.3,
+                        opacity: 0,
+                        onComplete: () => errorDiv.remove()
+                    });
+                } else {
+                    errorDiv.remove();
+                }
             }, 4000);
         }
     }

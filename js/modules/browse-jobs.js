@@ -540,16 +540,28 @@ function initFeaturedJobs() {
         </div>`;
     }
 
+    // ── Waiting message (reused for empty collection + timeout fallback) ──
+    function showWaiting() {
+        carousel.innerHTML = `
+            <div style="text-align:center;padding:60px 20px;color:var(--text-secondary);width:100%;">
+                <i class="fas fa-rocket" style="font-size:3rem;opacity:0.4;display:block;margin-bottom:16px;"></i>
+                <p style="font-size:1.1rem;font-weight:600;color:var(--text-primary);margin-bottom:8px;">Exciting opportunities coming soon!</p>
+                <p style="font-size:0.9rem;opacity:0.7;">Recruiters are preparing their listings — check back shortly.</p>
+            </div>`;
+    }
+
+    // If onSnapshot never fires within 6 s, replace skeleton with waiting note
+    let firstSnapDone = false;
+    const fallbackTimer = setTimeout(() => {
+        if (!firstSnapDone) showWaiting();
+    }, 6000);
+
     function renderSnap(snap) {
-        if (snap.empty) {
-            carousel.innerHTML = `
-                <div style="text-align:center;padding:60px 20px;color:var(--text-secondary);width:100%;">
-                    <i class="fas fa-rocket" style="font-size:3rem;opacity:0.4;display:block;margin-bottom:16px;"></i>
-                    <p style="font-size:1.1rem;font-weight:600;color:var(--text-primary);margin-bottom:8px;">Exciting opportunities coming soon!</p>
-                    <p style="font-size:0.9rem;opacity:0.7;">Recruiters are preparing their listings — check back shortly.</p>
-                </div>`;
-            return;
+        if (!firstSnapDone) {
+            firstSnapDone = true;
+            clearTimeout(fallbackTimer);
         }
+        if (snap.empty) { showWaiting(); return; }
         carousel.innerHTML = snap.docs.map((doc, idx) => buildCard(doc, idx)).join('');
         if (typeof AOS !== 'undefined') AOS.refresh();
         carousel.querySelectorAll('.apply-btn[data-job-id]').forEach(btn => {
@@ -581,6 +593,8 @@ function initFeaturedJobs() {
                     if (featuredUnsub) { featuredUnsub(); featuredUnsub = null; }
                     attachListener(false); // retry without orderBy
                 } else {
+                    firstSnapDone = true;
+                    clearTimeout(fallbackTimer);
                     carousel.innerHTML = `
                         <div style="text-align:center;padding:40px 20px;color:var(--text-secondary);width:100%;">
                             <i class="fas fa-wifi" style="font-size:2.5rem;opacity:0.3;display:block;margin-bottom:12px;"></i>
@@ -589,7 +603,7 @@ function initFeaturedJobs() {
                 }
             }
         );
-        window.addEventListener('beforeunload', () => { if (featuredUnsub) featuredUnsub(); }, { once: true });
+        window.addEventListener('pagehide', () => { if (featuredUnsub) featuredUnsub(); }, { once: true });
     }
 
     // Wait up to 6 s for Firebase SDK to finish loading (deferred scripts)
@@ -597,6 +611,8 @@ function initFeaturedJobs() {
     function tryInit() {
         if (typeof firebase === 'undefined' || !firebase.firestore) {
             if (++attempts < 20) { setTimeout(tryInit, 300); return; }
+            firstSnapDone = true;
+            clearTimeout(fallbackTimer);
             carousel.innerHTML = `
                 <div style="text-align:center;padding:40px 20px;color:var(--text-secondary);width:100%;">
                     <i class="fas fa-wifi" style="font-size:2.5rem;opacity:0.3;display:block;margin-bottom:12px;"></i>

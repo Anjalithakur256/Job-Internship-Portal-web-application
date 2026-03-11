@@ -321,6 +321,27 @@
     deferredPrompt = null;
   });
 
+  /* ── Wire hero Install button (click + touchend for mobile) ── */
+  function wireHeroBtn() {
+    const heroBtn = document.getElementById('heroInstallBtn');
+    if (!heroBtn) return;
+    let touchMoved = false;
+    heroBtn.addEventListener('touchstart', () => { touchMoved = false; }, { passive: true });
+    heroBtn.addEventListener('touchmove', () => { touchMoved = true; }, { passive: true });
+    heroBtn.addEventListener('touchend', (e) => {
+      if (!touchMoved) {
+        e.preventDefault();
+        triggerInstall();
+      }
+    });
+    heroBtn.addEventListener('click', () => triggerInstall());
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireHeroBtn);
+  } else {
+    wireHeroBtn();
+  }
+
   /* â”€â”€ 7. Core install logic â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   function triggerInstall() {
     if (isStandalone) {

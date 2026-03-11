@@ -66,11 +66,18 @@ class BrowseJobs {
                         ...doc.data(),
                         postedAt: doc.data().postedAt?.toDate?.() || new Date(),
                     }));
-                    // Update browse-hero live count
+                    // Update browse-hero live count + stat pills
                     const heroCount = document.getElementById('browseHeroCount');
                     if (heroCount) {
                         const n = this.allJobs.length;
                         heroCount.textContent = n >= 1000 ? `${(n/1000).toFixed(1)}K+` : (n > 0 ? `${n}+` : 'Live');
+                    }
+                    const bhJobs = document.getElementById('bhStatJobs');
+                    if (bhJobs) bhJobs.textContent = this.allJobs.length || '—';
+                    const bhCo = document.getElementById('bhStatCompanies');
+                    if (bhCo) {
+                        const unique = new Set(this.allJobs.map(j => (j.company || '').toLowerCase().trim()).filter(Boolean));
+                        bhCo.textContent = unique.size || '—';
                     }
                     this.applyFiltersAndRender();
                 },
@@ -508,7 +515,11 @@ function initHomePageStats() {
         .catch(() => markUnavailable(statUsers));
 
     db.collection('applications').get()
-        .then(snap => animateCount(statApps, snap.size))
+        .then(snap => {
+            animateCount(statApps, snap.size);
+            const bhApps = document.getElementById('bhStatApps');
+            if (bhApps) bhApps.textContent = snap.size >= 1000 ? `${(snap.size/1000).toFixed(1)}K+` : (snap.size || '—');
+        })
         .catch(() => markUnavailable(statApps));
 }
 

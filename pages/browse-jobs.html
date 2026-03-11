@@ -45,10 +45,98 @@
     <!-- Browse Hero -->
     <section class="browse-hero">
         <div class="container">
-            <h1 data-aos="fade-up">Explore <span class="gradient-text" id="browseHeroCount">Live</span> Opportunities</h1>
-            <p data-aos="fade-up" data-aos-delay="100">Internships, freelance gigs, and full-time roles — filtered to match you.</p>
+            <div class="bh-eyebrow" data-aos="fade-up"><i class="fas fa-bolt"></i> India&rsquo;s fastest-growing student job platform</div>
+            <h1 data-aos="fade-up" data-aos-delay="60">Explore <span class="gradient-text" id="browseHeroCount">Live</span> Opportunities</h1>
+            <p data-aos="fade-up" data-aos-delay="120">Internships, freelance gigs, and full-time roles &mdash; curated for students &amp; freshers across India.<br>Filter by skills, location, and salary to find the perfect fit in seconds.</p>
+
+            <!-- Live stat pills -->
+            <div class="bh-stats" data-aos="fade-up" data-aos-delay="180">
+                <div class="bh-stat"><i class="fas fa-briefcase"></i><strong id="bhStatJobs">—</strong><span>Live Jobs</span></div>
+                <div class="bh-stat"><i class="fas fa-building"></i><strong id="bhStatCompanies">—</strong><span>Companies Hiring</span></div>
+                <div class="bh-stat"><i class="fas fa-layer-group"></i><strong>5+</strong><span>Skill Categories</span></div>
+                <div class="bh-stat"><i class="fas fa-user-graduate"></i><strong id="bhStatApps">—</strong><span>Applications Sent</span></div>
+            </div>
+
+            <!-- Feature highlights -->
+            <div class="bh-features" data-aos="fade-up" data-aos-delay="240">
+                <div class="bh-feature"><i class="fas fa-filter"></i><span>Smart Filters</span><small>By type, location &amp; salary</small></div>
+                <div class="bh-feature"><i class="fas fa-bolt"></i><span>One-click Apply</span><small>CV auto-attaches from profile</small></div>
+                <div class="bh-feature"><i class="fas fa-bell"></i><span>Instant Alerts</span><small>Get notified on new postings</small></div>
+                <div class="bh-feature"><i class="fas fa-shield-alt"></i><span>Verified Roles</span><small>Posted by real recruiters</small></div>
+            </div>
+
+            <!-- How it works -->
+            <div class="bh-how" data-aos="fade-up" data-aos-delay="300">
+                <div class="bh-step"><span class="bh-step-num">1</span><strong>Browse</strong><small>Scroll or filter to find roles that match your skills</small></div>
+                <div class="bh-step-arrow"><i class="fas fa-chevron-right"></i></div>
+                <div class="bh-step"><span class="bh-step-num">2</span><strong>Apply</strong><small>Click &ldquo;Apply Now&rdquo; &mdash; your saved CV attaches automatically</small></div>
+                <div class="bh-step-arrow"><i class="fas fa-chevron-right"></i></div>
+                <div class="bh-step"><span class="bh-step-num">3</span><strong>Get Hired</strong><small>Recruiter reviews &amp; accepts your application in-platform</small></div>
+            </div>
         </div>
     </section>
+
+    <style>
+    .bh-eyebrow {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: rgba(229,57,53,0.12); border: 1px solid rgba(229,57,53,0.3);
+        color: #e53935; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px;
+        text-transform: uppercase; padding: 0.3rem 0.9rem; border-radius: 20px;
+        margin-bottom: 1.2rem;
+    }
+    .browse-hero p { max-width: 700px !important; }
+    .bh-stats {
+        display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;
+        margin-top: 2rem;
+    }
+    .bh-stat {
+        display: flex; align-items: center; gap: 0.6rem;
+        background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 50px; padding: 0.5rem 1.2rem;
+        font-size: 0.85rem; color: #ccc;
+    }
+    .bh-stat i { color: #e53935; font-size: 0.9rem; }
+    .bh-stat strong { color: #fff; font-size: 1rem; font-weight: 700; margin-right: 2px; }
+    .bh-features {
+        display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem;
+        margin-top: 1.8rem;
+    }
+    .bh-feature {
+        display: flex; flex-direction: column; align-items: center; gap: 4px;
+        background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 12px; padding: 0.9rem 1.4rem; min-width: 130px;
+        transition: all 0.2s;
+    }
+    .bh-feature:hover { border-color: rgba(229,57,53,0.35); background: rgba(229,57,53,0.05); transform: translateY(-3px); }
+    .bh-feature i { font-size: 1.2rem; color: #e53935; margin-bottom: 2px; }
+    .bh-feature span { font-size: 0.82rem; font-weight: 700; color: #fff; }
+    .bh-feature small { font-size: 0.7rem; color: #777; text-align: center; }
+    .bh-how {
+        display: flex; align-items: flex-start; justify-content: center;
+        flex-wrap: wrap; gap: 0; margin-top: 2.5rem;
+        background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 16px; padding: 1.5rem 2rem;
+    }
+    .bh-step {
+        display: flex; flex-direction: column; align-items: center; gap: 6px;
+        flex: 1; min-width: 160px; max-width: 220px;
+    }
+    .bh-step-num {
+        width: 34px; height: 34px; border-radius: 50%;
+        background: linear-gradient(135deg, #e53935, #b71c1c);
+        color: #fff; font-size: 0.9rem; font-weight: 800;
+        display: flex; align-items: center; justify-content: center;
+        margin-bottom: 4px;
+    }
+    .bh-step strong { font-size: 0.92rem; color: #fff; }
+    .bh-step small { font-size: 0.72rem; color: #888; text-align: center; line-height: 1.5; }
+    .bh-step-arrow { color: #333; font-size: 1rem; align-self: center; padding: 0 0.5rem; margin-top: -8px; }
+    @media (max-width: 600px) {
+        .bh-step-arrow { display: none; }
+        .bh-how { gap: 1rem; }
+        .bh-feature { min-width: 110px; }
+    }
+    </style>
 
     <!-- Main Browse Layout -->
     <main class="container">

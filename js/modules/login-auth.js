@@ -145,11 +145,14 @@ if (loginForm) {
       sessionStorage.setItem('userRole', role);
       
       setTimeout(() => {
-        // Redirect based on role
+        // Redirect based on role; honour applyJob param for students
         if (role === 'recruiter') {
           window.location.href = "dashboard/recruiter-dashboard.html";
         } else {
-          window.location.href = "dashboard/student-dashboard.html";
+          const applyJob = new URLSearchParams(window.location.search).get('applyJob');
+          window.location.href = applyJob
+            ? `dashboard/student-dashboard.html?applyJob=${encodeURIComponent(applyJob)}`
+            : "dashboard/student-dashboard.html";
         }
       }, 500);
     } catch (error) {
@@ -251,7 +254,10 @@ if (signupForm) {
         if (role === 'recruiter') {
           window.location.href = "dashboard/recruiter-dashboard.html";
         } else {
-          window.location.href = "dashboard/student-dashboard.html";
+          const applyJob = new URLSearchParams(window.location.search).get('applyJob');
+          window.location.href = applyJob
+            ? `dashboard/student-dashboard.html?applyJob=${encodeURIComponent(applyJob)}`
+            : "dashboard/student-dashboard.html";
         }
       }, 500);
     } catch (error) {
@@ -382,9 +388,14 @@ if (googleSignInButton) {
 
       showMessage('Signed in with Google! Redirecting...', 'success');
       setTimeout(() => {
-        window.location.href = role === 'recruiter'
-          ? "dashboard/recruiter-dashboard.html"
-          : "dashboard/student-dashboard.html";
+        if (role === 'recruiter') {
+          window.location.href = "dashboard/recruiter-dashboard.html";
+        } else {
+          const applyJob = new URLSearchParams(window.location.search).get('applyJob');
+          window.location.href = applyJob
+            ? `dashboard/student-dashboard.html?applyJob=${encodeURIComponent(applyJob)}`
+            : "dashboard/student-dashboard.html";
+        }
       }, 700);
 
     } catch (error) {

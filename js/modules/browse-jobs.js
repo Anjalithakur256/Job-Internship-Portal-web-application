@@ -428,10 +428,7 @@ class BrowseJobs {
 
     handleApply(jobId) {
         if (!this.currentUser) {
-            this.showToast('Please log in to apply', 'warning');
-            document.getElementById('authModal')?.classList.add('active');
-            document.querySelectorAll('.auth-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
-            document.querySelectorAll('.auth-form').forEach((f, i) => f.classList.toggle('active', i === 0));
+            window.location.href = `../login.html?applyJob=${jobId}`;
             return;
         }
         // Navigate to student dashboard with job pre-selected (or trigger apply modal)
@@ -624,7 +621,7 @@ function initFeaturedJobs() {
                 const jobId = this.dataset.jobId;
                 const user = typeof firebase !== 'undefined' ? firebase.auth().currentUser : null;
                 if (!user) {
-                    document.getElementById('authModal')?.classList.add('active');
+                    window.location.href = `login.html?applyJob=${jobId}`;
                     return;
                 }
                 window.location.href = `dashboard/student-dashboard.html?applyJob=${jobId}`;
@@ -715,7 +712,7 @@ function initHeroCard() {
             if (applyBtn) {
                 applyBtn.onclick = () => {
                     const user = firebase.auth().currentUser;
-                    if (!user) { document.getElementById('authModal')?.classList.add('active'); return; }
+                    if (!user) { window.location.href = `login.html?applyJob=${job.id}`; return; }
                     window.location.href = `dashboard/student-dashboard.html?applyJob=${job.id}`;
                 };
             }

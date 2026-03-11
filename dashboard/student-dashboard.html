@@ -1305,6 +1305,12 @@
 
                 await db.collection('jobs').doc(jobId).update({ applicationsCount: firebase.firestore.FieldValue.increment(1) });
 
+                // Increment public application count
+                await db.collection('siteStats').doc('public').set(
+                    { appCount: firebase.firestore.FieldValue.increment(1) },
+                    { merge: true }
+                ).catch(() => {});
+
                 showToast('Application submitted successfully!');
                 document.getElementById('applyModal').classList.remove('active');
                 document.getElementById('applyCover').value = '';

@@ -509,18 +509,39 @@ function initHomePageStats() {
         .then(snap => animateCount(statJobs, snap.size))
         .catch(() => markUnavailable(statJobs));
 
-    // Users and applications require auth — show real count if accessible, else '--'
-    db.collection('users').get()
-        .then(snap => animateCount(statUsers, snap.size))
-        .catch(() => markUnavailable(statUsers));
-
-    db.collection('applications').get()
+    // Read from public siteStats document (no auth required)
+    db.collection('siteStats').doc('public').get()
         .then(snap => {
-            animateCount(statApps, snap.size);
+            const data = snap.exists ? (snap.data() || {}) : {};
+            animateCount(statUsers, data.userCount || 0);
+            animateCount(statApps,  data.appCount  || 0);
             const bhApps = document.getElementById('bhStatApps');
-            if (bhApps) bhApps.textContent = snap.size >= 1000 ? `${(snap.size/1000).toFixed(1)}K+` : (snap.size || '—');
+            const appCount = data.appCount || 0;
+            if (bhApps) bhApps.textContent = appCount >= 1000 ? `${(appCount/1000).toFixed(1)}K+` : (appCount || '—');
         })
-        .catch(() => markUnavailable(statApps));
+        .catch(() => {
+            markUnavailable(statUsers);
+            markUnavailable(statApps);
+        });
+
+    // When an authenticated user visits, refresh siteStats/public with real counts
+    // so that future unauthenticated visitors always see accurate live numbers.
+    firebase.auth().onAuthStateChanged(user => {
+        if (!user) return;
+        Promise.all([
+            db.collection('users').get().catch(() => null),
+            db.collection('applications').get().catch(() => null),
+        ]).then(([u, a]) => {
+            const updates = {};
+            if (u) updates.userCount = u.size;
+            if (a) updates.appCount  = a.size;
+            if (Object.keys(updates).length) {
+                db.collection('siteStats').doc('public')
+                  .set(updates, { merge: true })
+                  .catch(() => {});
+            }
+        });
+    });
 }
 
 // ── HOME PAGE: Featured Jobs Carousel (real-time) ──
@@ -540,7 +561,10 @@ function initFeaturedJobs() {
         const job = { id: doc.id, ...doc.data() };
         const type = job.type || job.jobType || 'Full-time';
         const salary = job.salary ? `₹${(parseInt(job.salary)/1000).toFixed(0)}K` : 'Competitive';
-        const skills = (job.skills || []).slice(0, 3);
+        const rawSkills = job.skills;
+        const skills = (Array.isArray(rawSkills) ? rawSkills
+            : typeof rawSkills === 'string' ? rawSkills.split(',').map(s => s.trim()).filter(Boolean)
+            : []).slice(0, 3);
         const initials = encodeURIComponent((job.company || 'C').substring(0, 2).toUpperCase());
         const color = colors[idx % colors.length];
         const logoSrc = job.logoUrl || `https://ui-avatars.com/api/?name=${initials}&background=${color}&color=fff&bold=true&rounded=true&size=50`;
@@ -587,7 +611,13 @@ function initFeaturedJobs() {
             clearTimeout(fallbackTimer);
         }
         if (snap.empty) { showWaiting(); return; }
-        carousel.innerHTML = snap.docs.map((doc, idx) => buildCard(doc, idx)).join('');
+        try {
+            carousel.innerHTML = snap.docs.map((doc, idx) => buildCard(doc, idx)).join('');
+        } catch (e) {
+            console.error('buildCard error:', e);
+            showWaiting();
+            return;
+        }
         if (typeof AOS !== 'undefined') AOS.refresh();
         carousel.querySelectorAll('.apply-btn[data-job-id]').forEach(btn => {
             btn.addEventListener('click', function() {

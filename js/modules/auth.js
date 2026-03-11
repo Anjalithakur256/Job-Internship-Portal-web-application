@@ -231,6 +231,12 @@ class AuthManager {
                 verified: false,
             }).catch(() => {});
 
+            // Increment public user count
+            await firebase.firestore().collection('siteStats').doc('public').set(
+                { userCount: firebase.firestore.FieldValue.increment(1) },
+                { merge: true }
+            ).catch(() => {});
+
             this.showFormSuccess('Account created! Redirecting...');
 
             setTimeout(() => {

@@ -14,6 +14,14 @@ service cloud.firestore {
     }
 
     // ============================================
+    // SITE STATS COLLECTION (public counters)
+    // ============================================
+    match /siteStats/{docId} {
+      allow read: if true;          // public — home page reads userCount/appCount
+      allow write: if isAuthenticated();
+    }
+
+    // ============================================
     // USERS COLLECTION
     // ============================================
     match /users/{userId} {

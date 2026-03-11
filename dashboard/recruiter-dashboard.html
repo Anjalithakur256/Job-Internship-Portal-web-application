@@ -745,6 +745,7 @@
                 document.getElementById('page-' + item.dataset.page).classList.add('active');
                 document.querySelector('.main').scrollTo({ top: 0, behavior: 'smooth' });
                 if (item.dataset.page === 'post-job') fillPostJobFromProfile();
+                if (item.dataset.page === 'applicants') loadAllApplicants();
             });
         });
 
@@ -770,6 +771,7 @@
                 document.querySelector('.main').scrollTo({ top: 0, behavior: 'smooth' });
             }
             if (page === 'post-job') fillPostJobFromProfile();
+            if (page === 'applicants') loadAllApplicants();
         }
 
         // ===== TOAST =====

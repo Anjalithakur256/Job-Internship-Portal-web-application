@@ -56,6 +56,30 @@
             100% { transform: rotate(360deg); }
         }
         .loading-text { font-size: 14px; color: rgba(255,255,255,0.6); }
+
+        /* ── Install App button ── */
+        .install-app-btn {
+            background: linear-gradient(135deg, #e53935, #b71c1c);
+            color: #fff !important;
+            box-shadow: 0 6px 20px rgba(229,57,53,0.40);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .install-app-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0);
+            transition: background 0.2s;
+        }
+        .install-app-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(229,57,53,0.60);
+        }
+        .install-app-btn:hover::before { background: rgba(255,255,255,0.06); }
+        .install-app-btn:active { transform: scale(0.97); }
+        .install-app-btn.hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -125,9 +149,9 @@
                         <i class="fas fa-user-plus"></i>
                         <span>Create Free Profile</span>
                     </a>
-                    <button class="pwa-hero-btn" id="heroInstallBtn" onclick="window.pwaInstall && window.pwaInstall()" aria-label="Download JobNexus App">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-                        <span>Get the App</span>
+                    <button class="cta-button install-app-btn" id="heroInstallBtn" onclick="window.pwaInstall && window.pwaInstall()" aria-label="Download JobNexus App">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        <span>Download App</span>
                     </button>
                 </div>
 

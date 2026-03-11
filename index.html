@@ -123,17 +123,17 @@
 
                 <div class="hero-stats">
                     <div class="stat-item">
-                        <span class="stat-number" id="statTotalJobs">1.2K</span>
+                        <span class="stat-number" id="statTotalJobs">—</span>
                         <span class="stat-label">Active Jobs</span>
                     </div>
                     <div class="stat-divider"></div>
                     <div class="stat-item">
-                        <span class="stat-number" id="statTotalUsers">8.7K</span>
+                        <span class="stat-number" id="statTotalUsers">—</span>
                         <span class="stat-label">Users</span>
                     </div>
                     <div class="stat-divider"></div>
                     <div class="stat-item">
-                        <span class="stat-number" id="statTotalApplications">31K</span>
+                        <span class="stat-number" id="statTotalApplications">—</span>
                         <span class="stat-label">Applications</span>
                     </div>
                 </div>
@@ -226,74 +226,10 @@
                 <p>Discover positions curated for you</p>
             </div>
             <div class="jobs-carousel" id="jobsCarousel">
-                <div class="job-card" data-aos="fade-up">
-                    <div class="job-card-header">
-                        <img src="https://ui-avatars.com/api/?name=TC&background=5b21b6&color=fff&bold=true&rounded=true&size=50" alt="TechCorp Inc." class="company-logo">
-                        <div class="save-job-btn">
-                            <i class="far fa-bookmark"></i>
-                        </div>
-                    </div>
-                    <h3 class="job-title">Frontend Developer</h3>
-                    <p class="company-name">TechCorp Inc.</p>
-                    <div class="job-meta">
-                        <span class="job-type">Full-time</span>
-                        <span class="job-location"><i class="fas fa-map-marker-alt"></i> Remote</span>
-                        <span class="job-salary">₹50-70K</span>
-                    </div>
-                    <p class="job-description">Build modern web applications with React and ensure exceptional user experiences.</p>
-                    <div class="job-tags">
-                        <span class="tag">React</span>
-                        <span class="tag">JavaScript</span>
-                        <span class="tag">CSS</span>
-                    </div>
-                    <button class="apply-btn">Apply Now</button>
-                </div>
-
-                <div class="job-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="job-card-header">
-                        <img src="https://ui-avatars.com/api/?name=CS&background=0ea5e9&color=fff&bold=true&rounded=true&size=50" alt="CloudSys Ltd." class="company-logo">
-                        <div class="save-job-btn">
-                            <i class="far fa-bookmark"></i>
-                        </div>
-                    </div>
-                    <h3 class="job-title">Backend Engineer</h3>
-                    <p class="company-name">CloudSys Ltd.</p>
-                    <div class="job-meta">
-                        <span class="job-type">Full-time</span>
-                        <span class="job-location"><i class="fas fa-map-marker-alt"></i> Bangalore</span>
-                        <span class="job-salary">₹60-80K</span>
-                    </div>
-                    <p class="job-description">Design and implement scalable backend solutions using Node.js and Python.</p>
-                    <div class="job-tags">
-                        <span class="tag">Node.js</span>
-                        <span class="tag">Python</span>
-                        <span class="tag">Database</span>
-                    </div>
-                    <button class="apply-btn">Apply Now</button>
-                </div>
-
-                <div class="job-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="job-card-header">
-                        <img src="https://ui-avatars.com/api/?name=DH&background=ec4899&color=fff&bold=true&rounded=true&size=50" alt="DesignHub Co." class="company-logo">
-                        <div class="save-job-btn">
-                            <i class="far fa-bookmark"></i>
-                        </div>
-                    </div>
-                    <h3 class="job-title">UI/UX Designer</h3>
-                    <p class="company-name">DesignHub Co.</p>
-                    <div class="job-meta">
-                        <span class="job-type">Internship</span>
-                        <span class="job-location"><i class="fas fa-map-marker-alt"></i> Pune</span>
-                        <span class="job-salary">₹15-25K</span>
-                    </div>
-                    <p class="job-description">Create beautiful and intuitive user interfaces for mobile and web applications.</p>
-                    <div class="job-tags">
-                        <span class="tag">Figma</span>
-                        <span class="tag">UI Design</span>
-                        <span class="tag">UX</span>
-                    </div>
-                    <button class="apply-btn">Apply Now</button>
-                </div>
+                <!-- Populated from Firestore by initFeaturedJobs() -->
+                <div class="job-skeleton"><div class="skel skel-logo"></div><div class="skel skel-title"></div><div class="skel skel-text"></div><div class="skel skel-meta"></div><div class="skel skel-btn"></div></div>
+                <div class="job-skeleton"><div class="skel skel-logo"></div><div class="skel skel-title"></div><div class="skel skel-text"></div><div class="skel skel-meta"></div><div class="skel skel-btn"></div></div>
+                <div class="job-skeleton"><div class="skel skel-logo"></div><div class="skel skel-title"></div><div class="skel skel-text"></div><div class="skel skel-meta"></div><div class="skel skel-btn"></div></div>
             </div>
             <div class="carousel-controls">
                 <button class="carousel-btn prev" id="prevBtn">

@@ -22,18 +22,6 @@ class BrowseJobs {
         };
         this.sortMode = 'latest';
 
-        // Fallback demo jobs for when Firestore is not connected
-        this.demoJobs = [
-            { id: 'demo1', title: 'Frontend Developer', company: 'TechCorp Inc.', location: 'Remote', type: 'Full-time', skills: ['React', 'JavaScript', 'CSS'], salary: 70000, postedAt: new Date(Date.now() - 86400000) },
-            { id: 'demo2', title: 'Backend Engineer', company: 'CloudSys Ltd.', location: 'Bangalore', type: 'Full-time', skills: ['Node.js', 'Python', 'MongoDB'], salary: 80000, postedAt: new Date(Date.now() - 172800000) },
-            { id: 'demo3', title: 'UI/UX Designer', company: 'DesignHub Co.', location: 'Pune', type: 'Internship', skills: ['Figma', 'UI Design', 'Prototyping'], salary: 25000, postedAt: new Date(Date.now() - 259200000) },
-            { id: 'demo4', title: 'Data Analyst Intern', company: 'DataMinds', location: 'Mumbai', type: 'Internship', skills: ['Python', 'Excel', 'SQL'], salary: 20000, postedAt: new Date(Date.now() - 345600000) },
-            { id: 'demo5', title: 'Mobile Developer', company: 'AppFactory', location: 'Delhi', type: 'Full-time', skills: ['Flutter', 'Dart', 'Firebase'], salary: 90000, postedAt: new Date(Date.now() - 432000000) },
-            { id: 'demo6', title: 'Content Writer', company: 'WriteWell', location: 'Remote', type: 'Freelance', skills: ['SEO', 'Copywriting', 'WordPress'], salary: 30000, postedAt: new Date(Date.now() - 518400000) },
-            { id: 'demo7', title: 'DevOps Engineer', company: 'InfraCloud', location: 'Hyderabad', type: 'Full-time', skills: ['Docker', 'Kubernetes', 'AWS'], salary: 120000, postedAt: new Date(Date.now() - 604800000) },
-            { id: 'demo8', title: 'Marketing Intern', company: 'GrowthLabs', location: 'Chennai', type: 'Internship', skills: ['Social Media', 'Analytics', 'Canva'], salary: 15000, postedAt: new Date(Date.now() - 691200000) },
-        ];
-
         this.init();
     }
 
@@ -59,9 +47,12 @@ class BrowseJobs {
 
     subscribeToJobs() {
         if (typeof firebase === 'undefined' || !firebase.firestore) {
-            // Firestore unavailable — use demo data
-            this.allJobs = this.demoJobs;
-            this.applyFiltersAndRender();
+            this._showGridMsg(
+                'wifi',
+                'Unable to connect to the database.',
+                'Please check your internet connection and refresh.',
+                true
+            );
             return;
         }
 
@@ -70,28 +61,43 @@ class BrowseJobs {
         try {
             this.unsubscribeJobs = db.collection('jobs').onSnapshot(
                 snapshot => {
-                    if (snapshot.empty) {
-                        // Collection exists but empty — show demo data
-                        this.allJobs = this.demoJobs;
-                    } else {
-                        this.allJobs = snapshot.docs.map(doc => ({
-                            id: doc.id,
-                            ...doc.data(),
-                            postedAt: doc.data().postedAt?.toDate?.() || new Date(),
-                        }));
-                    }
+                    this.allJobs = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data(),
+                        postedAt: doc.data().postedAt?.toDate?.() || new Date(),
+                    }));
                     this.applyFiltersAndRender();
                 },
                 error => {
                     console.warn('Firestore jobs listener error:', error.message);
-                    this.allJobs = this.demoJobs;
-                    this.applyFiltersAndRender();
+                    this._showGridMsg(
+                        'exclamation-circle',
+                        'Failed to load jobs.',
+                        'Please refresh the page and try again.',
+                        true
+                    );
                 }
             );
         } catch (e) {
-            this.allJobs = this.demoJobs;
-            this.applyFiltersAndRender();
+            this._showGridMsg(
+                'exclamation-circle',
+                'Failed to connect to the database.',
+                'Please refresh the page.',
+                true
+            );
         }
+    }
+
+    _showGridMsg(icon, title, subtitle, showRetry = false) {
+        const grid = document.getElementById('jobsGrid');
+        if (!grid) return;
+        grid.innerHTML = `
+            <div class="no-jobs-msg" style="grid-column:1/-1;">
+                <i class="fas fa-${icon}"></i>
+                <p>${title}</p>
+                <p style="font-size:0.85rem;margin-top:8px;opacity:0.75;">${subtitle}</p>
+                ${showRetry ? `<button onclick="window.location.reload()" style="margin-top:16px;padding:8px 22px;background:#667eea;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;"><i class="fas fa-sync" style="margin-right:6px;"></i>Retry</button>` : ''}
+            </div>`;
     }
 
     // ── SAVED JOBS ───────────────────────────────
@@ -308,12 +314,23 @@ class BrowseJobs {
         if (countEl) countEl.textContent = this.filteredJobs.length;
 
         if (this.filteredJobs.length === 0) {
-            grid.innerHTML = `
-                <div class="no-jobs-msg">
-                    <i class="fas fa-search-minus"></i>
-                    <p>No jobs match your filters.</p>
-                    <p style="font-size:0.85rem;margin-top:8px;">Try adjusting or clearing filters.</p>
-                </div>`;
+            const hasFilters = this.filters.keyword || this.filters.location || this.filters.type || this.filters.skills || this.filters.maxSalary < 200000;
+            if (hasFilters) {
+                grid.innerHTML = `
+                    <div class="no-jobs-msg" style="grid-column:1/-1;">
+                        <i class="fas fa-search-minus"></i>
+                        <p>No jobs match your filters.</p>
+                        <p style="font-size:0.85rem;margin-top:8px;">Try adjusting or <button id="clearFromEmptyMsg" style="background:none;border:none;color:#667eea;cursor:pointer;font-weight:700;font-size:inherit;padding:0;">clearing filters</button>.</p>
+                    </div>`;
+                document.getElementById('clearFromEmptyMsg')?.addEventListener('click', () => this.clearFilters());
+            } else {
+                grid.innerHTML = `
+                    <div class="no-jobs-msg" style="grid-column:1/-1;">
+                        <i class="fas fa-briefcase"></i>
+                        <p>No jobs posted yet.</p>
+                        <p style="font-size:0.85rem;margin-top:8px;">New opportunities are added by recruiters — check back soon.</p>
+                    </div>`;
+            }
             return;
         }
 
@@ -435,9 +452,6 @@ function initHomePageStats() {
     const statApps = document.getElementById('statTotalApplications');
     if (!statJobs && !statUsers && !statApps) return;
 
-    // Fallback values
-    const fallback = { jobs: 1240, users: 8750, applications: 31400 };
-
     function animateCount(el, target) {
         if (!el) return;
         const duration = 1800;
@@ -445,38 +459,37 @@ function initHomePageStats() {
         const step = (now) => {
             const pct = Math.min((now - start) / duration, 1);
             const val = Math.floor(pct * target);
-            el.textContent = val >= 1000 ? (val >= 10000 ? `${(val/1000).toFixed(1)}K` : `${(val/1000).toFixed(1)}K`) : val;
+            el.textContent = val >= 1000 ? `${(val/1000).toFixed(1)}K` : val;
             if (pct < 1) requestAnimationFrame(step);
             else el.textContent = target >= 1000 ? `${(target/1000).toFixed(1)}K` : target;
         };
         requestAnimationFrame(step);
     }
 
+    function markUnavailable(el) { if (el) el.textContent = '--'; }
+
     if (typeof firebase === 'undefined' || !firebase.firestore) {
-        animateCount(statJobs, fallback.jobs);
-        animateCount(statUsers, fallback.users);
-        animateCount(statApps, fallback.applications);
+        markUnavailable(statJobs);
+        markUnavailable(statUsers);
+        markUnavailable(statApps);
         return;
     }
 
     const db = firebase.firestore();
-    Promise.all([
-        db.collection('jobs').get().catch(() => null),
-        db.collection('users').get().catch(() => null),
-        db.collection('applications').get().catch(() => null),
-    ]).then(([jobs, users, apps]) => {
-        // Use real counts when available; fall back only on error (null)
-        const jobCount = jobs !== null ? (jobs.size || fallback.jobs) : fallback.jobs;
-        const userCount = users !== null ? (users.size || fallback.users) : fallback.users;
-        const appCount = apps !== null ? (apps.size || fallback.applications) : fallback.applications;
-        animateCount(statJobs, jobCount);
-        animateCount(statUsers, userCount);
-        animateCount(statApps, appCount);
-    }).catch(() => {
-        animateCount(statJobs, fallback.jobs);
-        animateCount(statUsers, fallback.users);
-        animateCount(statApps, fallback.applications);
-    });
+
+    // Jobs are publicly readable
+    db.collection('jobs').get()
+        .then(snap => animateCount(statJobs, snap.size))
+        .catch(() => markUnavailable(statJobs));
+
+    // Users and applications require auth — show real count if accessible, else '--'
+    db.collection('users').get()
+        .then(snap => animateCount(statUsers, snap.size))
+        .catch(() => markUnavailable(statUsers));
+
+    db.collection('applications').get()
+        .then(snap => animateCount(statApps, snap.size))
+        .catch(() => markUnavailable(statApps));
 }
 
 // ── HOME PAGE: Featured Jobs Carousel ────────────
@@ -484,10 +497,22 @@ function initHomePageStats() {
 function initFeaturedJobs() {
     const carousel = document.getElementById('jobsCarousel');
     if (!carousel) return;
-    if (typeof firebase === 'undefined' || !firebase.firestore) return;
+
+    const esc = s => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : '';
+    const skelCard = `<div class="job-skeleton"><div class="skel skel-logo"></div><div class="skel skel-title"></div><div class="skel skel-text"></div><div class="skel skel-meta"></div><div class="skel skel-btn"></div></div>`;
+
+    // Show loading skeletons immediately (replaces any remaining static content)
+    carousel.innerHTML = skelCard + skelCard + skelCard;
+
+    if (typeof firebase === 'undefined' || !firebase.firestore) {
+        carousel.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--text-secondary);width:100%;">
+            <i class="fas fa-wifi" style="font-size:2.5rem;opacity:0.3;display:block;margin-bottom:12px;"></i>
+            <p>Unable to connect. Please check your internet connection.</p>
+        </div>`;
+        return;
+    }
 
     const db = firebase.firestore();
-    const esc = s => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : '';
     const colors = ['5b21b6','0ea5e9','ec4899','10b981','f59e0b','6366f1'];
 
     db.collection('jobs')
@@ -495,7 +520,13 @@ function initFeaturedJobs() {
         .limit(6)
         .get()
         .then(snap => {
-            if (snap.empty) return; // Keep static fallback cards
+            if (snap.empty) {
+                carousel.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--text-secondary);width:100%;">
+                    <i class="fas fa-briefcase" style="font-size:2.5rem;opacity:0.3;display:block;margin-bottom:12px;"></i>
+                    <p>No jobs posted yet. Check back soon.</p>
+                </div>`;
+                return;
+            }
 
             carousel.innerHTML = snap.docs.map((doc, idx) => {
                 const job = { id: doc.id, ...doc.data() };
@@ -529,7 +560,6 @@ function initFeaturedJobs() {
 
             if (typeof AOS !== 'undefined') AOS.refresh();
 
-            // Re-attach apply button handlers
             carousel.querySelectorAll('.apply-btn[data-job-id]').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const jobId = this.dataset.jobId;
@@ -542,7 +572,53 @@ function initFeaturedJobs() {
                 });
             });
         })
-        .catch(() => {}); // silently keep static fallback cards on any error
+        .catch(err => {
+            console.warn('Featured jobs load error:', err.message);
+            carousel.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--text-secondary);width:100%;">
+                <i class="fas fa-exclamation-circle" style="font-size:2.5rem;opacity:0.3;display:block;margin-bottom:12px;"></i>
+                <p>Failed to load jobs. Please refresh the page.</p>
+            </div>`;
+        });
+}
+
+// ── HOME PAGE: Hero Visual Card (first live job) ──
+
+function initHeroCard() {
+    const mainCard = document.querySelector('.hero-visual-card.main-card');
+    if (!mainCard) return;
+    if (typeof firebase === 'undefined' || !firebase.firestore) return;
+
+    firebase.firestore().collection('jobs')
+        .orderBy('createdAt', 'desc')
+        .limit(1)
+        .get()
+        .then(snap => {
+            if (snap.empty) return;
+            const job = { id: snap.docs[0].id, ...snap.docs[0].data() };
+            const titleEl  = mainCard.querySelector('.vc-title');
+            const compEl   = mainCard.querySelector('.vc-company');
+            const tagsEl   = mainCard.querySelector('.vc-tags');
+            const salaryEl = mainCard.querySelector('.vc-salary');
+            const applyBtn = mainCard.querySelector('.vc-apply-btn');
+
+            if (titleEl)  titleEl.textContent  = job.title   || 'Job Opening';
+            if (compEl)   compEl.textContent   = job.company || 'Company';
+            if (tagsEl && (job.skills || job.location)) {
+                const tagItems = [...(job.skills || []).slice(0, 2), job.location || 'Remote'];
+                tagsEl.innerHTML = tagItems.map(t => `<span>${t}</span>`).join('');
+            }
+            if (salaryEl && job.salary) {
+                salaryEl.textContent = `₹${(parseInt(job.salary)/1000).toFixed(0)}K / mo`;
+            }
+            if (applyBtn) {
+                applyBtn.onclick = () => {
+                    const user = firebase.auth().currentUser;
+                    if (!user) { document.getElementById('authModal')?.classList.add('active'); return; }
+                    window.location.href = `dashboard/student-dashboard.html?applyJob=${job.id}`;
+                };
+            }
+        })
+        .catch(() => {});
 }
 
 // ── SEED: Populate Firestore with demo jobs ────────
@@ -603,6 +679,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load real featured jobs into home page carousel
     initFeaturedJobs();
+
+    // Update hero visual card with newest live job
+    initHeroCard();
 
     // Auto-seed sample data if Firestore is empty (runs after auth state resolves)
     if (typeof firebase !== 'undefined' && firebase.auth) {

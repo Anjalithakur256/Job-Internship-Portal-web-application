@@ -982,7 +982,7 @@
         document.getElementById('markAllRead').addEventListener('click', async () => {
             try {
                 const batch = db.batch();
-                notificationsData.filter(n => !n.read).forEach(n => {
+                notificationsData.filter(n => n.personal && !n.read).forEach(n => {
                     batch.update(db.collection('notifications').doc(n.id), { read: true });
                 });
                 await batch.commit();
@@ -993,14 +993,34 @@
 
         async function loadNotifications() {
             try {
-                const snap = await db.collection('notifications')
-                    .where('target', '==', 'students')
-                    .orderBy('createdAt', 'desc')
-                    .limit(20)
-                    .get();
-                notificationsData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                // Fetch broadcast (all-student) AND personal notifications in parallel
+                const [broadcastSnap, personalSnap] = await Promise.all([
+                    db.collection('notifications')
+                        .where('target', '==', 'students')
+                        .orderBy('createdAt', 'desc')
+                        .limit(15)
+                        .get()
+                        .catch(() => ({ docs: [] })),
+                    db.collection('notifications')
+                        .where('userId', '==', currentUser.uid)
+                        .orderBy('createdAt', 'desc')
+                        .limit(15)
+                        .get()
+                        .catch(() => ({ docs: [] }))
+                ]);
 
-                const unreadCount = notificationsData.filter(n => !n.read).length;
+                // Merge: personal first (they show unread highlight), then broadcast
+                const personal = personalSnap.docs.map(d => ({ id: d.id, ...d.data(), personal: true }));
+                const broadcast = broadcastSnap.docs.map(d => ({ id: d.id, ...d.data(), personal: false }));
+                const all = [...personal, ...broadcast].sort((a, b) => {
+                    const ta = a.createdAt?.toDate?.()?.getTime() || 0;
+                    const tb = b.createdAt?.toDate?.()?.getTime() || 0;
+                    return tb - ta;
+                }).slice(0, 25);
+                notificationsData = all;
+
+                // Badge: only count personal unread
+                const unreadCount = all.filter(n => n.personal && !n.read).length;
                 const badge = document.getElementById('notifCount');
                 if (unreadCount > 0) {
                     badge.style.display = 'flex';
@@ -1010,27 +1030,37 @@
                 }
 
                 const container = document.getElementById('notifList');
-                if (!notificationsData.length) {
+                if (!all.length) {
                     container.innerHTML = '<div class="notif-empty">No notifications yet.</div>';
                     return;
                 }
-                container.innerHTML = notificationsData.map(n => `
-                    <div class="notif-item ${n.read ? '' : 'unread'}" onclick="handleNotifClick('${n.id}', '${n.jobId || ''}')">
-                        <div class="notif-title"><i class="fas fa-briefcase" style="color:#e53935;margin-right:6px;font-size:0.8rem;"></i>${n.title || 'Notification'}</div>
+
+                const iconMap = { accepted: 'check-circle', rejected: 'times-circle', new_job: 'briefcase', application_status: 'file-alt' };
+                const colorMap = { accepted: '#10b981', rejected: '#ef4444' };
+                container.innerHTML = all.map(n => {
+                    const icon = n.type === 'application_status'
+                        ? (n.status === 'accepted' ? 'check-circle' : 'times-circle')
+                        : 'briefcase';
+                    const color = n.status === 'accepted' ? '#10b981' : n.status === 'rejected' ? '#ef4444' : '#e53935';
+                    const isUnread = n.personal && !n.read;
+                    return `<div class="notif-item ${isUnread ? 'unread' : ''}" onclick="handleNotifClick('${n.id}', '${n.jobId || ''}', ${n.personal})">
+                        <div class="notif-title"><i class="fas fa-${icon}" style="color:${color};margin-right:6px;font-size:0.8rem;"></i>${n.title || 'Notification'}</div>
                         <div class="notif-msg">${n.message || ''}</div>
                         <div class="notif-time">${n.createdAt ? timeAgo(n.createdAt.toDate()) : 'Just now'}</div>
-                    </div>
-                `).join('');
+                    </div>`;
+                }).join('');
             } catch(e) {
                 console.error('Notifications error:', e);
             }
         }
 
-        async function handleNotifClick(notifId, jobId) {
-            // Mark as read
-            try {
-                await db.collection('notifications').doc(notifId).update({ read: true });
-            } catch(e) {}
+        async function handleNotifClick(notifId, jobId, isPersonal) {
+            // Mark as read only if it's a personal notification
+            if (isPersonal) {
+                try {
+                    await db.collection('notifications').doc(notifId).update({ read: true });
+                } catch(e) {}
+            }
             notifDropdown.classList.remove('show');
             if (jobId) {
                 viewJob(jobId);
@@ -1040,6 +1070,7 @@
 
         // Listen for real-time notifications
         function listenForNotifications() {
+            // 1) Broadcast: new job postings for all students
             db.collection('notifications')
                 .where('target', '==', 'students')
                 .orderBy('createdAt', 'desc')
@@ -1050,16 +1081,36 @@
                             const data = change.doc.data();
                             if (data.createdAt) {
                                 const age = Date.now() - data.createdAt.toDate().getTime();
-                                if (age < 30000) { // Only show toast for notifications < 30 seconds old
-                                    showToast(`New: ${data.title} - ${data.message}`, 'info');
+                                if (age < 30000) showToast(`\uD83D\uDCBC ${data.title}: ${data.message}`, 'info');
+                            }
+                            loadNotifications();
+                        }
+                    });
+                }, () => {});
+
+            // 2) Personal: application status updates for this student
+            db.collection('notifications')
+                .where('userId', '==', currentUser.uid)
+                .where('read', '==', false)
+                .orderBy('createdAt', 'desc')
+                .limit(5)
+                .onSnapshot((snap) => {
+                    snap.docChanges().forEach(change => {
+                        if (change.type === 'added') {
+                            const data = change.doc.data();
+                            if (data.createdAt) {
+                                const age = Date.now() - data.createdAt.toDate().getTime();
+                                if (age < 60000) {
+                                    const icon = data.status === 'accepted' ? '\uD83C\uDF89' : '\uD83D\uDCCB';
+                                    showToast(`${icon} ${data.title} — ${data.message}`, data.status === 'accepted' ? 'success' : 'info');
                                 }
                             }
                             loadNotifications();
                         }
                     });
-                });
+                }, () => {});
         }
-        // Start listening after a short delay
+        // Start listening after auth loads currentUser
         setTimeout(listenForNotifications, 2000);
 
         // ===== RECENT HIRING =====

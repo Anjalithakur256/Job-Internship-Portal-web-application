@@ -1202,7 +1202,31 @@
         // ===== UPDATE APPLICATION STATUS =====
         async function updateAppStatus(appId, newStatus) {
             try {
+                // Fetch app doc first to get student info for notification
+                const appDoc = await db.collection('applications').doc(appId).get();
+                const appData = appDoc.exists ? appDoc.data() : null;
+
                 await db.collection('applications').doc(appId).update({ status: newStatus });
+
+                // Send personal notification to the student
+                if (appData && appData.studentId) {
+                    const isAccepted = newStatus === 'accepted';
+                    const notifMsg = isAccepted
+                        ? `Congratulations! Your application for ${appData.jobTitle || 'the job'} at ${appData.company || 'the company'} has been accepted.`
+                        : `Thank you for applying. Your application for ${appData.jobTitle || 'the job'} at ${appData.company || 'the company'} was not selected this time.`;
+                    await db.collection('notifications').add({
+                        type: 'application_status',
+                        title: isAccepted ? '\uD83C\uDF89 Application Accepted!' : 'Application Update',
+                        message: notifMsg,
+                        jobId: appData.jobId || null,
+                        jobTitle: appData.jobTitle || '',
+                        company: appData.company || '',
+                        status: newStatus,
+                        userId: appData.studentId,
+                        read: false,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }).catch(e => console.warn('Notification create failed:', e.message));
+                }
                 showToast(`Application ${newStatus}!`);
                 // Refresh current view
                 loadOverview();

@@ -500,14 +500,13 @@ function initHomePageStats() {
 
 // ── HOME PAGE: Featured Jobs Carousel ────────────
 
-function initFeaturedJobs() {
+async function initFeaturedJobs() {
     const carousel = document.getElementById('jobsCarousel');
     if (!carousel) return;
 
     const esc = s => s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : '';
     const skelCard = `<div class="job-skeleton"><div class="skel skel-logo"></div><div class="skel skel-title"></div><div class="skel skel-text"></div><div class="skel skel-meta"></div><div class="skel skel-btn"></div></div>`;
 
-    // Show loading skeletons immediately (replaces any remaining static content)
     carousel.innerHTML = skelCard + skelCard + skelCard;
 
     if (typeof firebase === 'undefined' || !firebase.firestore) {
@@ -521,73 +520,79 @@ function initFeaturedJobs() {
     const db = firebase.firestore();
     const colors = ['5b21b6','0ea5e9','ec4899','10b981','f59e0b','6366f1'];
 
-    // Try newest-first; fall back to unordered if no docs have createdAt
-    const featuredQuery = db.collection('jobs').orderBy('createdAt', 'desc').limit(6);
-    const fallbackQuery = db.collection('jobs').limit(6);
-
-    featuredQuery.get()
-        .catch(() => fallbackQuery.get())  // index / permission error → fallback
-        .then(snap => snap.empty ? fallbackQuery.get() : snap) // orderBy excluded all docs → fallback
-        .then(snap => {
+    try {
+        let snap;
+        try {
+            // Try ordered query first (newest jobs first)
+            snap = await db.collection('jobs').orderBy('createdAt', 'desc').limit(6).get();
+            // If ordered query returned nothing, some docs may lack createdAt — try unordered
             if (snap.empty) {
-                carousel.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--text-secondary);width:100%;">
-                    <i class="fas fa-briefcase" style="font-size:2.5rem;opacity:0.3;display:block;margin-bottom:12px;"></i>
-                    <p>No jobs posted yet. Check back soon.</p>
-                </div>`;
-                return;
+                snap = await db.collection('jobs').limit(6).get();
             }
+        } catch (_) {
+            // orderBy failed (missing index or field) — fall back to unordered
+            snap = await db.collection('jobs').limit(6).get();
+        }
 
-            carousel.innerHTML = snap.docs.map((doc, idx) => {
-                const job = { id: doc.id, ...doc.data() };
-                const type = job.type || job.jobType || 'Full-time';
-                const salary = job.salary ? `₹${(parseInt(job.salary)/1000).toFixed(0)}K` : 'Competitive';
-                const skills = (job.skills || []).slice(0, 3);
-                const initials = encodeURIComponent((job.company || 'C').substring(0, 2).toUpperCase());
-                const color = colors[idx % colors.length];
-                const logoSrc = job.logoUrl || `https://ui-avatars.com/api/?name=${initials}&background=${color}&color=fff&bold=true&rounded=true&size=50`;
-                const desc = (job.description || '').substring(0, 100);
-
-                return `
-                <div class="job-card" data-aos="fade-up" data-aos-delay="${idx * 100}">
-                    <div class="job-card-header">
-                        <img src="${logoSrc}" alt="${esc(job.company)}" class="company-logo"
-                             onerror="this.src='https://ui-avatars.com/api/?name=${initials}&background=667eea&color=fff&bold=true&rounded=true&size=50'">
-                        <div class="save-job-btn"><i class="far fa-bookmark"></i></div>
-                    </div>
-                    <h3 class="job-title">${esc(job.title)}</h3>
-                    <p class="company-name">${esc(job.company || 'Company')}</p>
-                    <div class="job-meta">
-                        <span class="job-type">${esc(type)}</span>
-                        <span class="job-location"><i class="fas fa-map-marker-alt"></i> ${esc(job.location || 'Remote')}</span>
-                        <span class="job-salary">${salary}/mo</span>
-                    </div>
-                    <p class="job-description">${esc(desc)}${(job.description || '').length > 100 ? '...' : ''}</p>
-                    <div class="job-tags">${skills.map(s => `<span class="tag">${esc(s)}</span>`).join('')}</div>
-                    <button class="apply-btn" data-job-id="${job.id}">Apply Now</button>
-                </div>`;
-            }).join('');
-
-            if (typeof AOS !== 'undefined') AOS.refresh();
-
-            carousel.querySelectorAll('.apply-btn[data-job-id]').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const jobId = this.dataset.jobId;
-                    const user = typeof firebase !== 'undefined' ? firebase.auth().currentUser : null;
-                    if (!user) {
-                        document.getElementById('authModal')?.classList.add('active');
-                        return;
-                    }
-                    window.location.href = `dashboard/student-dashboard.html?applyJob=${jobId}`;
-                });
-            });
-        })
-        .catch(err => {
-            console.warn('Featured jobs load error:', err.message);
+        if (snap.empty) {
             carousel.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--text-secondary);width:100%;">
-                <i class="fas fa-exclamation-circle" style="font-size:2.5rem;opacity:0.3;display:block;margin-bottom:12px;"></i>
-                <p>Failed to load jobs. Please refresh the page.</p>
+                <i class="fas fa-briefcase" style="font-size:2.5rem;opacity:0.3;display:block;margin-bottom:12px;"></i>
+                <p>No jobs posted yet. Check back soon.</p>
             </div>`;
+            return;
+        }
+
+        carousel.innerHTML = snap.docs.map((doc, idx) => {
+            const job = { id: doc.id, ...doc.data() };
+            const type = job.type || job.jobType || 'Full-time';
+            const salary = job.salary ? `₹${(parseInt(job.salary)/1000).toFixed(0)}K` : 'Competitive';
+            const skills = (job.skills || []).slice(0, 3);
+            const initials = encodeURIComponent((job.company || 'C').substring(0, 2).toUpperCase());
+            const color = colors[idx % colors.length];
+            const logoSrc = job.logoUrl || `https://ui-avatars.com/api/?name=${initials}&background=${color}&color=fff&bold=true&rounded=true&size=50`;
+            const desc = (job.description || '').substring(0, 100);
+
+            return `
+            <div class="job-card" data-aos="fade-up" data-aos-delay="${idx * 100}">
+                <div class="job-card-header">
+                    <img src="${logoSrc}" alt="${esc(job.company)}" class="company-logo"
+                         onerror="this.src='https://ui-avatars.com/api/?name=${initials}&background=667eea&color=fff&bold=true&rounded=true&size=50'">
+                    <div class="save-job-btn"><i class="far fa-bookmark"></i></div>
+                </div>
+                <h3 class="job-title">${esc(job.title)}</h3>
+                <p class="company-name">${esc(job.company || 'Company')}</p>
+                <div class="job-meta">
+                    <span class="job-type">${esc(type)}</span>
+                    <span class="job-location"><i class="fas fa-map-marker-alt"></i> ${esc(job.location || 'Remote')}</span>
+                    <span class="job-salary">${salary}/mo</span>
+                </div>
+                <p class="job-description">${esc(desc)}${(job.description || '').length > 100 ? '...' : ''}</p>
+                <div class="job-tags">${skills.map(s => `<span class="tag">${esc(s)}</span>`).join('')}</div>
+                <button class="apply-btn" data-job-id="${job.id}">Apply Now</button>
+            </div>`;
+        }).join('');
+
+        if (typeof AOS !== 'undefined') AOS.refresh();
+
+        carousel.querySelectorAll('.apply-btn[data-job-id]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const jobId = this.dataset.jobId;
+                const user = typeof firebase !== 'undefined' ? firebase.auth().currentUser : null;
+                if (!user) {
+                    document.getElementById('authModal')?.classList.add('active');
+                    return;
+                }
+                window.location.href = `dashboard/student-dashboard.html?applyJob=${jobId}`;
+            });
         });
+
+    } catch (err) {
+        console.warn('Featured jobs load error:', err.message);
+        carousel.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--text-secondary);width:100%;">
+            <i class="fas fa-exclamation-circle" style="font-size:2.5rem;opacity:0.3;display:block;margin-bottom:12px;"></i>
+            <p>Failed to load jobs. <button onclick="initFeaturedJobs()" style="background:none;border:none;color:#667eea;cursor:pointer;font-weight:700;font-size:inherit;padding:0;">Retry</button></p>
+        </div>`;
+    }
 }
 
 // ── HOME PAGE: Hero Visual Card (first live job) ──

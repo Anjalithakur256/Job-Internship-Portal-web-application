@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================
 
 function initGSAPAnimations() {
+    if (typeof gsap === 'undefined') return;
     // Hero title animation
     gsap.from('.hero-title', {
         duration: 1,
@@ -132,6 +133,8 @@ function initCounters() {
                 
                 statNumbers.forEach(stat => {
                     const endValue = parseInt(stat.getAttribute('data-count'));
+                    // Skip elements managed by Firestore (no data-count attribute)
+                    if (isNaN(endValue)) return;
                     let currentValue = 0;
                     const increment = endValue / 100;
                     
@@ -162,6 +165,7 @@ function initCounters() {
 // ============================================
 
 function initInteractiveElements() {
+    if (typeof gsap === 'undefined') return;
     // Button hover effects
     document.querySelectorAll('.cta-button').forEach(btn => {
         btn.addEventListener('mouseenter', function() {
@@ -286,10 +290,7 @@ function setupEventListeners() {
     document.querySelectorAll('.apply-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             showNotification('Application submitted successfully!', 'success');
-            
-            // Trigger animation
-            gsap.to(this, {
-                duration: 0.3,
+            if (typeof gsap === 'undefined') return;
                 scale: 0.95,
                 ease: 'power2.out'
             });

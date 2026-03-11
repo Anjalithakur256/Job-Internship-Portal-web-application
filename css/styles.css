@@ -3,6 +3,7 @@
    ============================================ */
 
 :root {
+    color-scheme: dark; /* force dark styling for all native form controls */
     --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --primary-solid: #667eea;
     --secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);

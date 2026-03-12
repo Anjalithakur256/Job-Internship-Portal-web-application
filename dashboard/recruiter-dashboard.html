@@ -64,7 +64,7 @@
         .nav-item i { width: 20px; text-align: center; font-size: 0.95rem; }
 
         /* Main */
-        .main { margin-left: 240px; padding: 2rem; flex: 1; height: calc(100vh - 60px); overflow-y: auto; }
+        .main { margin-left: 240px; padding: 2rem; flex: 1; min-height: calc(100vh - 60px); }
 
         /* Page Header */
         .page-header { margin-bottom: 2rem; }
@@ -283,7 +283,7 @@
                 transition: all 0.25s !important;
             }
             /* ── Layout ── */
-            .main { margin-left: 0 !important; padding: 1rem !important; height: calc(100vh - 60px) !important; overflow-y: auto !important; }
+            .main { margin-left: 0 !important; padding: 1rem !important; min-height: calc(100vh - 60px) !important; }
             .layout { margin-top: 60px !important; }
             .topbar { padding: 0 0.75rem !important; }
             .form-grid { grid-template-columns: 1fr !important; }

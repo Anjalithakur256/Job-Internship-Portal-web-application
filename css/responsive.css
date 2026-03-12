@@ -63,59 +63,42 @@ main,
   max-width: 100vw;
 }
 
-/* ── Animated background: force GPU layer so overflow:hidden clips transforms ── */
+/* ── Animated background clipping fix ───────────────────────
+   NOTE: Do NOT apply will-change:transform or translateZ(0) to
+   .animated-background globally. On iOS Safari, doing so on a
+   position:fixed element BREAKS its overflow:hidden clipping,
+   making off-screen shapes (e.g. shape-2 at right:-150px)
+   scroll-able. We use clip-path instead which is compositor-safe. */
 .animated-background {
-  /* Creates a stacking context so child transforms are clipped correctly    */
-  /* on mobile Chrome/Safari (they ignore overflow:hidden without this fix). */
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  will-change: transform;
+  clip-path: inset(0);
+  -webkit-clip-path: inset(0);
 }
 
-/* ── Override float animation on mobile — remove X component ────
-   @keyframes float uses translateX(15px) which forces the browser
-   to expand the scrollable area even inside overflow:hidden containers
-   on mobile Webkit. Replacing it with a Y-only version fixes this.  */
+/* ── On mobile: hide floating shapes entirely ───────────────
+   Shapes are purely decorative. On mobile their off-screen
+   positions (right:-150px etc.) can leak out of the clipping
+   context on older WebKit builds. Hide them to guarantee a
+   clean single-scrollbar experience. */
 @media (max-width: 900px) {
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50%       { transform: translateY(24px); }
+  .floating-shape {
+    display: none !important;
   }
 
-  /* Dashboard orbs: the orbDrift @keyframes is defined INLINE in the
-     dashboard <style> tags which comes AFTER this stylesheet, so it
-     wins @keyframes re-definition. Use animation:none !important on
-     the ELEMENTS instead — this beats any cascade order.
-     Orbs are purely decorative; hiding them on mobile is fine.        */
+  /* Dashboard orbs: defined INLINE after this sheet so we use
+     animation/display overrides instead of @keyframes re-def. */
   .amb-orb-1,
   .amb-orb-2,
   .amb-orb-3 {
-    animation: none !important;
-    /* Reset transforms so they don't occupy off-screen space */
-    transform: none !important;
-    /* Move the off-screen orbs further off-screen so they don't scroll */
-    top: -300px !important;
-    left: -300px !important;
-    right: auto !important;
-    bottom: auto !important;
-    width: 1px !important;
-    height: 1px !important;
+    display: none !important;
   }
 
-  /* float-element (premium UI fixed elements) — stop X movement */
-  .float-element { animation: none !important; transform: none !important; }
-
-  /* Floating shapes on index/browse: force Y-only via animation stop;
-     translateZ(0) on .animated-background already clips them, but
-     belt-and-suspenders on very old mobile browsers:             */
-  .floating-shape {
-    animation: float var(--dur, 20s) ease-in-out infinite !important;
-  }
+  /* float-element (premium UI fixed elements) — kill entirely */
+  .float-element { display: none !important; }
 }
 
-/* ── Disable horizontal slide-in entrance animations on mobile
+/* ── Disable horizontal slide-in entrance animations on mobile/tablet
    These start elements at translateX(±30px) and can clip content ── */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .hero-anim-left,
   .hero-anim-right {
     animation: none !important;

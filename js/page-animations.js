@@ -79,7 +79,10 @@
       ],
       'data-reveal="zoom"': ['.hero-badge', '.cta-content'],
       'data-reveal="left"': ['.hero-content', '.hero-anim-left'],
-      'data-reveal="right"':[ '.hero-visual', '.hero-anim-right'],
+      /* On mobile (≤900px) hero-visual is hidden; on wider screens the
+         X-slide is safe because the hero section has overflow:hidden.
+         Use plain 'data-reveal' (Y-only) on ≤900px, right-slide on wider. */
+      'data-reveal="right"': window.innerWidth > 900 ? ['.hero-visual', '.hero-anim-right'] : [],
       'data-stagger':       [
         '.stats-row', '.why-grid', '.steps-grid',
         '.testimonials-grid', '.jobs-carousel',

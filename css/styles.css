@@ -389,7 +389,7 @@ body::before {
 }
 
 .hero-anim-right {
-    animation: heroSlideRight 0.7s ease 0.15s both;
+    animation: heroSlideRight 0.7s ease 0.15s forwards;
 }
 
 .gradient-text {

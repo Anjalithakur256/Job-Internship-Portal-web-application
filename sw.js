@@ -6,7 +6,7 @@
      • Offline page : shown when network + cache both fail
    ========================================================= */
 
-const CACHE_NAME = 'jobnexus-v5';
+const CACHE_NAME = 'jobnexus-v6';
 const OFFLINE_URL = '/';
 
 const PRECACHE_ASSETS = [
@@ -46,8 +46,16 @@ self.addEventListener('install', (event) => {
       return cache.addAll(PRECACHE_ASSETS).catch((err) => {
         console.warn('[SW] Some assets failed to pre-cache:', err);
       });
-    }).then(() => self.skipWaiting())
+    })
+    // NOTE: No self.skipWaiting() here — new SW waits until user clicks "Update"
   );
+});
+
+// ── Message: allow page to trigger skipWaiting on demand ─
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 // ── Activate: delete stale caches ───────────────────────

@@ -24,7 +24,29 @@
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        .then((reg) => {
+          // Detect when a new SW is found and waiting
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            if (!newWorker) return;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                // There is a previous SW — new one is waiting → show update dialog
+                showUpdateDialog(newWorker);
+              }
+            });
+          });
+          // Also check if there's already a waiting SW on page load
+          if (reg.waiting && navigator.serviceWorker.controller) {
+            showUpdateDialog(reg.waiting);
+          }
+        })
         .catch((err) => console.warn('[PWA] SW registration failed:', err));
+
+      // Reload all clients once new SW has activated
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
+      });
     });
   }
 
@@ -190,6 +212,75 @@
       #pwa-install-wrapper { bottom: 18px; right: 18px; }
       #pwa-install-btn { padding: 12px 18px; font-size: 14px; }
     }
+
+    /* ── Update Available dialog ─────────────────────────── */
+    #pwa-update-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200000;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    #pwa-update-modal.open { display: flex; }
+    #pwa-update-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(3px);
+    }
+    #pwa-update-sheet {
+      position: relative;
+      z-index: 1;
+      background: #1a1f2e;
+      border-radius: 24px 24px 0 0;
+      padding: 28px 24px 44px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 -8px 40px rgba(0,0,0,0.55);
+      animation: pwa-slide-up 0.38s cubic-bezier(0.34,1.35,0.64,1) both;
+      text-align: center;
+    }
+    #pwa-update-sheet .upd-icon {
+      width: 66px; height: 66px;
+      background: linear-gradient(135deg, #e53935, #b71c1c);
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 14px;
+      box-shadow: 0 4px 20px rgba(229,57,53,0.45);
+    }
+    #pwa-update-sheet h3 {
+      color: #fff; font-size: 21px; font-weight: 700; margin: 0 0 6px;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+    #pwa-update-sheet p {
+      color: #8b949e; font-size: 14px; line-height: 1.5; margin: 0 0 26px;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+    #pwa-update-now-btn {
+      display: block; width: 100%; padding: 15px;
+      background: linear-gradient(135deg, #e53935, #b71c1c);
+      color: #fff; border: none; border-radius: 14px;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+      font-family: 'Inter', Arial, sans-serif;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 18px rgba(229,57,53,0.45);
+      transition: transform 0.18s, box-shadow 0.18s;
+      letter-spacing: 0.3px;
+    }
+    #pwa-update-now-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(229,57,53,0.65);
+    }
+    #pwa-update-later-btn {
+      display: block; width: 100%; padding: 12px;
+      background: transparent; color: #8b949e; border: none;
+      font-size: 14px; cursor: pointer;
+      font-family: 'Inter', Arial, sans-serif;
+      transition: color 0.2s;
+    }
+    #pwa-update-later-btn:hover { color: #c9d1d9; }
   `;
   document.head.appendChild(style);
 
@@ -398,6 +489,48 @@
     } else {
       hideHeroBtn();
     }
+  }
+
+  /* ── Update Available dialog ─────────────────────────── */
+  let _updateWorker = null;
+
+  function showUpdateDialog(waitingWorker) {
+    _updateWorker = waitingWorker;
+    const modal = document.getElementById('pwa-update-modal');
+    if (modal) modal.classList.add('open');
+  }
+
+  function buildUpdateModal() {
+    const modal = document.createElement('div');
+    modal.id = 'pwa-update-modal';
+    modal.innerHTML = `
+      <div id="pwa-update-overlay"></div>
+      <div id="pwa-update-sheet">
+        <div class="upd-icon">&#x26A1;</div>
+        <h3>Update Available!</h3>
+        <p>A new version of <strong style="color:#e53935">JobNexus</strong> is ready.<br>Tap below to reload and get the latest features.</p>
+        <button id="pwa-update-now-btn">&#x2B06; Update App Now</button>
+        <button id="pwa-update-later-btn">Maybe Later</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    document.getElementById('pwa-update-now-btn').addEventListener('click', () => {
+      modal.classList.remove('open');
+      if (_updateWorker) {
+        _updateWorker.postMessage({ type: 'SKIP_WAITING' });
+      }
+    });
+
+    const dismiss = () => modal.classList.remove('open');
+    document.getElementById('pwa-update-later-btn').addEventListener('click', dismiss);
+    document.getElementById('pwa-update-overlay').addEventListener('click', dismiss);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', buildUpdateModal);
+  } else {
+    buildUpdateModal();
   }
 
 })();

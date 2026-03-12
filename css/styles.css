@@ -65,6 +65,13 @@ html {
     scroll-behavior: smooth;
 }
 
+/* ── JobNexus logo: remove JPEG background on all dark backgrounds ── */
+img[src*="Job%20Nexus%20logo"],
+img[src*="Job Nexus logo"] {
+    mix-blend-mode: screen;
+    display: block;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);

@@ -30,7 +30,7 @@ class LoadingScreen {
     this.screen = document.createElement('div');
     this.screen.className = 'loading-screen';
     this.screen.innerHTML = `
-      <img src="/Public/Job%20Nexus%20logo..jpeg" alt="JobNexus" style="height:72px;width:auto;object-fit:contain;margin-bottom:16px">
+      <img src="/Public/Job%20Nexus%20logo..jpeg" alt="JobNexus" style="height:72px;width:auto;object-fit:contain;margin-bottom:16px;mix-blend-mode:screen;">
       <div class="loading-spinner"></div>
       <div class="loading-progress"></div>
     `;

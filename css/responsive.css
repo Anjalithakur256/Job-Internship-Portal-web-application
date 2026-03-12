@@ -437,8 +437,10 @@ main,
     top: 0 !important; bottom: 0 !important;
     overflow-y: auto !important;
     overscroll-behavior-y: contain !important;
+    scrollbar-width: none !important; /* Firefox */
     box-shadow: 4px 0 28px rgba(0,0,0,0.55) !important;
   }
+  .sidebar::-webkit-scrollbar { display: none !important; } /* Chrome/Safari/Edge */
   .sidebar.open { transform: translateX(0) !important; }
   .sidebar-backdrop {
     display: block !important;

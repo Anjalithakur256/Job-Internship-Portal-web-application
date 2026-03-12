@@ -11,15 +11,15 @@
   "lang": "en",
   "icons": [
     {
-      "src": "/Public/icons/JobNexusICON.jpeg",
+      "src": "/Public/icons/JobNexusICON.png",
       "sizes": "192x192",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/Public/icons/JobNexusICON.jpeg",
+      "src": "/Public/icons/JobNexusICON.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
@@ -30,14 +30,14 @@
       "short_name": "Jobs",
       "description": "Browse all available job listings",
       "url": "/pages/browse-jobs.html",
-      "icons": [{ "src": "/Public/icons/JobNexusICON.jpeg", "sizes": "192x192" }]
+      "icons": [{ "src": "/Public/icons/JobNexusICON.png", "sizes": "192x192" }]
     },
     {
       "name": "Login / Sign Up",
       "short_name": "Login",
       "description": "Login or create your account",
       "url": "/login.html",
-      "icons": [{ "src": "/Public/icons/JobNexusICON.jpeg", "sizes": "192x192" }]
+      "icons": [{ "src": "/Public/icons/JobNexusICON.png", "sizes": "192x192" }]
     }
   ],
   "screenshots": [],

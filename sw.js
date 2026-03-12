@@ -6,7 +6,7 @@
      • Offline page : shown when network + cache both fail
    ========================================================= */
 
-const CACHE_NAME = 'jobnexus-v20';
+const CACHE_NAME = 'jobnexus-v21';
 const OFFLINE_URL = '/';
 
 const PRECACHE_ASSETS = [
@@ -46,8 +46,7 @@ self.addEventListener('install', (event) => {
       return cache.addAll(PRECACHE_ASSETS).catch((err) => {
         console.warn('[SW] Some assets failed to pre-cache:', err);
       });
-    })
-    // NOTE: No self.skipWaiting() here — new SW waits until user clicks "Update"
+    }).then(() => self.skipWaiting()) // Auto-activate so logo/asset updates take effect immediately
   );
 });
 

@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "http-server": "^14.1.1",
+    "sharp": "^0.34.5",
     "vercel": "^33.0.0"
   },
   "browserslist": [

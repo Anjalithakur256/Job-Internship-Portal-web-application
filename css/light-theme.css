@@ -101,15 +101,7 @@ body::before {
 .menu-toggle span { background: #e6edf3 !important; }
 
 @media (max-width: 768px) {
-  .nav-menu {
-    display: none; position: fixed; top:0;left:0;right:0;bottom:0;
-    background: rgba(13,17,23,0.98) !important;
-    flex-direction:column; align-items:center; justify-content:center; gap:2rem; z-index:999;
-  }
-  .nav-menu.open { display: flex !important; }
-  .nav-link { font-size: 1.3rem !important; color: #e6edf3 !important; }
-  .menu-toggle { display: flex !important; z-index: 1000; position: relative; }
-  .nav-actions .auth-btn { display: none; }
+  .nav-desktop-login { display: none !important; }
 }
 
 /* ============================================================ HERO */

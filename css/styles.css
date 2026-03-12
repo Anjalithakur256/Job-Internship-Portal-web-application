@@ -209,6 +209,37 @@ body::before {
     transform: scale(1.05);
 }
 
+/* Wordmark text shown beside the icon in the navbar */
+.logo-wordmark {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    -webkit-text-fill-color: unset !important;
+}
+.logo-wordmark .wm-name {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #ffffff;
+    -webkit-text-fill-color: #ffffff;
+    letter-spacing: 0.4px;
+}
+.logo-wordmark .wm-name em {
+    color: #e53935;
+    -webkit-text-fill-color: #e53935;
+    font-style: normal;
+}
+.logo-wordmark .wm-sub {
+    font-size: 0.45rem;
+    font-weight: 600;
+    color: #888;
+    -webkit-text-fill-color: #888;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
 .nav-menu {
     display: flex;
     gap: var(--spacing-lg);

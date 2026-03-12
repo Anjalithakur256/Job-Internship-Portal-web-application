@@ -6,7 +6,7 @@
      • Offline page : shown when network + cache both fail
    ========================================================= */
 
-const CACHE_NAME = 'jobnexus-v18';
+const CACHE_NAME = 'jobnexus-v19';
 const OFFLINE_URL = '/';
 
 const PRECACHE_ASSETS = [

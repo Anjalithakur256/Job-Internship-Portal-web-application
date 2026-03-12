@@ -65,6 +65,13 @@ html {
     scroll-behavior: smooth;
 }
 
+/* ── JobNexus icon: circular shape + subtle red glow ring ── */
+img[src*="JobNexusICON"] {
+    filter: saturate(1.15) drop-shadow(0 0 8px rgba(229,57,53,0.45));
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(229,57,53,0.4), 0 0 14px rgba(229,57,53,0.18);
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);

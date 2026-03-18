@@ -16,6 +16,7 @@ class CarouselManager {
         this.isTouchInteraction = false;
         this.isHorizontalTouchDrag = null;
         this.hasHorizontalOverflow = false;
+        this.isTouchDevice = window.matchMedia('(hover: none), (pointer: coarse)').matches;
         
         if (this.carousel) {
             this.init();
@@ -142,6 +143,10 @@ class CarouselManager {
     }
 
     setupDragScroll() {
+        if (this.isTouchDevice) {
+            return;
+        }
+
         if (!this.hasHorizontalOverflow) {
             return;
         }

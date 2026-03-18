@@ -393,12 +393,22 @@ main,
   .how-it-works { padding: 2.5rem 0 !important; }
   .testimonials { padding: 2.5rem 0 !important; }
   .featured-jobs { padding: 2.5rem 0 !important; }
+  .featured-jobs .container {
+    overflow-x: clip !important;
+  }
   .why-choose,
   .featured-jobs,
   .jobs-carousel,
   .job-card,
   .why-card {
     touch-action: pan-y !important;
+  }
+  .jobs-carousel {
+    width: 100% !important;
+    overflow-x: clip !important;
+  }
+  .jobs-carousel .job-card {
+    max-width: 100% !important;
   }
 
   /* ══ GRIDS ═════════════════════════════════════════════════ */

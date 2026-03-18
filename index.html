@@ -581,11 +581,12 @@
                 closeMenu();
             }
         }, { passive: true });
-        window.addEventListener('scroll', syncBodyScrollLock, { passive: true });
-        window.addEventListener('touchmove', syncBodyScrollLock, { passive: true });
+        window.addEventListener('orientationchange', syncBodyScrollLock, { passive: true });
+        window.addEventListener('visibilitychange', syncBodyScrollLock, { passive: true });
         window.addEventListener('pageshow', closeMenu, { passive: true });
     })();
     </script>
+    <script src="js/home-scroll-stabilizer.js"></script>
     <script src="/js/pwa.js"></script>
 </body>
 </html>

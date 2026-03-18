@@ -6,7 +6,7 @@
      • Offline page : shown when network + cache both fail
    ========================================================= */
 
-const CACHE_NAME = 'jobnexus-v21';
+const CACHE_NAME = 'jobnexus-v22';
 const OFFLINE_URL = '/';
 
 const PRECACHE_ASSETS = [
@@ -30,6 +30,7 @@ const PRECACHE_ASSETS = [
   '/css/page-animations.css',
   '/css/responsive.css',
   '/js/main.js',
+  '/js/home-scroll-stabilizer.js',
   '/js/pwa.js',
   '/js/firebase-config.js',
   '/js/page-animations.js',

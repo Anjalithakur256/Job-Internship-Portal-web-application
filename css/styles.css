@@ -790,6 +790,7 @@ body::before {
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: var(--spacing-lg);
     margin-bottom: var(--spacing-lg);
+    touch-action: pan-y;
 }
 
 .job-card {

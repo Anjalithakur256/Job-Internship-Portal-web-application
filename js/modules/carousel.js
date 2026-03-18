@@ -11,7 +11,10 @@ class CarouselManager {
         this.autoScrollInterval = null;
         this.isDragging = false;
         this.startX = 0;
+        this.startY = 0;
         this.scrollLeft = 0;
+        this.isTouchInteraction = false;
+        this.isHorizontalTouchDrag = null;
         
         if (this.carousel) {
             this.init();
@@ -131,14 +134,18 @@ class CarouselManager {
         this.carousel.addEventListener('mousemove', (e) => this.onDrag(e));
 
         // Touch support
-        this.carousel.addEventListener('touchstart', (e) => this.onDragStart(e));
-        this.carousel.addEventListener('touchend', () => this.onDragEnd());
-        this.carousel.addEventListener('touchmove', (e) => this.onDrag(e));
+        this.carousel.addEventListener('touchstart', (e) => this.onDragStart(e), { passive: true });
+        this.carousel.addEventListener('touchend', () => this.onDragEnd(), { passive: true });
+        this.carousel.addEventListener('touchcancel', () => this.onDragEnd(), { passive: true });
+        this.carousel.addEventListener('touchmove', (e) => this.onDrag(e), { passive: false });
     }
 
     onDragStart(e) {
         this.isDragging = true;
-        this.startX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
+        this.isTouchInteraction = e.type.includes('touch');
+        this.isHorizontalTouchDrag = this.isTouchInteraction ? null : true;
+        this.startX = this.isTouchInteraction ? e.touches[0].pageX : e.pageX;
+        this.startY = this.isTouchInteraction ? e.touches[0].pageY : 0;
         this.scrollLeft = this.carousel.scrollLeft;
         this.carousel.style.cursor = 'grabbing';
         this.carousel.style.scrollBehavior = 'auto';
@@ -146,17 +153,45 @@ class CarouselManager {
 
     onDrag(e) {
         if (!this.isDragging) return;
-        
-        e.preventDefault();
-        
-        const x = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
+
+        if (this.isTouchInteraction) {
+            const touch = e.touches && e.touches[0];
+            if (!touch) return;
+
+            const deltaX = touch.pageX - this.startX;
+            const deltaY = touch.pageY - this.startY;
+
+            if (this.isHorizontalTouchDrag === null) {
+                const threshold = 8;
+                if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return;
+
+                if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                    this.onDragEnd();
+                    return;
+                }
+
+                this.isHorizontalTouchDrag = true;
+            }
+
+            if (this.isHorizontalTouchDrag) {
+                e.preventDefault();
+            } else {
+                return;
+            }
+        } else {
+            e.preventDefault();
+        }
+
+        const x = this.isTouchInteraction ? e.touches[0].pageX : e.pageX;
         const walk = (x - this.startX) * 1; // Adjust sensitivity
-        
+
         this.carousel.scrollLeft = this.scrollLeft - walk;
     }
 
     onDragEnd() {
         this.isDragging = false;
+        this.isTouchInteraction = false;
+        this.isHorizontalTouchDrag = null;
         this.carousel.style.cursor = 'grab';
         this.carousel.style.scrollBehavior = 'smooth';
         this.updateButtonStates();
@@ -282,8 +317,8 @@ class AdvancedCarousel {
 
 // Job Carousel with Filter/Search
 class JobCarouselWithFilters {
-    constructor(carouselSelector = '#jobsCarousel') {
-        this.carousel = new CarouselManager(carouselSelector);
+    constructor(carouselSelector = '#jobsCarousel', carouselInstance = null) {
+        this.carousel = carouselInstance || new CarouselManager(carouselSelector);
         this.filters = {
             type: 'all',
             location: 'all',
@@ -402,11 +437,11 @@ class JobCarouselWithFilters {
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         window.carousel = new CarouselManager('#jobsCarousel', '#prevBtn', '#nextBtn');
-        window.jobFilters = new JobCarouselWithFilters('#jobsCarousel');
+        window.jobFilters = new JobCarouselWithFilters('#jobsCarousel', window.carousel);
     });
 } else {
     window.carousel = new CarouselManager('#jobsCarousel', '#prevBtn', '#nextBtn');
-    window.jobFilters = new JobCarouselWithFilters('#jobsCarousel');
+    window.jobFilters = new JobCarouselWithFilters('#jobsCarousel', window.carousel);
 }
 
 // Export for use in other modules

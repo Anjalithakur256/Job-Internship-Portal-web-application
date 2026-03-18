@@ -19,7 +19,14 @@ class PremiumUI {
     this.systems.mouseEffects = null;
 
     // Initialize smooth scrolling
-    this.systems.smoothScroll = window.SmoothScroll ? new window.SmoothScroll() : null;
+    if (window.smoothScroll) {
+      this.systems.smoothScroll = window.smoothScroll;
+    } else {
+      this.systems.smoothScroll = window.SmoothScroll ? new window.SmoothScroll() : null;
+      if (this.systems.smoothScroll) {
+        window.smoothScroll = this.systems.smoothScroll;
+      }
+    }
 
     // Initialize 3D tilt cards
     this.systems.card3DTilt = window.Card3DTilt ? new window.Card3DTilt() : null;

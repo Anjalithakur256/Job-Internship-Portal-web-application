@@ -82,7 +82,7 @@
         .install-app-btn.hidden { display: none !important; }
     </style>
 </head>
-<body>
+<body class="home-page">
     <!-- Animated background -->
     <div class="animated-background">
         <div class="floating-shape shape-1"></div>
@@ -557,6 +557,7 @@
         const menu     = document.getElementById('navMenu');
         const backdrop = document.getElementById('navBackdrop');
         if (!toggle || !menu) return;
+        document.body.style.overflow = '';
         function openMenu() {
             menu.classList.add('open');
             toggle.classList.add('active');
@@ -572,6 +573,12 @@
         toggle.addEventListener('click', () => menu.classList.contains('open') ? closeMenu() : openMenu());
         if (backdrop) backdrop.addEventListener('click', closeMenu);
         menu.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768 && menu.classList.contains('open')) {
+                closeMenu();
+            }
+        }, { passive: true });
+        window.addEventListener('pageshow', closeMenu, { passive: true });
     })();
     </script>
     <script src="/js/pwa.js"></script>

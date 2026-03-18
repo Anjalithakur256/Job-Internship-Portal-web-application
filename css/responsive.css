@@ -258,6 +258,13 @@ main,
    ============================================================ */
 @media (max-width: 768px) {
 
+  body.home-page {
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+
   /* ══ NAVBAR ════════════════════════════════════════════════ */
   .menu-toggle {
     display: flex !important;
@@ -300,13 +307,16 @@ main,
     transform: translateX(100%) !important;
     transition: transform 0.3s cubic-bezier(.25,.8,.25,1),
                 visibility 0.3s !important;
-    overflow-y: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
   /* Open state */
   .nav-menu.open {
     visibility: visible !important;
     pointer-events: auto !important;
     transform: translateX(0) !important;
+    overflow-y: auto !important;
   }
   /* Nav links inside panel */
   .nav-link {

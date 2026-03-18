@@ -273,8 +273,9 @@ function setupEventListeners() {
     // Mobile menu toggle
     const menuToggle = document.getElementById('menuToggle');
     const navMenu = document.getElementById('navMenu');
+    const navBackdrop = document.getElementById('navBackdrop');
 
-    if (menuToggle && navMenu) {
+    if (menuToggle && navMenu && !navBackdrop) {
         menuToggle.addEventListener('click', () => {
             navMenu.classList.toggle('active');
             menuToggle.classList.toggle('active');

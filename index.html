@@ -557,18 +557,21 @@
         const menu     = document.getElementById('navMenu');
         const backdrop = document.getElementById('navBackdrop');
         if (!toggle || !menu) return;
+        function syncBodyScrollLock() {
+            document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+        }
         document.body.style.overflow = '';
         function openMenu() {
             menu.classList.add('open');
             toggle.classList.add('active');
             if (backdrop) backdrop.classList.add('show');
-            document.body.style.overflow = 'hidden';
+            syncBodyScrollLock();
         }
         function closeMenu() {
             menu.classList.remove('open');
             toggle.classList.remove('active');
             if (backdrop) backdrop.classList.remove('show');
-            document.body.style.overflow = '';
+            syncBodyScrollLock();
         }
         toggle.addEventListener('click', () => menu.classList.contains('open') ? closeMenu() : openMenu());
         if (backdrop) backdrop.addEventListener('click', closeMenu);
@@ -578,6 +581,8 @@
                 closeMenu();
             }
         }, { passive: true });
+        window.addEventListener('scroll', syncBodyScrollLock, { passive: true });
+        window.addEventListener('touchmove', syncBodyScrollLock, { passive: true });
         window.addEventListener('pageshow', closeMenu, { passive: true });
     })();
     </script>

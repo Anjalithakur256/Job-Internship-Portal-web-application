@@ -283,6 +283,12 @@
         }
         @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
         @media (max-width: 768px) {
+            body {
+                height: auto !important;
+                min-height: 100vh !important;
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
+            }
             /* ── Sidebar: hidden off-screen by default, slides in on .open ── */
             .sidebar {
                 display: block !important;
@@ -309,11 +315,13 @@
                 z-index: 999 !important;
                 visibility: hidden !important;
                 opacity: 0 !important;
+                pointer-events: none !important;
                 transition: opacity 0.3s, visibility 0.3s !important;
             }
             .sidebar-backdrop.show {
                 visibility: visible !important;
                 opacity: 1 !important;
+                pointer-events: auto !important;
             }
             /* ── Blur layout (main content) when sidebar open — sidebar is outside .layout so unaffected ── */
             .layout { transition: filter 0.3s ease !important; }
@@ -342,8 +350,22 @@
                 transition: all 0.25s !important;
             }
             /* ── Layout ── */
-            .main { margin-left: 0 !important; padding: 1rem !important; height: calc(100vh - 60px) !important; overflow-y: auto !important; scroll-behavior: smooth !important; }
-            .layout { margin-top: 60px !important; }
+            .main {
+                margin-left: 0 !important;
+                padding: 1rem !important;
+                height: auto !important;
+                min-height: calc(100vh - 60px) !important;
+                overflow-y: visible !important;
+                -webkit-overflow-scrolling: touch !important;
+                touch-action: pan-y !important;
+                scroll-behavior: smooth !important;
+            }
+            .layout {
+                margin-top: 60px !important;
+                height: auto !important;
+                min-height: calc(100vh - 60px) !important;
+                overflow: visible !important;
+            }
             .topbar { padding: 0 0.75rem !important; }
             .notif-dropdown { right: 10px !important; width: calc(100vw - 20px) !important; }
         }

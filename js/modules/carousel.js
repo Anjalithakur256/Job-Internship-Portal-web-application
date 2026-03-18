@@ -15,6 +15,7 @@ class CarouselManager {
         this.scrollLeft = 0;
         this.isTouchInteraction = false;
         this.isHorizontalTouchDrag = null;
+        this.hasHorizontalOverflow = false;
         
         if (this.carousel) {
             this.init();
@@ -22,10 +23,24 @@ class CarouselManager {
     }
 
     init() {
+        this.updateScrollableState();
         this.setupEventListeners();
         this.setupAutoScroll();
         this.setupDragScroll();
         this.updateButtonStates();
+
+        window.addEventListener('resize', () => {
+            this.updateScrollableState();
+            this.updateButtonStates();
+        }, { passive: true });
+    }
+
+    updateScrollableState() {
+        if (!this.carousel) {
+            this.hasHorizontalOverflow = false;
+            return;
+        }
+        this.hasHorizontalOverflow = (this.carousel.scrollWidth - this.carousel.clientWidth) > 8;
     }
 
     setupEventListeners() {
@@ -127,6 +142,10 @@ class CarouselManager {
     }
 
     setupDragScroll() {
+        if (!this.hasHorizontalOverflow) {
+            return;
+        }
+
         // Touch/Drag scroll support
         this.carousel.addEventListener('mousedown', (e) => this.onDragStart(e));
         this.carousel.addEventListener('mouseleave', () => this.onDragEnd());
@@ -141,6 +160,7 @@ class CarouselManager {
     }
 
     onDragStart(e) {
+        if (!this.hasHorizontalOverflow) return;
         this.isDragging = true;
         this.isTouchInteraction = e.type.includes('touch');
         this.isHorizontalTouchDrag = this.isTouchInteraction ? null : true;

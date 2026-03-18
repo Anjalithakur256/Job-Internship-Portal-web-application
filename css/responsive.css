@@ -393,6 +393,13 @@ main,
   .how-it-works { padding: 2.5rem 0 !important; }
   .testimonials { padding: 2.5rem 0 !important; }
   .featured-jobs { padding: 2.5rem 0 !important; }
+  .why-choose,
+  .featured-jobs,
+  .jobs-carousel,
+  .job-card,
+  .why-card {
+    touch-action: pan-y !important;
+  }
 
   /* ══ GRIDS ═════════════════════════════════════════════════ */
   .why-grid { grid-template-columns: 1fr 1fr !important; gap: 0.85rem !important; }
